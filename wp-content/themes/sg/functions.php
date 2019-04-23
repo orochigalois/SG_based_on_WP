@@ -75,3 +75,50 @@ function redirect_to_url() {
 	}
 }
 add_action('template_redirect', 'redirect_to_url');
+
+
+
+function wpse239290_user_welcome_notice() {
+    // Make sure that the user is assigned to the subscriber role, specifically.
+    // Alternatively, capabilities can be checked with current_user_can(), but roles are not supposed to be checked this way.
+    $user = wp_get_current_user();
+    if ( ! in_array( 'subscriber', $user->roles ) ) {
+        return;
+    }
+
+    // Make sure the profile or dashboard screens are being viewed.
+    $screen = get_current_screen();
+    if ( ! $screen || ( 'profile' !== $screen->id && 'dashboard' !== $screen->id ) ) {
+        return;
+    }
+
+    // Show a friendly green notice, and allow it to be dismissed (it will re-appear if the page is reloaded though).
+    $class = 'notice notice-success is-dismissible';
+
+    // Customize the HTML to  fit your preferences.
+    $message = '<p>Looking for the <a href="http://example.com/form">Example Form</a></p>';
+
+    printf( '<div class="%1$s"><div class="subscriberProfile">%2$s</div></div>', $class, $message ); 
+}
+add_action( 'admin_notices', 'wpse239290_user_welcome_notice' );
+
+
+
+
+
+
+function sg_admin_menu()
+{
+	$user = wp_get_current_user();
+	if (!in_array('subscriber', $user->roles)) {
+		return;
+	}
+	add_menu_page('SG', 'SG', 'read', 'alex_sg_page', 'sg_index', 'dashicons-translation', 110);
+}
+
+function sg_index()
+{
+	require 'templates/sg.php'; 
+}
+
+add_action('admin_menu', 'sg_admin_menu');
