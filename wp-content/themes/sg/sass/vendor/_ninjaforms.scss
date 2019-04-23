@@ -1,0 +1,204 @@
+.nf-form-cont {
+	margin:0px auto;
+
+	.nf-form-title {
+		display:block;
+		margin:0px 0px $form-group-margin-bottom;
+	}
+
+	.nf-form-fields-required {
+		display:none;
+	}
+
+	.nf-error-msg {
+		font-size:0.8em;
+	}
+
+	.nf-field-container {
+		@extend .form-group;
+
+		.field-wrap{
+			&.nf-error{
+				input{
+					border-color:$danger;
+				}
+			}
+		}
+
+		.nf-field{
+			&+.nf-after-field{
+				display:none !important;
+			}
+		}
+	}
+
+	.textbox-container,
+	.firstname-container,
+	.lastname-container,
+	.phone-container,
+	.email-container,
+	.city-container {
+		.nf-field-element input {
+			@extend .form-control;
+		}
+	}
+
+	.textarea-container {
+		.nf-field-element textarea {
+			@extend .form-control;
+			min-height:175px;
+		}
+	}
+
+	.checkbox-container {
+		.nf-field {
+			position:relative;
+		}
+
+		.nf-field-label {
+			padding-left:6px;
+
+			label {
+				@extend %checkbox__label;
+				padding-left:10px;
+
+				&.nf-checked-label {
+					@extend %checkbox__label--active;
+				}
+			}
+		}
+
+		.nf-field-element input {
+			@extend %checkbox__input;
+		}
+	}
+
+	.listcheckbox-container {
+		.field-wrap {
+			display:block;
+		}
+
+		.nf-field-label {
+			width:auto;
+			padding-right:32px;
+			text-align:left;
+
+			label {
+				@extend h3;
+			}
+
+			@media screen and (min-width:$screen-sm) {
+				display:inline-block;
+			}
+		}
+
+		.nf-field-element {
+			ul {
+				@media screen and (min-width:$screen-sm) {
+					columns:2;
+				}
+			}
+
+			li {
+				display:inline-block;
+				margin-bottom:0px !important;
+				margin-right:10px !important;
+				@extend %checkbox;
+
+				input {
+					@extend %checkbox__input;
+
+					&:checked + label {
+						@extend %checkbox__label--active;
+					}
+				}
+
+				label {
+					@extend %checkbox__label;
+					color:$body-color;
+				}
+
+				@media screen and (max-width:$screen-xs-max){
+					width: 50%;
+					float: left;
+					margin-right:0 !important;
+				}
+			}
+		}
+	}
+
+	.listradio-container {
+		.field-wrap {
+			display:block;
+		}
+
+		.nf-field-label {
+			width:auto;
+			padding-right:32px;
+			text-align:left;
+
+			@media screen and (min-width:$screen-sm) {
+				display:inline-block;
+			}
+		}
+
+		.nf-field-element {
+			ul {
+				@media screen and (min-width:$screen-sm) {
+					columns:2;
+				}
+			}
+
+			li {
+				display:inline-block;
+				margin-right:10px !important;
+				@extend %radio;
+
+				input {
+					@extend %radio__input;
+
+					&:checked + label {
+						@extend %radio__label--active;
+					}
+				}
+
+				label {
+					@extend %radio__label;
+					color:$body-color;
+				}
+			}
+		}
+	}
+
+	.html-container {
+		margin:16px 0px;
+
+		.nf-field-element {
+			@extend .typography;
+		}
+	}
+
+	.submit-container {
+		.nf-field-element {
+			text-align:right;
+			
+			input {
+				@extend .btn;
+
+				&:not([class*='btn-']),
+				&.btn-default {
+					@extend .btn-primary;
+				}
+
+				&.btn-primary {
+					@extend .btn-primary;
+					width:100%;
+				}
+
+				&.btn-sm {
+					@extend .btn-sm;
+				}
+			}
+		}
+	}
+}

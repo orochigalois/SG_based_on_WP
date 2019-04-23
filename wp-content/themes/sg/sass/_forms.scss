@@ -1,0 +1,75 @@
+.btn {
+    transition: border 300ms ease, background 300ms ease, color 300ms ease;
+}
+
+.form-control {
+    &::placeholder {
+        opacity: 1 !important;
+    }
+}
+
+%radio {
+    position: relative;
+    padding: 0px 0px 0px 35px !important;
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    &__label {
+        &:before {
+            content: '';
+            display: block;
+            position: relative;
+            float: left;
+            top: 4px;
+            width: 20px;
+            height: 20px;
+            margin: 0px 0px 0px -35px;
+            background: white;
+            border: 5px solid white;
+            border-radius: 20px;
+            line-height: 1;
+        }
+
+        &--active {
+            &:before {
+                background: black;
+            }
+        }
+    }
+}
+
+%checkbox {
+    position: relative;
+    margin: 0px;
+    padding: 0px 0px 0px 35px !important;
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    &__label {
+        &:before {
+            content: '';
+            display: block;
+            position: relative;
+            float: left;
+            top: 0px;
+            width: 20px;
+            height: 20px;
+            margin: 0px 0px 0px -35px;
+            background: white;
+            border: 5px solid white;
+            line-height: 1;
+        }
+
+        &--active {
+            &:before {
+                background: black;
+            }
+        }
+    }
+}

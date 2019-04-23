@@ -1,0 +1,6 @@
+sucuri
+ninja-forms
+wc-logs
+sites/*/sucuri
+sites/*/ninja-forms
+sites/*/wc-logs

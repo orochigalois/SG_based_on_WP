@@ -1,0 +1,17 @@
+.site-header {
+}
+
+// SPECIAL CASE FOR WHEN WP ADMIN BAR IS VISIBLE AND HEADER IS FIXED
+/*body.admin-bar {
+	header {
+		top:32px;
+
+		@media screen and (max-width:782px) {
+			top:46px;
+		}
+
+		@media screen and (max-width:$screen-xs-max) {
+			top:0px;
+		}
+	}
+}*/
