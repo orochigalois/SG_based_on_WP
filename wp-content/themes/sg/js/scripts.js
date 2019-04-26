@@ -1,63 +1,23 @@
 jQuery(document).ready(function($){
     $(document.body).removeClass('no-js').addClass('js');
 
-    initPolyfills();
-
-    // Utilities
-    initClassToggle();
-    initAnchorScroll()
-
+   
     // CF7 Form Control
     //initCF7();
     //initFullheightMobile();
+
+
+
+
+    initDownloadSound();
 });
 
 function isMobile() {
     return window.matchMedia('(max-width:767px)').matches;
 }
 
-function initPolyfills() {
-    // CSS object-fit for IE
-    objectFitImages();
 
-    // polyfill for IE - startsWith
-    if (!String.prototype.startsWith) {
-        String.prototype.startsWith = function(searchString, position) {
-            position = position || 0;
-            return this.indexOf(searchString, position) === position;
-        };
-    }
-}
 
-function initClassToggle() {
-    // Toggle class on click
-    $(document.body).on('click', '[data-toggle="class"][data-class]', function(event) {
-        var $trigger = $(this);
-        var $target = $($trigger.data('target') ? $trigger.data('target') : $trigger.attr('href'));
-
-        if($target.length) {
-            event.preventDefault();
-            $target.toggleClass($trigger.data('class'));
-            $trigger.toggleClass('classed');
-        }
-    });
-}
-
-function initAnchorScroll() {
-    // Smooth anchor scrolling
-    $('a[href*="#"]:not([data-toggle])').click(function(event) {
-        if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
-            var target = $(this.hash);
-            target = target.length ? target : $('[name="'+this.hash.slice(1)+'"]');
-            if (target.length && !target.parents('.woocommerce-tabs').length) {
-                event.preventDefault();
-                $('html, body').animate({
-                    scrollTop: target.offset().top
-                }, 1000);
-            }
-        }
-    });
-}
 
 // function initCF7(){
 //     var wpcf7Elm = $('.wpcf7-form')[0];
@@ -117,3 +77,24 @@ function initAnchorScroll() {
     document.body.removeChild(el);
   });
 }*/
+
+
+function initDownloadSound() {
+    jQuery(".sg_wordlist").on("click", document, function (event) {
+        event.preventDefault();
+
+        jQuery.ajax({
+            url: _ajaxurl,
+            method: 'GET',
+            data: {
+                action: 'downloadSound',
+                title: jQuery(this).text(),
+            },
+            dataType: 'json',
+           // async: false, 
+            success: function (response) {
+                console.log(response);
+            },
+        });
+    });
+}

@@ -113,12 +113,31 @@ function sg_admin_menu()
 	if (!in_array('subscriber', $user->roles)) {
 		return;
 	}
-	add_menu_page('SG', 'SG', 'read', 'alex_sg_page', 'sg_index', 'dashicons-translation', 110);
+	add_menu_page('Upload Vocabulary Lists', 'Upload', 'read', 'sg_upload_page', 'sg_upload', 'dashicons-translation', 110);
+	add_menu_page('Library', 'Library', 'read', 'sg_library_page', 'sg_library', 'dashicons-admin-page', 111);
 }
 
-function sg_index()
+function sg_upload()
 {
-	require 'templates/sg.php'; 
+	require 'templates/upload.php'; 
 }
+function sg_library()
+{
+	require 'templates/library.php'; 
+}
+
 
 add_action('admin_menu', 'sg_admin_menu');
+
+
+
+function add_to_admin_header() {
+ ?>
+    <script type="text/javascript">
+		var _ajaxurl = '<?= admin_url("admin-ajax.php"); ?>';
+		var _pageid = '<?= get_the_ID(); ?>';
+		var _imagedir = '<?php lp_image_dir(); ?>';
+	</script>
+<?php 
+}
+add_action( 'admin_head', 'add_to_admin_header' );

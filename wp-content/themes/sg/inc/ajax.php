@@ -52,3 +52,14 @@ add_action('wp_ajax_load_post', 'ajax_load_post');*/
 }
 add_action('wp_ajax_nopriv_more_posts', 'ajax_more_posts');
 add_action('wp_ajax_more_posts', 'ajax_more_posts');*/
+
+
+
+function ajax_downloadSound(){
+	$title = (!empty($_GET['title']) ? (string) $_GET['title'] : '');
+
+	print json_encode($title);
+	exit;
+}
+add_action('wp_ajax_nopriv_downloadSound', 'ajax_downloadSound');
+add_action('wp_ajax_downloadSound', 'ajax_downloadSound');
