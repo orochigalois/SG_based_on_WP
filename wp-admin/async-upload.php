@@ -35,7 +35,7 @@ if ( isset( $_REQUEST['action'] ) && 'upload-attachment' === $_REQUEST['action']
 }
 
 if ( ! current_user_can( 'upload_files' ) ) {
-	wp_die( __( 'Sorry, you are not allowed to upload files.' ) );
+	// wp_die( __( 'Sorry, you are not allowed to upload files.' ) );
 }
 
 // just fetch the detail form for that attachment
@@ -45,7 +45,7 @@ if ( isset( $_REQUEST['attachment_id'] ) && ( $id = intval( $_REQUEST['attachmen
 		wp_die( __( 'Invalid post type.' ) );
 	}
 	if ( ! current_user_can( 'edit_post', $id ) ) {
-		wp_die( __( 'Sorry, you are not allowed to edit this item.' ) );
+		//wp_die( __( 'Sorry, you are not allowed to edit this item.' ) );
 	}
 
 	switch ( $_REQUEST['fetch'] ) {
@@ -83,7 +83,9 @@ check_admin_referer( 'media-form' );
 $post_id = 0;
 if ( isset( $_REQUEST['post_id'] ) ) {
 	$post_id = absint( $_REQUEST['post_id'] );
-	if ( ! get_post( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
+	// if ( ! get_post( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) 
+	if ( ! get_post( $post_id ) ) 
+	{
 		$post_id = 0;
 	}
 }
