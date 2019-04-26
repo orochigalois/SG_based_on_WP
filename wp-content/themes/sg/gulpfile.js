@@ -36,17 +36,17 @@ gulp.task('scripts', function() {
     ])
     .pipe(concat('main.js'))
     .pipe(rename({suffix: '.min'}))
-    // .pipe(uglify().on('error', function(error){
-    //     gutil.log(gutil.colors.red('[Error]'), error.toString());
-    //     this.emit('end');
-    // }))
+    .pipe(uglify().on('error', function(error){
+        gutil.log(gutil.colors.red('[Error]'), error.toString());
+        this.emit('end');
+    }))
     .pipe(gulp.dest('dist/js'));
 });
 
 gulp.task('browser-sync', function() {
   browsersync({
     proxy: {
-        target: 'http://sg.local'
+        target: 'https://sg.local'
     },
     snippetOptions: {
         whitelist: ['/wp-admin/admin-ajax.php'],
@@ -55,11 +55,11 @@ gulp.task('browser-sync', function() {
   });
 });
 
-gulp.task('plugins', function() {
+gulp.task('vendor', function() {
   return gulp.src([
-    'js/plugins/[^_]*.js',
+    'js/vendor/[^_]*.js',
     ])
-    .pipe(concat('plugins.js'))
+    .pipe(concat('vendor.js'))
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify().on('error', function(error){
         gutil.log(gutil.colors.red('[Error]'), error.toString());
@@ -87,7 +87,7 @@ gulp.task('default', ['watch']);
 gulp.task('watch', ['browser-sync'], function() {
     gulp.watch('sass/**/*.scss',['styles']);
     gulp.watch('js/**/[^_]*.js',['scripts']);
-    gulp.watch('js/plugins/[^_]*.js',['plugins']);
+    gulp.watch('js/vendor/[^_]*.js',['vendor']);
     gulp.watch('../**/*.php', function() {
         browsersync.reload();
     });
