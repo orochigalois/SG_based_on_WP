@@ -46,7 +46,7 @@ gulp.task('scripts', function() {
 gulp.task('browser-sync', function() {
   browsersync({
     proxy: {
-        target: 'https://sg.local'
+        target: 'http://sg.local'
     },
     snippetOptions: {
         whitelist: ['/wp-admin/admin-ajax.php'],
