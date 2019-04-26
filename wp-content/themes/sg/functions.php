@@ -141,3 +141,29 @@ function add_to_admin_header() {
 <?php 
 }
 add_action( 'admin_head', 'add_to_admin_header' );
+
+
+
+add_action( 'user_register', 'create_user_folder', 10, 1 );
+
+function create_user_folder( $user_id ) {
+
+	$upload_dir = wp_upload_dir();
+	mkdir($upload_dir['basedir'].'/userdata'.$user_id,0777);
+	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/sentence',0777);
+	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/word',0777);
+	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/picture',0777);
+}
+
+
+
+function wpse_form_in_admin_bar() {
+    global $wp_admin_bar;
+
+    $wp_admin_bar->add_menu( array(
+        'id' => 'wpse-form-in-admin-bar',
+        'parent' => 'top-secondary',
+        'title' => '<p class="sg-current-label">Current wordlist: <span></span></p>'
+    ) );
+}
+add_action( 'admin_bar_menu', 'wpse_form_in_admin_bar' );

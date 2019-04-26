@@ -89,11 +89,18 @@ function initDownloadSound() {
             data: {
                 action: 'downloadSound',
                 title: jQuery(this).text(),
+                wordlist_id:jQuery(this).data("wordlist_id"),
             },
             dataType: 'json',
            // async: false, 
             success: function (response) {
-                console.log(response);
+                if(response.status=='success'){
+                    console.log(response);
+
+                    jQuery( ".sg-current-label>span" ).text(response.title);
+
+                }
+                
             },
         });
     });
