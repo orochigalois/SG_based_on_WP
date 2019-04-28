@@ -1,4 +1,6 @@
 <?php
+
+session_start();
 set_time_limit(0);
 ////////If a proxy should be used in server,update this 2 constants
 define('USE_PROXY', false);
@@ -128,6 +130,9 @@ function ajax_downloadSound(){
 	$result['status']="success";
 	$result['title']=$title;
 
+
+	//4. store $wordmatrix
+	$_SESSION['wordmatrix']=$wordmatrix;
 	print json_encode($result);
 	exit;
 }

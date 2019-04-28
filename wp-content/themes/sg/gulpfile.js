@@ -36,10 +36,10 @@ gulp.task('scripts', function() {
     ])
     .pipe(concat('main.js'))
     .pipe(rename({suffix: '.min'}))
-    .pipe(uglify().on('error', function(error){
-        gutil.log(gutil.colors.red('[Error]'), error.toString());
-        this.emit('end');
-    }))
+    // .pipe(uglify().on('error', function(error){
+    //     gutil.log(gutil.colors.red('[Error]'), error.toString());
+    //     this.emit('end');
+    // }))
     .pipe(gulp.dest('dist/js'));
 });
 
