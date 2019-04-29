@@ -128,7 +128,7 @@ function sg_library()
 }
 
 function sg_dictation(){
-	require 'templates/dictation.php'; 
+	require 'templates/game_dictation.php'; 
 }
 
 
