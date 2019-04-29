@@ -172,3 +172,19 @@ function wpse_form_in_admin_bar() {
     ) );
 }
 add_action( 'admin_bar_menu', 'wpse_form_in_admin_bar' );
+
+
+
+
+
+
+function my_footer_shh() {
+    remove_filter( 'update_footer', 'core_update_footer' );
+	add_filter( 'update_footer', 'code_is_poetry' ,5);
+
+	function code_is_poetry(){
+		return 'Code is Poetry';
+	}
+}
+
+add_action( 'admin_menu', 'my_footer_shh' );

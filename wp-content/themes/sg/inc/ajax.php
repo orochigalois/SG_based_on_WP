@@ -109,11 +109,14 @@ function ajax_downloadSound(){
 		// 	curl_save_file($word_url, $word_saveTo);
 		// }
 
-		$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
-		$sentence_url = str_replace(" ", "%20", $sentence_url);
-		$sentence_saveTo = $upload_dir['basedir'].'/userdata' . $current_user->ID . '/sentence' .'/'. $word . '.mp3';
+		if($sentence!=''){
+			$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
+			$sentence_url = str_replace(" ", "%20", $sentence_url);
+			$sentence_saveTo = $upload_dir['basedir'].'/userdata' . $current_user->ID . '/sentence' .'/'. $word . '.mp3';
 
-		curl_save_file($sentence_url, $sentence_saveTo);
+			curl_save_file($sentence_url, $sentence_saveTo);
+		}
+		
 
 		// if (!file_exists($sentence_saveTo)) {
 		// 	curl_save_file($sentence_url, $sentence_saveTo);
