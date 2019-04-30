@@ -12,6 +12,7 @@ jQuery(document).ready(function ($) {
 
     var spark = new Audio("../wp-content/themes/sg/sound/__hit.mp3");
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
+    var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
 
     var temp = document.querySelector('.time');
     var button = document.querySelector(".startBtn");
@@ -127,6 +128,9 @@ jQuery(document).ready(function ($) {
 
         if(isTypo)
         {
+            __error.pause();
+            __error.currentTime = 0;
+            __error.play();
             errors++;
             errorDiv.innerHTML = errors; //add points to the points div
         }
