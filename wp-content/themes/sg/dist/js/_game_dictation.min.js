@@ -29,6 +29,7 @@ jQuery(document).ready(function ($) {
     var errors;
     var wordIndex;
 
+    var wordSound;
 
 
 
@@ -62,7 +63,7 @@ jQuery(document).ready(function ($) {
         }
         spans = document.querySelectorAll(".span");
         //b. play word sound
-        var wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + list[wordIndex] + ".mp3");
+        wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + list[wordIndex] + ".mp3");
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
@@ -73,6 +74,13 @@ jQuery(document).ready(function ($) {
         
 
     }
+
+
+    $( ".replayBtn" ).on( "click", document, function() {
+        wordSound.pause();
+        wordSound.currentTime = 0;
+        wordSound.play();
+    });
 
 
     
