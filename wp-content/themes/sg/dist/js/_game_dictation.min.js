@@ -107,13 +107,17 @@ jQuery(document).ready(function ($) {
 
     
 
-    
+    function isLetterOrSpace(str) {
+        return str.length === 1 && str.match(/[a-z]/i) ||str==' ';
+    }
 
     //3.keydown
     document.addEventListener("keydown", typing, false);
     function typing(e) {
         
         typed = String.fromCharCode(e.which);
+        if(!isLetterOrSpace(typed))
+            return;
         var isTypo=true;
         for (var i = 0; i < spans.length; i++) {
             if (spans[i].innerHTML.toUpperCase() === typed.toUpperCase()) { // if typed letter is the one from the word
