@@ -142,7 +142,25 @@ jQuery(document).ready(function ($) {
         {
             __error.pause();
             __error.currentTime = 0;
-            __error.play();
+         
+
+            var promise = __error.play();
+
+         
+            if (promise) {
+                //Older browsers may not return a promise, according to the MDN website
+                promise.catch(function(error) { console.error(error); });
+            }
+
+            // if (promise !== undefined) {
+            //   promise.then(_ => {
+            //     // Autoplay started!
+            //   }).catch(error => {
+            //     // Autoplay was prevented.
+            //     // Show a "Play" button so that user can start playback.
+            //   });
+            // }
+
             errors++;
             errorDiv.innerHTML = errors; //add points to the points div
         }

@@ -97,7 +97,7 @@ gulp.task('translations', function() {
     .pipe(gulp.dest('languages/'+domain+'.pot'));
 });
 
-gulp.task('default', ['watch']);
+// gulp.task('default', ['watch']);
 
 gulp.task('watch', ['browser-sync'], function() {
     gulp.watch('sass/**/*.scss',['styles']);
