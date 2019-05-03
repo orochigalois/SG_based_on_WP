@@ -43,8 +43,13 @@ function get_wordMatrix($wordlist_id)
 		$values = explode(',', $line); // split lines by commas
 		$wordmatrix[$i]['word'] = trim($values[0]);
 		unset($values[0]);
-		$wordmatrix[$i]['sentence'] = trim($values[1]);
-		unset($values[1]);
+		if(isset($values[1])){
+			$wordmatrix[$i]['sentence'] = trim($values[1]);
+			unset($values[1]);
+		}else{
+			$wordmatrix[$i]['sentence']="";
+		}
+		
 	}
 
 	return $wordmatrix;
@@ -111,14 +116,17 @@ function get_wordImage($wordmatrix)
 
 
 		$result=curl_request($word_url);
+		// write_log($result);
 		$jsonobj = json_decode($result);
+
+		// write_log($jsonobj);
 		$image_link="";
 
 		foreach($jsonobj->items as $value)
 		{                        
 			$image_link = $value->link;
 		}
-
+		// write_log($image_link);
 		$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $word;
 
 		// curl_save_file($word_url, $image_saveTo);

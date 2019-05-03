@@ -78,7 +78,7 @@ $table_prefix  = 'wp_';
  * @link https://codex.wordpress.org/Debugging_in_WordPress
  */
 define('WP_DEBUG', true);
-
+define( 'WP_DEBUG_LOG', true );
 define('WP_MEMORY_LIMIT', '512M'); // WooCommerce sites need this for some reason
 
 define('DISALLOW_FILE_EDIT', true); // Theme and plugin editor

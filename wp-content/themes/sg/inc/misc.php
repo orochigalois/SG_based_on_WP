@@ -1,5 +1,15 @@
 <?php
 
+function write_log($log) {
+       
+	if (is_array($log) || is_object($log)) {
+		error_log(print_r($log, true));
+	} else {
+		error_log($log);
+	}
+
+}
+
 function lp_is_plugin_active($plugin_file) {
 	static $plugins = null;
 
