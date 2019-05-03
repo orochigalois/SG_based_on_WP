@@ -20,8 +20,8 @@
 
     <div class="hidden_data__wordlist">
         <?php
-        $wordmatrix = $_SESSION['wordmatrix'];
-        foreach ($wordmatrix as $wordline) {
+        $wordMatrix = $_SESSION['wordMatrix'];
+        foreach ($wordMatrix as $wordline) {
             $word = strtolower($wordline['word']);
             echo '<div class="word">' . $word . '</div>';
         }

@@ -1,4 +1,11 @@
-
+<div class="hidden_data" style="display:none;">
+    <div class="hidden_data__userID">
+        <?php global $current_user;
+        wp_get_current_user();
+        echo $current_user->ID;
+        ?>
+    </div>
+</div>
 <div class="library_container">
 <?php
 //
@@ -21,10 +28,9 @@ if (is_user_logged_in()) :
 			printDate($date);
 			echo '<div class="shelf">';
 		}
-		 // or whatever you want here.
 
 		echo '<div class="book_container">';
-		echo '<div class="book">'.get_the_title().'</div>';
+		echo '<div class="book" data-wordlist_id="'.get_the_ID().'">'.get_the_title().'</div>';
 		echo '</div>';
 
 
@@ -49,3 +55,6 @@ function printDate($date)
 
 ?>
 </div>
+
+
+<?php include_once('library_modal.php'); ?>

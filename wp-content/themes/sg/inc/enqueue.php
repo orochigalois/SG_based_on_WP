@@ -42,9 +42,9 @@ function lp_enqueue_admin()
 	global $plugin_page;
 	if($plugin_page=='sg_dictation_page'){
 		wp_enqueue_script('_game_dictation-script', get_template_directory_uri() . '/dist/js/_game_dictation.min.js', '', '', true);
-
-		wp_enqueue_style('animate','https://raw.githubusercontent.com/daneden/animate.css/master/animate.css');
-		
+	}
+	if($plugin_page=='sg_library_page'){
+		wp_enqueue_script('_library-script', get_template_directory_uri() . '/dist/js/_library.min.js', '', '', true);
 	}
 	
 }
