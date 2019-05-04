@@ -100,7 +100,7 @@ function wpse239290_user_welcome_notice() {
 
     printf( '<div class="%1$s"><div class="subscriberProfile">%2$s</div></div>', $class, $message ); 
 }
-add_action( 'admin_notices', 'wpse239290_user_welcome_notice' );
+// add_action( 'admin_notices', 'wpse239290_user_welcome_notice' );
 
 
 
@@ -188,3 +188,50 @@ function my_footer_shh() {
 }
 
 add_action( 'admin_menu', 'my_footer_shh' );
+
+
+// disable default dashboard widgets
+function disable_default_dashboard_widgets() {
+	global $wp_meta_boxes;
+	// wp..
+	unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_activity']);
+	unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_right_now']);
+	unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_recent_comments']);
+	unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
+	unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_recent_drafts']);
+	// bbpress
+	unset($wp_meta_boxes['dashboard']['normal']['core']['bbp-dashboard-right-now']);
+	// yoast seo
+	unset($wp_meta_boxes['dashboard']['normal']['core']['yoast_db_widget']);
+	// gravity forms
+	unset($wp_meta_boxes['dashboard']['normal']['core']['rg_forms_dashboard']);
+}
+add_action('wp_dashboard_setup', 'disable_default_dashboard_widgets', 999);
+
+
+/**
+ * Add a widget to the dashboard.
+ *
+ * This function is hooked into the 'wp_dashboard_setup' action below.
+ */
+function add_roadmap_widgets() {
+
+	wp_add_dashboard_widget(
+                 'dashboard_widget_roadmap',         // Widget slug.
+                 'Roadmap',         // Title.
+                 'dashboard_widget_roadmap_function' // Display function.
+        );	
+}
+add_action( 'wp_dashboard_setup', 'add_roadmap_widgets' );
+
+/**
+ * Create the function to output the contents of our Dashboard Widget.
+ */
+function dashboard_widget_roadmap_function() {
+
+	include_once('partials/widget_roadmap.php');
+}

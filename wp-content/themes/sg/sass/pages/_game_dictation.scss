@@ -1,10 +1,11 @@
 #toplevel_page_sg_dictation_page{
     display:none;
 }
-
+.toplevel_page_sg_dictation_page{
+    background-color:#282e3a;
+}
 .game_dictation {
-
-
+    
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
@@ -12,6 +13,8 @@
     padding: 2%;
     background-color: #424242;
     height: 500px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 
 
     .startBtn {

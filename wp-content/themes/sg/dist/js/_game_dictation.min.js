@@ -1,6 +1,5 @@
 jQuery(document).ready(function ($) {
 
-    
     //1.get hidden_data & init
     var list = [];
 
@@ -10,14 +9,11 @@ jQuery(document).ready(function ($) {
 
     var userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
 
-    var spark = new Audio("../wp-content/themes/sg/sound/__hit.mp3");
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
 
-    var temp = document.querySelector('.time');
     var button = document.querySelector(".startBtn");
     var words = document.querySelector(".words");
-    var timerDiv = document.querySelector(".time");
     var scoreDiv = document.querySelector(".score");
     var errorDiv = document.querySelector(".error");
     
@@ -46,7 +42,7 @@ jQuery(document).ready(function ($) {
         points = 0;
         errors = 0;
         wordIndex=0;
-        scoreDiv.innerHTML = points;
+        scoreDiv.innerHTML = points.toString()+'/'+list.length.toString();
         errorDiv.innerHTML = errors;
     }
 
@@ -62,13 +58,20 @@ jQuery(document).ready(function ($) {
             words.appendChild(span);
         }
         spans = document.querySelectorAll(".span");
-        //b. play word sound
+
+
+        //b. show picture
+        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + list[wordIndex]+")");
+
+
+
+        //c. play sound
         wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + list[wordIndex] + ".mp3");
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
 
-        //c. prepare moving to next word
+        //d. prepare moving to next word
         wordIndex++;
 
         
@@ -82,36 +85,13 @@ jQuery(document).ready(function ($) {
         wordSound.play();
     });
 
-
-    
     
 
-    // function countdown() {
-    //     points = 0;
-    //     var timer = setInterval(function () {
-    //         button.disabled = true;
-    //         seconds--;
-    //         temp.innerHTML = seconds;
-    //         if (seconds === 0) {
-    //             alert("Game over! Your score is " + points);
-    //             scoreDiv.innerHTML = "0";
-    //             words.innerHTML = "";
-    //             button.disabled = false;
-    //             clearInterval(timer);
-    //             seconds = 60;
-    //             timerDiv.innerHTML = "60";
-    //             button.disabled = false;
-    //         }
-    //     }, 1000);
-    // }
-
-    
-
+    //3.keydown
     function isLetterOrSpace(str) {
         return str.length === 1 && str.match(/[a-z]/i) ||str==' ';
     }
-
-    //3.keydown
+    
     document.addEventListener("keydown", typing, false);
     function typing(e) {
         
@@ -176,7 +156,9 @@ jQuery(document).ready(function ($) {
                 words.classList.add("animated");
                 words.classList.add("fadeOut");
                 points++; // increment the points
-                scoreDiv.innerHTML = points; //add points to the points div
+                scoreDiv.innerHTML = points.toString()+'/'+list.length.toString();
+
+                
 
                 document.removeEventListener("keydown", typing, false);
                 setTimeout(function () {
@@ -185,6 +167,11 @@ jQuery(document).ready(function ($) {
                         if(errors==0)
                         {
                             alert("well done! There should be fireworks");
+
+                            //store a score
+                            // userID
+
+                            init();
                         }
                         else
                         {
