@@ -5,6 +5,11 @@
         echo $current_user->ID;
         ?>
     </div>
+    <div class="hidden_data__wordlist_id">
+        <?php 
+        echo $_SESSION['wordlist_id'];
+        ?>
+    </div>
 
     <div class="hidden_data__wordlist">
         <?php

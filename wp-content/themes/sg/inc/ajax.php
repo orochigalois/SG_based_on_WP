@@ -168,8 +168,30 @@ function ajax_getWords()
 
 	//store $wordmatrix
 	$_SESSION['wordMatrix']=$wordMatrix;
+
+	//store $wordlist_id
+	$_SESSION['wordlist_id']=$wordlist_id;
 	print json_encode($result);
 	exit;
 }
 add_action('wp_ajax_nopriv_getWords', 'ajax_getWords');
 add_action('wp_ajax_getWords', 'ajax_getWords');
+
+
+
+
+
+function ajax_updateScore()
+{
+	$score_meta=date("Y-m-d H:i:s");
+	add_post_meta( $_GET['wordlist_id'], '_sg_dictation_score', $score_meta );
+
+
+
+	
+	$result['status'] = "success";
+	print json_encode($result);
+	
+}
+add_action('wp_ajax_nopriv_updateScore', 'ajax_updateScore');
+add_action('wp_ajax_updateScore', 'ajax_updateScore');

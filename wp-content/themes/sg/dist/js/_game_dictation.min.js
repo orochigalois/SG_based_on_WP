@@ -8,6 +8,7 @@ jQuery(document).ready(function ($) {
     });
 
     var userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
+    var wordlist_id = jQuery(".hidden_data .hidden_data__wordlist_id").text().trim();
 
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
@@ -168,10 +169,27 @@ jQuery(document).ready(function ($) {
                         {
                             alert("well done! There should be fireworks");
 
-                            //store a score
-                            // userID
+                            //update score
+                            jQuery.ajax({
+                                url: _ajaxurl,
+                                method: 'GET',
+                                data: {
+                                    action: 'updateScore',
+                                    wordlist_id:wordlist_id,
+                                },
+                                dataType: 'json',
+                                success: function (response) {
+                                    if (response.status == 'success') {
+                                        console.log(response);
+                                    }
+                            
+                                },
+                            });
 
                             init();
+                            words.className = "words"; // restart the classes
+                            getWord(); // give another word
+                            document.addEventListener("keydown", typing, false);
                         }
                         else
                         {
