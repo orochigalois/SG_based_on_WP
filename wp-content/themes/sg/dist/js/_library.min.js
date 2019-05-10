@@ -66,6 +66,17 @@ function initOpenModal() {
 						});
 					});
 
+					jQuery(".md-modal .vocabulary>img").each(function (index) {
+						jQuery(this).on("click", function () {
+							sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).prev().text() + ".mp3");
+							sentenceSound.pause();
+							sentenceSound.currentTime = 0;
+							sentenceSound.play();
+						});
+					});
+
+
+
 					jQuery( ".game-dictation" ).on( "click", document, function() {
 						window.location.href = 'admin.php?page=sg_dictation_page';
 					});

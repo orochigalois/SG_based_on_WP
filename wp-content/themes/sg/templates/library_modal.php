@@ -33,6 +33,12 @@
                 <div></div>
                 <div></div>
             </div>
+
+            
+        </div>
+
+
+        <div id="image-overlay">
         </div>
     </div>
 </div>
