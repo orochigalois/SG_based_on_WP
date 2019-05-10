@@ -17,6 +17,9 @@
         foreach ($wordMatrix as $wordline) {
             $word = strtolower($wordline['word']);
             echo '<div class="word">' . $word . '</div>';
+            $sentence = strtolower($wordline['sentence']);
+            echo '<div class="sentence">' . $sentence . '</div>';
+            
         }
         ?>
     </div>
@@ -39,4 +42,7 @@
         <img src="">
         <p class="words"></p>
     </div>
+    
 </div>
+<h1 class="sentenceWrap">
+</h1>

@@ -1,2 +1,2 @@
-nice,nice day
+nice,好的，非常好
 bad,bad boy

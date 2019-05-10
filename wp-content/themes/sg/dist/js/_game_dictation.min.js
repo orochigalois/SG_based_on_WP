@@ -2,9 +2,13 @@ jQuery(document).ready(function ($) {
 
     //1.get hidden_data & init
     var list = [];
+    var sentenceList = [];
 
     jQuery(".hidden_data .hidden_data__wordlist .word").each(function () {
         list.push($(this).text());
+    });
+    jQuery(".hidden_data .hidden_data__wordlist .sentence").each(function () {
+        sentenceList.push($(this).text());
     });
 
     var userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
@@ -27,6 +31,8 @@ jQuery(document).ready(function ($) {
     var wordIndex;
 
     var wordSound;
+    
+    var currentSentence;
 
 
 
@@ -72,7 +78,11 @@ jQuery(document).ready(function ($) {
         wordSound.currentTime = 0;
         wordSound.play();
 
-        //d. prepare moving to next word
+
+        //d. store current sentence
+        currentSentence=sentenceList[wordIndex];
+
+        //e. prepare moving to next word
         wordIndex++;
 
         
@@ -151,9 +161,12 @@ jQuery(document).ready(function ($) {
                 checker++;
             }
             if (checker === spans.length) { // if so, animate the words with animate.css class
-                // spark.pause();
-                // spark.currentTime = 0;
-                // spark.play();
+
+
+                
+                jQuery(".sentenceWrap").text(currentSentence);
+
+
                 words.classList.add("animated");
                 words.classList.add("fadeOut");
                 points++; // increment the points
