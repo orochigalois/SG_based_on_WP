@@ -9,12 +9,15 @@ $scores = $wpdb->get_results(
     WHERE meta_key='_sg_dictation_score' and b.post_author='{$current_user->ID}' order by `meta_value` desc
     "
 );
-echo "<ul>";
+echo "<table><tr>
+<th>complete time</th>
+<th>vocabulary</th>
+</tr>";
 foreach ( $scores as $score ) 
 {
-    echo "<li>".$score->meta_value."&nbsp;&nbsp;|&nbsp;&nbsp;".$score->post_title."</li>";
+    echo "<tr><td>".$score->meta_value."</td><td>".$score->post_title."</td></tr>";
 }
-echo "</ul>";
+echo "</table>";
 
 
  ?>

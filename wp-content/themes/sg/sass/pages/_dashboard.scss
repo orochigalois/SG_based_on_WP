@@ -1,0 +1,22 @@
+.postbox {
+    table {
+        border-spacing: 0;
+        border-right: 1px solid #d4d4d4;
+        border-bottom: 1px solid #d4d4d4;
+    }
+    
+    th,
+    td {
+        text-align: center;
+        border-top: 1px solid #d4d4d4;
+        border-left: 1px solid #d4d4d4;
+    }
+    td.red{
+        color:red;
+    }
+    
+    th,
+    tr:nth-child(odd) {
+        background: #f1f1f1;
+    }
+}

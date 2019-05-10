@@ -183,10 +183,9 @@ add_action('wp_ajax_getWords', 'ajax_getWords');
 
 function ajax_updateScore()
 {
+	date_default_timezone_set('Australia/Melbourne');
 	$score_meta=date("Y-m-d H:i:s");
 	add_post_meta( $_GET['wordlist_id'], '_sg_dictation_score', $score_meta );
-
-
 
 	
 	$result['status'] = "success";
