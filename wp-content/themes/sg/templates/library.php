@@ -23,7 +23,11 @@ if (is_user_logged_in()) :
 			if($date!='')
 				echo '</div>';
 			$date = get_the_date('Y/m/d');
-			printDate($date);
+			
+			global $wp_locale;
+			$the_weekday = $wp_locale->get_weekday( mysql2date( 'w', get_post()->post_date, false ) );
+	
+			printDate($date,$the_weekday);
 			echo '<div class="shelf">';
 		}
 
@@ -42,10 +46,10 @@ echo '</div>';
 endif;
 
 
-function printDate($date)
+function printDate($date,$the_weekday)
 {
 	echo '<div class="app-calendar">';
-	echo '<div id="weekday">monday</div>';
+	echo "<div id=\"weekday\">{$the_weekday}</div>";
 	echo '<div id="day">' . $date . '</div>';
 	echo '</div>';
 }
