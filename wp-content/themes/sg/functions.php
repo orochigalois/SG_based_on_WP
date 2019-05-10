@@ -235,3 +235,19 @@ function dashboard_widget_roadmap_function() {
 
 	include_once('partials/widget_roadmap.php');
 }
+
+
+function add_overview_widgets() {
+
+	wp_add_dashboard_widget(
+                 'dashboard_widget_overview',         // Widget slug.
+                 'Overview',         // Title.
+                 'dashboard_widget_overview_function' // Display function.
+        );	
+}
+add_action( 'wp_dashboard_setup', 'add_overview_widgets' );
+
+function dashboard_widget_overview_function() {
+
+	include_once('partials/widget_overview.php');
+}
