@@ -194,3 +194,32 @@ function ajax_updateScore()
 }
 add_action('wp_ajax_nopriv_updateScore', 'ajax_updateScore');
 add_action('wp_ajax_updateScore', 'ajax_updateScore');
+
+
+
+function ajax_get_images()
+{
+	$start=(intval($_GET["page"])-1)*9+1;
+	$url =  'https://www.googleapis.com/customsearch/v1?start='.$start.'&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q='.$_GET["word"];
+
+
+	$result=curl_request($url);
+	$jsonobj = json_decode($result);
+
+	$return_str='<div id="layout"><ul>';
+		
+
+	foreach($jsonobj->items as $value)
+	{                        
+		$return_str=$return_str.'<li><img style="object-fit:contain;" width=200 height=150 src="' 
+				.$value->link.'" /></li>';
+	}
+
+	$return_str=$return_str.'</ul></div>';
+
+	echo $return_str;
+	wp_die();//otherwise you will get a trailing zero appended to your return string.
+
+}
+add_action('wp_ajax_nopriv_get_images', 'ajax_get_images');
+add_action('wp_ajax_get_images', 'ajax_get_images');

@@ -66,12 +66,54 @@ function initOpenModal() {
 						});
 					});
 
-					jQuery(".md-modal .vocabulary>img").each(function (index) {
+					jQuery(".md-modal .vocabulary>dl>img").each(function (index) {
 						jQuery(this).on("click", function () {
-							sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).prev().text() + ".mp3");
-							sentenceSound.pause();
-							sentenceSound.currentTime = 0;
-							sentenceSound.play();
+
+
+							var currentWord=jQuery(this).next().text();
+							jQuery.ajax({
+								url: _ajaxurl,
+								method: 'GET',
+								data: {
+									action: 'get_images',
+									page: 1,
+									word:currentWord,
+								},
+								dataType: 'html',
+								success: function (response) {
+									jQuery(".md-modal #image-overlay").html(response);
+									jQuery(".md-modal #image-overlay").show();
+							
+								},
+							});
+
+
+
+
+					// 		myDialog.currentWord=$(this)[0].parentNode.childNodes[0].innerHTML;
+					// myDialog.currentImgID=$(this)[0].parentNode.childNodes[1].children[0].id;
+
+                    // $('.eachLine').css('cursor', 'wait');
+                    // $.post("m3_X_get_pic_from_bingAPI.php", {
+					// 	picName: myDialog.currentWord,
+                    //                 page: 1
+                        
+                    // }, function (data, status) {
+                    //     $('.eachLine').css('cursor', 'default');
+                    //     myDialog.page = 1;
+                    //     $(".page").html("Page 1"); 
+                    //     $(".caption").html(myDialog.currentWord);
+
+                    //     document.getElementById("hide").innerHTML = data;
+                    //     myDialog.show();
+
+                    //     myDialog.content.innerHTML = "<table width=" + (myDialog.width - 26) + " height=" +
+                    //         (myDialog.height - 96) + "><tr><td>" +
+                    //         document.getElementById("hide").innerHTML + "</td></tr></table>"
+					// });
+					
+
+
 						});
 					});
 
