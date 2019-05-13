@@ -116,6 +116,7 @@ function sg_admin_menu()
 	add_menu_page('Upload Vocabulary Lists', 'Upload', 'read', 'sg_upload_page', 'sg_upload', 'dashicons-translation', 110);
 	add_menu_page('Library', 'Library', 'read', 'sg_library_page', 'sg_library', 'dashicons-admin-page', 111);
 	add_menu_page('Dictation Game', 'Dictation', 'read', 'sg_dictation_page', 'sg_dictation', 'dashicons-editor-spellcheck', 112);
+	add_menu_page('Test', 'Test', 'read', 'sg_test_page', 'sg_test', 'dashicons-editor-spellcheck', 200);
 }
 
 function sg_upload()
@@ -125,6 +126,10 @@ function sg_upload()
 function sg_library()
 {
 	require 'templates/library.php'; 
+}
+function sg_test()
+{
+	require 'templates/test.php'; 
 }
 
 function sg_dictation(){
