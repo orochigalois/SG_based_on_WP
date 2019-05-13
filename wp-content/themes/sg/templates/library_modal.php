@@ -13,7 +13,7 @@
                     <option value="Roboto">Roboto</option>
                 </select>
             </div>
-           
+
             <button class="game-dictation">Dictation</button>
             <button class="md-close">Close</button>
         </div>
@@ -34,17 +34,18 @@
                 <div></div>
             </div>
 
-            
+
         </div>
 
 
-        <div id="image-overlay">
-        </div>
     </div>
 </div>
 
-<div class="md-overlay"></div>
+<div class="md-overlay">
 
+</div>
+<div id="image-overlay">
+</div>
 
 
 <!-- <a target="_blank" href="<?php echo wp_get_attachment_url(get_the_ID()); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>        -->

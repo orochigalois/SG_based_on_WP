@@ -172,7 +172,7 @@ function ajax_getWords()
 	//store $wordlist_id
 	$_SESSION['wordlist_id']=$wordlist_id;
 	print json_encode($result);
-	exit;
+	wp_die();
 }
 add_action('wp_ajax_nopriv_getWords', 'ajax_getWords');
 add_action('wp_ajax_getWords', 'ajax_getWords');
@@ -206,16 +206,16 @@ function ajax_get_images()
 	$result=curl_request($url);
 	$jsonobj = json_decode($result);
 
-	$return_str='<div id="layout"><ul>';
+	$return_str='<ul>';
 		
 
 	foreach($jsonobj->items as $value)
 	{                        
-		$return_str=$return_str.'<li><img style="object-fit:contain;" width=200 height=150 src="' 
+		$return_str=$return_str.'<li><img src="' 
 				.$value->link.'" /></li>';
 	}
 
-	$return_str=$return_str.'</ul></div>';
+	$return_str=$return_str.'</ul><img class="prev" src="'.lp_theme_url().'/images/prev-arrow.png" alt=""/><img class="next" src="'.lp_theme_url().'/images/next-arrow.png" alt=""/>';
 
 	echo $return_str;
 	wp_die();//otherwise you will get a trailing zero appended to your return string.
@@ -223,3 +223,20 @@ function ajax_get_images()
 }
 add_action('wp_ajax_nopriv_get_images', 'ajax_get_images');
 add_action('wp_ajax_get_images', 'ajax_get_images');
+
+
+function ajax_save_images()
+{
+	global $current_user;
+
+	$upload_dir = wp_upload_dir();
+	$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["word"];
+
+	curl_save_file($_GET["imageUrl"], $image_saveTo);
+	$result['status'] = "success";
+	print json_encode($result);
+	wp_die();
+
+}
+add_action('wp_ajax_nopriv_save_images', 'ajax_save_images');
+add_action('wp_ajax_save_images', 'ajax_save_images');

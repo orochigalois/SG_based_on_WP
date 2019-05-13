@@ -69,8 +69,11 @@ function initOpenModal() {
 					jQuery(".md-modal .vocabulary>dl>img").each(function (index) {
 						jQuery(this).on("click", function () {
 
-
+							
 							var currentWord=jQuery(this).next().text();
+							var $currentImg=jQuery(this);
+
+							$currentImg.css('cursor', 'wait');
 							jQuery.ajax({
 								url: _ajaxurl,
 								method: 'GET',
@@ -81,8 +84,39 @@ function initOpenModal() {
 								},
 								dataType: 'html',
 								success: function (response) {
-									jQuery(".md-modal #image-overlay").html(response);
-									jQuery(".md-modal #image-overlay").show();
+									jQuery("#image-overlay").html(response);
+									jQuery("#image-overlay").css('display', 'flex');
+									$currentImg.css('cursor', 'pointer');
+
+
+									jQuery("#image-overlay>ul>li>img").each(function (index) {
+										jQuery(this).on("click", function () {
+
+											var src= jQuery(this).attr("src");
+											$currentImg.attr("src",src);
+											jQuery("#image-overlay").hide();
+
+
+											
+											
+											jQuery.ajax({
+												url: _ajaxurl,
+												method: 'GET',
+												data: {
+													action: 'save_images',
+													imageUrl: src,
+													word:currentWord,
+												},
+												dataType: 'json',
+												success: function (response) {
+													if (response.status == 'success') {
+														console.log(response);
+													}
+											
+												},
+											});
+										});
+									});
 							
 								},
 							});
