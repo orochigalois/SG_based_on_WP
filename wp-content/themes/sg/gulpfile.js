@@ -76,8 +76,7 @@ gulp.task('browser-sync', function() {
         target: 'http://sg.local'
     },
     snippetOptions: {
-        whitelist: ['/wp-admin/admin-ajax.php'],
-        blacklist: ['/wp-admin/**']
+        whitelist: ['/wp-admin/admin-ajax.php']
     }
   });
 });
