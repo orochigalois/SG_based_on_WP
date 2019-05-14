@@ -86,6 +86,7 @@ function initOpenModal() {
 								},
 								dataType: 'html',
 								success: function (response) {
+									jQuery("#image-overlay>ul").remove();
 									jQuery("#image-overlay").append(response);
 									jQuery("#image-overlay").css('display', 'flex');
 									jQuery("body").css("cursor", "default");
