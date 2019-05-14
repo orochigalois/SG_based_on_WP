@@ -26,6 +26,8 @@ function initOpenModal() {
 		jQuery(".md-modal .vocabulary h1").empty();
 		jQuery(".md-modal .vocabulary #loadIcon").fadeIn();
 		jQuery('.md-modal').addClass('md-show');
+		jQuery('.md-modal button').attr("disabled", true);
+		jQuery('.md-modal select').attr("disabled", true);
 		var title = jQuery(this).text();
 		jQuery.ajax({
 			url: _ajaxurl,
@@ -163,6 +165,9 @@ function initOpenModal() {
 					jQuery( ".game-dictation" ).on( "click", document, function() {
 						window.location.href = 'admin.php?page=sg_dictation_page';
 					});
+
+					jQuery('.md-modal button').attr("disabled", false);
+					jQuery('.md-modal select').attr("disabled", false);
 
 				}
 
