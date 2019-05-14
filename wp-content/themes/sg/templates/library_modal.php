@@ -45,6 +45,8 @@
 
 </div>
 <div id="image-overlay">
+    <img class="prev greyout" src="<?php lp_image_dir(); ?>/prev-arrow.png" alt="prev"/>
+    <img class="next" src="<?php lp_image_dir(); ?>/next-arrow.png" alt="next"/>
 </div>
 
 

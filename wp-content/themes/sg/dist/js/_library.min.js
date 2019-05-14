@@ -1,12 +1,12 @@
-var userID
+var userID;
+var currentPage=1;
+var currentWord;
+var $currentImg;
+
 jQuery(document).ready(function ($) {
 	userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
-	
-
 	initChangeFont();
-
 	initOpenModal();
-
 });
 
 function initChangeFont(){
@@ -66,105 +66,138 @@ function initOpenModal() {
 						});
 					});
 
+					//update image
 					jQuery(".md-modal .vocabulary>dl>img").each(function (index) {
 						jQuery(this).on("click", function () {
 
 							
-							var currentWord=jQuery(this).next().text();
-							var $currentImg=jQuery(this);
+							currentWord=jQuery(this).next().text();
+							$currentImg=jQuery(this);
+							currentPage=1;
 
-							$currentImg.css('cursor', 'wait');
+							jQuery("body").css("cursor", "waiting");
 							jQuery.ajax({
 								url: _ajaxurl,
 								method: 'GET',
 								data: {
 									action: 'get_images',
-									page: 1,
+									page: currentPage,
 									word:currentWord,
 								},
 								dataType: 'html',
 								success: function (response) {
-									jQuery("#image-overlay").html(response);
+									jQuery("#image-overlay").append(response);
 									jQuery("#image-overlay").css('display', 'flex');
-									$currentImg.css('cursor', 'pointer');
+									jQuery("body").css("cursor", "default");
 
 
-									jQuery("#image-overlay>ul>li>img").each(function (index) {
-										jQuery(this).on("click", function () {
-
-											var src= jQuery(this).attr("src");
-											$currentImg.attr("src",src);
-											jQuery("#image-overlay").hide();
+									ajax_save_images();
 
 
-											
-											
-											jQuery.ajax({
-												url: _ajaxurl,
-												method: 'GET',
-												data: {
-													action: 'save_images',
-													imageUrl: src,
-													word:currentWord,
-												},
-												dataType: 'json',
-												success: function (response) {
-													if (response.status == 'success') {
-														console.log(response);
-													}
-											
-												},
-											});
-										});
-									});
-							
+									
+			
 								},
 							});
-
-
-
-
-					// 		myDialog.currentWord=$(this)[0].parentNode.childNodes[0].innerHTML;
-					// myDialog.currentImgID=$(this)[0].parentNode.childNodes[1].children[0].id;
-
-                    // $('.eachLine').css('cursor', 'wait');
-                    // $.post("m3_X_get_pic_from_bingAPI.php", {
-					// 	picName: myDialog.currentWord,
-                    //                 page: 1
-                        
-                    // }, function (data, status) {
-                    //     $('.eachLine').css('cursor', 'default');
-                    //     myDialog.page = 1;
-                    //     $(".page").html("Page 1"); 
-                    //     $(".caption").html(myDialog.currentWord);
-
-                    //     document.getElementById("hide").innerHTML = data;
-                    //     myDialog.show();
-
-                    //     myDialog.content.innerHTML = "<table width=" + (myDialog.width - 26) + " height=" +
-                    //         (myDialog.height - 96) + "><tr><td>" +
-                    //         document.getElementById("hide").innerHTML + "</td></tr></table>"
-					// });
-					
 
 
 						});
 					});
 
+					//prev page
+					jQuery( "#image-overlay .prev" ).on( "click", document, function() {
+						jQuery("body").css("cursor", "waiting");
+						if(currentPage>1){
+							currentPage--;
+							jQuery.ajax({
+								url: _ajaxurl,
+								method: 'GET',
+								data: {
+									action: 'get_images',
+									page: currentPage,
+									word:currentWord,
+								},
+								dataType: 'html',
+								success: function (response) {
+									jQuery("#image-overlay>ul").remove();
+									jQuery("#image-overlay").append(response);
+									jQuery("body").css("cursor", "default");
 
+									if(currentPage==1){
+										jQuery( "#image-overlay .prev" ).addClass("greyout");
+									}
+
+									ajax_save_images();
+									
+							
+								},
+							});
+						}
+					});
+					//next page
+					jQuery( "#image-overlay .next" ).on( "click", document, function() {
+						jQuery("body").css("cursor", "waiting");
+						currentPage++;
+						jQuery.ajax({
+							url: _ajaxurl,
+							method: 'GET',
+							data: {
+								action: 'get_images',
+								page: currentPage,
+								word:currentWord,
+							},
+							dataType: 'html',
+							success: function (response) {
+								jQuery("#image-overlay>ul").remove();
+								jQuery("#image-overlay").append(response);
+								jQuery("body").css("cursor", "default");
+								jQuery( "#image-overlay .prev" ).removeClass("greyout");
+								ajax_save_images();
+							},
+						});
+						
+					});
+
+					
 
 					jQuery( ".game-dictation" ).on( "click", document, function() {
 						window.location.href = 'admin.php?page=sg_dictation_page';
 					});
 
-
-					
-
-
-					
 				}
 
 			},
+		});
+	});
+}
+
+
+function ajax_save_images(){
+	jQuery("#image-overlay>ul>li>img").each(function (index) {
+		jQuery(this).on("click", function () {
+
+			var src= jQuery(this).attr("src");
+			$currentImg.attr("src",src);
+			jQuery("#image-overlay").hide();
+
+
+			
+			
+			jQuery.ajax({
+				url: _ajaxurl,
+				method: 'GET',
+				data: {
+					action: 'save_images',
+					imageUrl: src,
+					word:currentWord,
+				},
+				dataType: 'json',
+				success: function (response) {
+					if (response.status == 'success') {
+						console.log(response);
+					}
+			
+				},
+			});
 		});
 	});
 }

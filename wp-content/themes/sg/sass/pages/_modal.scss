@@ -120,6 +120,12 @@
         transform: translateY(-50%);
         left:6px;
         cursor: pointer;
+
+        &.greyout{
+            opacity: 0.4;
+            cursor: default;
+
+        }
     }
     img.next{
         position: absolute;

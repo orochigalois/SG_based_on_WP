@@ -215,7 +215,7 @@ function ajax_get_images()
 				.$value->link.'" /></li>';
 	}
 
-	$return_str=$return_str.'</ul><img class="prev" src="'.lp_theme_url().'/images/prev-arrow.png" alt=""/><img class="next" src="'.lp_theme_url().'/images/next-arrow.png" alt=""/>';
+	$return_str=$return_str.'</ul>';
 
 	echo $return_str;
 	wp_die();//otherwise you will get a trailing zero appended to your return string.

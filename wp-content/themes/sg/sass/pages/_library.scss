@@ -103,8 +103,8 @@ body.toplevel_page_sg_library_page {
 
                 .book {
                     text-align: center;
-                    font-size: 10px;
-                    padding: 12px 30px 0 50px;
+                    font-size: 12px;
+                    padding: 18px 30px 0 50px;
                     word-wrap: break-word;
                     z-index: 1;
                     transition: transform 0.1s;
@@ -117,7 +117,7 @@ body.toplevel_page_sg_library_page {
                     position: relative;
 
                     @media screen and (max-width:$screen-xs-max)  {
-                        padding: 12px 10px 0 30px;
+                        padding: 18px 10px 0 30px;
                     }
 
 
