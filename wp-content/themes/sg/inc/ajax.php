@@ -1,8 +1,28 @@
 <?php
+
+
+putenv('GOOGLE_APPLICATION_CREDENTIALS=/Users/xinyin/ShootingGame-98707e444ec6.json');
+
+// [START tts_quickstart]
+// includes the autoloader for libraries installed with composer
+require __DIR__ . '/vendor/autoload.php';
+
+// Imports the Cloud Client Library
+use Google\Cloud\TextToSpeech\V1\AudioConfig;
+use Google\Cloud\TextToSpeech\V1\AudioEncoding;
+use Google\Cloud\TextToSpeech\V1\SsmlVoiceGender;
+use Google\Cloud\TextToSpeech\V1\SynthesisInput;
+use Google\Cloud\TextToSpeech\V1\TextToSpeechClient;
+use Google\Cloud\TextToSpeech\V1\VoiceSelectionParams;
+
+date_default_timezone_set('Australia/Melbourne');
+
+
 session_start();
 set_time_limit(0);
 
 define('USER_AGENT', 'Mozilla/4.0');
+
 
 function curl_request($url)
 {
@@ -65,39 +85,74 @@ function get_wordSound($wordmatrix)
 		//If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
 		$sentence = str_replace("\r", "", $wordline['sentence']);
 
-		$word_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
+		// $word_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
+
+
+		// instantiates a client
+		$client = new TextToSpeechClient();
+
+		// sets text to be synthesised
+		$synthesisInputText = (new SynthesisInput())
+			->setText($word);
+
+		// build the voice request, select the language code ("en-US") and the ssml
+		// voice gender
+
+		// All LanguageCode: https://cloud.google.com/text-to-speech/docs/voices
+		$voice = (new VoiceSelectionParams())
+			->setLanguageCode('en-US')
+			->setSsmlGender(SsmlVoiceGender::FEMALE);
+
+		// Effects profile
+		$effectsProfileId = "telephony-class-application";
+
+		// select the type of audio file you want returned
+		$audioConfig = (new AudioConfig())
+			->setAudioEncoding(AudioEncoding::MP3)
+			->setEffectsProfileId(array($effectsProfileId));
+
+		// perform text-to-speech request on the text input with selected voice
+		// parameters and audio file type
+		$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+		$audioContent = $response->getAudioContent();
+
+
 
 
 
 		$word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/word' . '/' . $word . '.mp3';
 
+
+		// the response's audioContent is binary
+		file_put_contents($word_saveTo, $audioContent);
+
 		// curl_save_file($word_url, $word_saveTo);
 
 
-		if (!file_exists($word_saveTo)) {
-			curl_save_file($word_url, $word_saveTo);
-		}
-		if (abs(filesize($word_saveTo)) < 2000) {
-			curl_save_file($word_url, $word_saveTo);
-		}
+		// if (!file_exists($word_saveTo)) {
+		// 	curl_save_file($word_url, $word_saveTo);
+		// }
+		// if (abs(filesize($word_saveTo)) < 2000) {
+		// 	curl_save_file($word_url, $word_saveTo);
+		// }
 
-		if ($sentence != '') {
-			$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
-			$sentence_url = str_replace(" ", "%20", $sentence_url);
-			$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
+		// if ($sentence != '') {
+		// 	$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
+		// 	$sentence_url = str_replace(" ", "%20", $sentence_url);
+		// 	$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
 
-			// curl_save_file($sentence_url, $sentence_saveTo);
+		// 	// curl_save_file($sentence_url, $sentence_saveTo);
 
-			if (!file_exists($sentence_saveTo)) {
-				curl_save_file($sentence_url, $sentence_saveTo);
-			}
-			if (abs(filesize($sentence_saveTo)) < 2000) {
-				curl_save_file($sentence_url, $sentence_saveTo);
-			}
-		}
+		// 	if (!file_exists($sentence_saveTo)) {
+		// 		curl_save_file($sentence_url, $sentence_saveTo);
+		// 	}
+		// 	if (abs(filesize($sentence_saveTo)) < 2000) {
+		// 		curl_save_file($sentence_url, $sentence_saveTo);
+		// 	}
+		// }
 
 
-		
+
 	}
 }
 
