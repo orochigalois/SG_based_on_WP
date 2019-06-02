@@ -1,5 +1,4 @@
-<link href="https://fonts.googleapis.com/css?family=Roboto|Indie+Flower|Kalam|Rock+Salt" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css?family=Roboto|Indie+Flower|Kalam|Rock+Salt|Work+Sans:200" rel="stylesheet">
 <div class="md-modal">
     <div class="md-content">
 
@@ -11,15 +10,13 @@
                     <option value="Indie Flower">Indie Flower</option>
                     <option value="Rock Salt">Rock Salt</option>
                     <option value="Roboto">Roboto</option>
+                    <option value="Work Sans">Work Sans</option>
                 </select>
             </div>
 
             <button class="game-dictation">Dictation</button>
             <button class="md-close">Close</button>
         </div>
-
-
-
 
 
         <div class="vocabulary">
