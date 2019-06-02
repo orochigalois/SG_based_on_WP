@@ -224,6 +224,10 @@ add_action('wp_dashboard_setup', 'disable_default_dashboard_widgets', 999);
  * This function is hooked into the 'wp_dashboard_setup' action below.
  */
 function add_roadmap_widgets() {
+	$user = wp_get_current_user();
+	if (!in_array('subscriber', $user->roles)) {
+		return;
+	}
 
 	wp_add_dashboard_widget(
                  'dashboard_widget_roadmap',         // Widget slug.
@@ -243,6 +247,10 @@ function dashboard_widget_roadmap_function() {
 
 
 function add_overview_widgets() {
+	$user = wp_get_current_user();
+	if (!in_array('subscriber', $user->roles)) {
+		return;
+	}
 
 	wp_add_dashboard_widget(
                  'dashboard_widget_overview',         // Widget slug.
