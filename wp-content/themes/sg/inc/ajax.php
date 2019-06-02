@@ -1,7 +1,7 @@
 <?php
 
-
-putenv('GOOGLE_APPLICATION_CREDENTIALS='.getcwd().'/ShootingGame-98707e444ec6.json');
+// getcwd() will return /Users/xinyin/Project/SG_based_on_WP/wp-admin/ , so we need going to parent folder
+putenv('GOOGLE_APPLICATION_CREDENTIALS='.getcwd().'/../wp-content/themes/sg/ShootingGame-98707e444ec6.json');
 
 // [START tts_quickstart]
 // includes the autoloader for libraries installed with composer
