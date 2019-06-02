@@ -75,7 +75,7 @@ function get_wordMatrix($wordlist_id)
 	return $wordmatrix;
 }
 
-function get_wordSound($wordmatrix)
+function get_wordSound_by_google_tts($wordmatrix)
 {
 	global $current_user;
 
@@ -84,8 +84,6 @@ function get_wordSound($wordmatrix)
 		$word = strtolower($wordline['word']);
 		//If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
 		$sentence = str_replace("\r", "", $wordline['sentence']);
-
-		// $word_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
 
 
 		// instantiates a client
@@ -98,10 +96,10 @@ function get_wordSound($wordmatrix)
 		// build the voice request, select the language code ("en-US") and the ssml
 		// voice gender
 
-		// All LanguageCode: https://cloud.google.com/text-to-speech/docs/voices
+		// All LanguageCodes refer to: https://cloud.google.com/text-to-speech/docs/voices
 		$voice = (new VoiceSelectionParams())
 			->setLanguageCode('en-US')
-			->setSsmlGender(SsmlVoiceGender::FEMALE);
+			->setSsmlGender(SsmlVoiceGender::MALE);
 
 		// Effects profile
 		$effectsProfileId = "telephony-class-application";
@@ -126,36 +124,68 @@ function get_wordSound($wordmatrix)
 		// the response's audioContent is binary
 		file_put_contents($word_saveTo, $audioContent);
 
-		// curl_save_file($word_url, $word_saveTo);
 
 
-		// if (!file_exists($word_saveTo)) {
-		// 	curl_save_file($word_url, $word_saveTo);
-		// }
-		// if (abs(filesize($word_saveTo)) < 2000) {
-		// 	curl_save_file($word_url, $word_saveTo);
-		// }
+		if ($sentence != '') {
 
-		// if ($sentence != '') {
-		// 	$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
-		// 	$sentence_url = str_replace(" ", "%20", $sentence_url);
-		// 	$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
+			$synthesisInputText->setText($sentence);
 
-		// 	// curl_save_file($sentence_url, $sentence_saveTo);
+			$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+			$audioContent = $response->getAudioContent();
+			$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
 
-		// 	if (!file_exists($sentence_saveTo)) {
-		// 		curl_save_file($sentence_url, $sentence_saveTo);
-		// 	}
-		// 	if (abs(filesize($sentence_saveTo)) < 2000) {
-		// 		curl_save_file($sentence_url, $sentence_saveTo);
-		// 	}
-		// }
+			file_put_contents($sentence_saveTo, $audioContent);
+		}
 
 
 
 	}
 }
+function get_wordSound_by_voicerss_tts($wordmatrix)
+{
+	global $current_user;
 
+	$upload_dir = wp_upload_dir();
+	foreach ($wordmatrix as $wordline) {
+		$word = strtolower($wordline['word']);
+		//If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
+		$sentence = str_replace("\r", "", $wordline['sentence']);
+
+		$word_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
+
+
+
+		$word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/word' . '/' . $word . '.mp3';
+
+		curl_save_file($word_url, $word_saveTo);
+
+
+		if (!file_exists($word_saveTo)) {
+			curl_save_file($word_url, $word_saveTo);
+		}
+		if (abs(filesize($word_saveTo)) < 2000) {
+			curl_save_file($word_url, $word_saveTo);
+		}
+
+		if ($sentence != '') {
+			$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
+			$sentence_url = str_replace(" ", "%20", $sentence_url);
+			$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
+
+			curl_save_file($sentence_url, $sentence_saveTo);
+
+			if (!file_exists($sentence_saveTo)) {
+				curl_save_file($sentence_url, $sentence_saveTo);
+			}
+			if (abs(filesize($sentence_saveTo)) < 2000) {
+				curl_save_file($sentence_url, $sentence_saveTo);
+			}
+		}
+
+
+		
+	}
+}
 
 
 function get_wordImage($wordmatrix)
@@ -208,7 +238,19 @@ function ajax_getWords()
 	$wordlist_id = (!empty($_GET['wordlist_id']) ? (string)$_GET['wordlist_id'] : '');
 	$wordMatrix = get_wordMatrix($wordlist_id);
 
-	get_wordSound($wordMatrix);
+
+	$user = wp_get_current_user();
+	$user_info = get_user_meta($user->ID);
+
+	if (isset($user_info['tts'])) {
+		if ($user_info['tts'][0] == 'voicerss') {
+			get_wordSound_by_voicerss_tts($wordMatrix);
+		} else {
+			get_wordSound_by_google_tts($wordMatrix);
+		}
+	} else {
+		get_wordSound_by_google_tts($wordMatrix);
+	}
 
 	$image = get_wordImage($wordMatrix);
 

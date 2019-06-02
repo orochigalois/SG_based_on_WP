@@ -10,6 +10,7 @@ require 'inc/enqueue.php';
 require 'inc/menus.php';
 require 'inc/misc.php';
 require 'inc/register.php';
+require 'inc/profile.php';
 
 
 function is_blog () {
