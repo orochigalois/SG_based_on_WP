@@ -1,7 +1,7 @@
 <?php
 
 
-putenv('GOOGLE_APPLICATION_CREDENTIALS=/Users/xinyin/ShootingGame-98707e444ec6.json');
+putenv('GOOGLE_APPLICATION_CREDENTIALS='.getcwd().'/ShootingGame-98707e444ec6.json');
 
 // [START tts_quickstart]
 // includes the autoloader for libraries installed with composer
