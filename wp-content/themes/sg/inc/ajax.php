@@ -58,9 +58,13 @@ function get_wordMatrix($wordlist_id)
 	$filepath = get_attached_file($wordlist_id);
 
 	$csvdata = file_get_contents($filepath);
+	//trim and put it back
+	$csvdata = trim($csvdata);
+	file_put_contents($filepath, $csvdata);
+
 	$lines = explode("\n", $csvdata); // split data by new lines
 	foreach ($lines as $i => $line) {
-		$values = explode(',', $line); // split lines by commas
+		$values = explode(',', $line, 2); // split lines by commas
 		$wordmatrix[$i]['word'] = trim($values[0]);
 		unset($values[0]);
 		if(isset($values[1])){
