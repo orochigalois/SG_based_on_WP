@@ -60,6 +60,7 @@ function get_wordMatrix($wordlist_id)
 	$csvdata = file_get_contents($filepath);
 	//trim and put it back
 	$csvdata = trim($csvdata);
+	$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
 	file_put_contents($filepath, $csvdata);
 
 	$lines = explode("\n", $csvdata); // split data by new lines
