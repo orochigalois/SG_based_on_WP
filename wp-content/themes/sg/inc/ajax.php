@@ -1,7 +1,7 @@
 <?php
 
 // getcwd() will return /Users/xinyin/Project/SG_based_on_WP/wp-admin/ , so we need going to parent folder
-putenv('GOOGLE_APPLICATION_CREDENTIALS='.getcwd().'/../wp-content/themes/sg/ShootingGame-98707e444ec6.json');
+putenv('GOOGLE_APPLICATION_CREDENTIALS=' . getcwd() . '/../wp-content/themes/sg/ShootingGame-98707e444ec6.json');
 
 // [START tts_quickstart]
 // includes the autoloader for libraries installed with composer
@@ -51,32 +51,35 @@ function curl_save_file($url, $saveTo)
 
 
 
-function get_wordMatrix($wordlist_id)
+function get_wordMatrix($wordlist_id, $already_loaded)
 {
 
 	//parse csv
 	$filepath = get_attached_file($wordlist_id);
 
 	$csvdata = file_get_contents($filepath);
-	//trim and put it back
-	$csvdata = trim($csvdata);
-	$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
-	$csvdata= preg_replace("/[，]/u",',' ,$csvdata);  
 
-	file_put_contents($filepath, $csvdata);
+	if ($already_loaded != 'yes') {
+		//trim and put it back
+		$csvdata = trim($csvdata);
+		$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
+		$csvdata = preg_replace("/[，]/u", ',', $csvdata);
+
+		file_put_contents($filepath, $csvdata);
+	}
+
 
 	$lines = explode("\n", $csvdata); // split data by new lines
 	foreach ($lines as $i => $line) {
 		$values = explode(',', $line, 2); // split lines by commas
 		$wordmatrix[$i]['word'] = trim($values[0]);
 		unset($values[0]);
-		if(isset($values[1])){
+		if (isset($values[1])) {
 			$wordmatrix[$i]['sentence'] = trim($values[1]);
 			unset($values[1]);
-		}else{
-			$wordmatrix[$i]['sentence']="";
+		} else {
+			$wordmatrix[$i]['sentence'] = "";
 		}
-		
 	}
 
 	return $wordmatrix;
@@ -143,9 +146,6 @@ function get_wordSound_by_google_tts($wordmatrix)
 
 			file_put_contents($sentence_saveTo, $audioContent);
 		}
-
-
-
 	}
 }
 function get_wordSound_by_voicerss_tts($wordmatrix)
@@ -167,30 +167,13 @@ function get_wordSound_by_voicerss_tts($wordmatrix)
 		curl_save_file($word_url, $word_saveTo);
 
 
-		if (!file_exists($word_saveTo)) {
-			curl_save_file($word_url, $word_saveTo);
-		}
-		if (abs(filesize($word_saveTo)) < 2000) {
-			curl_save_file($word_url, $word_saveTo);
-		}
-
 		if ($sentence != '') {
 			$sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
 			$sentence_url = str_replace(" ", "%20", $sentence_url);
 			$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
 
 			curl_save_file($sentence_url, $sentence_saveTo);
-
-			if (!file_exists($sentence_saveTo)) {
-				curl_save_file($sentence_url, $sentence_saveTo);
-			}
-			if (abs(filesize($sentence_saveTo)) < 2000) {
-				curl_save_file($sentence_url, $sentence_saveTo);
-			}
 		}
-
-
-		
 	}
 }
 
@@ -204,34 +187,24 @@ function get_wordImage($wordmatrix)
 		$word = strtolower($wordline['word']);
 
 		//parameters refer to https://developers.google.com/custom-search/v1/cse/list
-		$word_url =  'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q='. $word;
+		$word_url =  'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $word;
 
 
-		$result=curl_request($word_url);
+		$result = curl_request($word_url);
 		// write_log($result);
 		$jsonobj = json_decode($result);
 
 		// write_log($jsonobj);
-		$image_link="";
+		$image_link = "";
 
-		foreach($jsonobj->items as $value)
-		{                        
+		foreach ($jsonobj->items as $value) {
 			$image_link = $value->link;
 		}
 		// write_log($image_link);
 		$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $word;
 
-		// curl_save_file($word_url, $image_saveTo);
 
-
-		if (!file_exists($image_saveTo)) {
-			curl_save_file($image_link, $image_saveTo);
-		}
-		if (abs(filesize($image_saveTo)) < 2000) {
-			curl_save_file($image_link, $image_saveTo);
-		}
-
-		
+		curl_save_file($image_link, $image_saveTo);
 	}
 }
 
@@ -243,38 +216,44 @@ function get_wordImage($wordmatrix)
 function ajax_getWords()
 {
 	$wordlist_id = (!empty($_GET['wordlist_id']) ? (string)$_GET['wordlist_id'] : '');
-	$wordMatrix = get_wordMatrix($wordlist_id);
+
+	$already_loaded = (!empty($_GET['already_loaded']) ? (string)$_GET['already_loaded'] : false);
+
+	$wordMatrix = get_wordMatrix($wordlist_id, $already_loaded);
 
 
-	$user = wp_get_current_user();
-	$user_info = get_user_meta($user->ID);
+	if ($already_loaded != 'yes') {
 
-	if (isset($user_info['tts'])) {
-		if ($user_info['tts'][0] == 'voicerss') {
-			get_wordSound_by_voicerss_tts($wordMatrix);
+		$user = wp_get_current_user();
+		$user_info = get_user_meta($user->ID);
+
+		if (isset($user_info['tts'])) {
+			if ($user_info['tts'][0] == 'voicerss') {
+				get_wordSound_by_voicerss_tts($wordMatrix);
+			} else {
+				get_wordSound_by_google_tts($wordMatrix);
+			}
 		} else {
 			get_wordSound_by_google_tts($wordMatrix);
 		}
-	} else {
-		get_wordSound_by_google_tts($wordMatrix);
+
+		get_wordImage($wordMatrix);
 	}
-
-	$image = get_wordImage($wordMatrix);
-
-
-
 
 
 	$result['status'] = "success";
-	$result['wordMatrix'] = $wordMatrix;
-	$result['image'] = $image;
+	$result['wordMatrix'] = $wordMatrix;;
+
+	if (!add_post_meta($wordlist_id, '_sg_wordlist_already_loaded', 'yes', true)) {
+		update_post_meta($wordlist_id, '_sg_wordlist_already_loaded', 'yes');
+	}
 
 
 	//store $wordmatrix
-	$_SESSION['wordMatrix']=$wordMatrix;
+	$_SESSION['wordMatrix'] = $wordMatrix;
 
 	//store $wordlist_id
-	$_SESSION['wordlist_id']=$wordlist_id;
+	$_SESSION['wordlist_id'] = $wordlist_id;
 	print json_encode($result);
 	wp_die();
 }
@@ -288,13 +267,12 @@ add_action('wp_ajax_getWords', 'ajax_getWords');
 function ajax_updateScore()
 {
 	date_default_timezone_set('Australia/Melbourne');
-	$score_meta=date("Y-m-d H:i:s");
-	add_post_meta( $_GET['wordlist_id'], '_sg_dictation_score', $score_meta );
+	$score_meta = date("Y-m-d H:i:s");
+	add_post_meta($_GET['wordlist_id'], '_sg_dictation_score', $score_meta);
 
-	
+
 	$result['status'] = "success";
 	print json_encode($result);
-	
 }
 add_action('wp_ajax_nopriv_updateScore', 'ajax_updateScore');
 add_action('wp_ajax_updateScore', 'ajax_updateScore');
@@ -303,26 +281,25 @@ add_action('wp_ajax_updateScore', 'ajax_updateScore');
 
 function ajax_get_images()
 {
-	$start=(intval($_GET["page"])-1)*9+1;
-	$url =  'https://www.googleapis.com/customsearch/v1?start='.$start.'&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q='.$_GET["word"];
+	$start = (intval($_GET["page"]) - 1) * 9 + 1;
+	$url =  'https://www.googleapis.com/customsearch/v1?start=' . $start . '&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $_GET["word"];
 
 
-	$result=curl_request($url);
+	$result = curl_request($url);
 	$jsonobj = json_decode($result);
 
-	$return_str='<ul>';
-		
+	$return_str = '<ul>';
 
-	foreach($jsonobj->items as $value)
-	{                        
-		$return_str=$return_str.'<li><img src="' 
-				.$value->link.'" /></li>';
+
+	foreach ($jsonobj->items as $value) {
+		$return_str = $return_str . '<li><img src="'
+			. $value->link . '" /></li>';
 	}
 
-	$return_str=$return_str.'</ul>';
+	$return_str = $return_str . '</ul>';
 
 	echo $return_str;
-	wp_die();//otherwise you will get a trailing zero appended to your return string.
+	wp_die(); //otherwise you will get a trailing zero appended to your return string.
 
 }
 add_action('wp_ajax_nopriv_get_images', 'ajax_get_images');
@@ -340,7 +317,6 @@ function ajax_save_images()
 	$result['status'] = "success";
 	print json_encode($result);
 	wp_die();
-
 }
 add_action('wp_ajax_nopriv_save_images', 'ajax_save_images');
 add_action('wp_ajax_save_images', 'ajax_save_images');

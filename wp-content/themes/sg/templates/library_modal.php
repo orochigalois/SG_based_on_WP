@@ -13,7 +13,7 @@
                     <option value="Work Sans">Work Sans</option>
                 </select>
             </div>
-
+            <button class="reload-all">Reload wordlist</button>
             <button class="game-dictation">Dictation</button>
             <button class="md-close">Close</button>
         </div>
@@ -42,8 +42,8 @@
 
 </div>
 <div id="image-overlay">
-    <img class="prev greyout" src="<?php lp_image_dir(); ?>/prev-arrow.png" alt="prev"/>
-    <img class="next" src="<?php lp_image_dir(); ?>/next-arrow.png" alt="next"/>
+    <img class="prev greyout" src="<?php lp_image_dir(); ?>/prev-arrow.png" alt="prev" />
+    <img class="next" src="<?php lp_image_dir(); ?>/next-arrow.png" alt="next" />
 </div>
 
 
