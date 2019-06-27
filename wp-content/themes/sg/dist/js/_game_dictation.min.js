@@ -99,15 +99,15 @@ jQuery(document).ready(function ($) {
     
 
     //3.keydown
-    function isLetterOrSpace(str) {
-        return str.length === 1 && str.match(/[a-z]/i) ||str==' ';
+    function isLetterOrSpaceOrDash(str) {
+        return str.length === 1 && str.match(/[a-z-]/i) ||str==' ';
     }
     
     document.addEventListener("keydown", typing, false);
     function typing(e) {
         
-        typed = String.fromCharCode(e.which);
-        if(!isLetterOrSpace(typed))
+        typed = e.key;
+        if(!isLetterOrSpaceOrDash(typed))
             return;
         var isTypo=true;
         for (var i = 0; i < spans.length; i++) {
