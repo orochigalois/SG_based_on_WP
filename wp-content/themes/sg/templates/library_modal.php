@@ -13,7 +13,7 @@
                     <option value="Work Sans">Work Sans</option>
                 </select>
             </div>
-            <button class="reload-all">Reload wordlist</button>
+            <button class="reload-all">Reload Sound/Image</button>
             <button class="game-dictation">Dictation</button>
             <button class="md-close">Close</button>
         </div>
