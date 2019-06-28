@@ -68,9 +68,10 @@ function get_wordMatrix($wordlist_id, $already_loaded)
 		file_put_contents($filepath, $csvdata);
 	}
 
-
+	$count=0;
 	$lines = explode("\n", $csvdata); // split data by new lines
 	foreach ($lines as $i => $line) {
+		$count++;
 		$values = explode(',', $line, 2); // split lines by commas
 		$wordmatrix[$i]['word'] = trim($values[0]);
 		unset($values[0]);
@@ -81,6 +82,11 @@ function get_wordMatrix($wordlist_id, $already_loaded)
 			$wordmatrix[$i]['sentence'] = "";
 		}
 	}
+	//save word count
+	if (!add_post_meta($wordlist_id, '_sg_word_count', $count, true)) {
+		update_post_meta($wordlist_id, '_sg_word_count', $count);
+	}
+	
 
 	return $wordmatrix;
 }
