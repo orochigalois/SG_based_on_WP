@@ -38,7 +38,7 @@ foreach ( $all_ids as $all_id )
     }
 }
 echo "<tr>
-<td class='red'>total</td>
+<td>total</td>
 <td>".$total_words."</td>
 <td>".$total_times."</td>
 </tr>";

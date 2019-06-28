@@ -265,3 +265,22 @@ function dashboard_widget_overview_function() {
 
 	include_once('partials/widget_overview.php');
 }
+
+function add_wordlist_widgets() {
+	$user = wp_get_current_user();
+	if (!in_array('subscriber', $user->roles)) {
+		return;
+	}
+
+	wp_add_dashboard_widget(
+                 'dashboard_widget_wordlist',         // Widget slug.
+                 'Wordlist',         // Title.
+                 'dashboard_widget_wordlist_function' // Display function.
+        );	
+}
+add_action( 'wp_dashboard_setup', 'add_wordlist_widgets' );
+
+function dashboard_widget_wordlist_function() {
+
+	include_once('partials/widget_wordlist.php');
+}

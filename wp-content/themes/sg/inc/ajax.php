@@ -223,10 +223,9 @@ function ajax_getWords()
 {
 	$wordlist_id = (!empty($_GET['wordlist_id']) ? (string)$_GET['wordlist_id'] : '');
 
-	$already_loaded = (!empty($_GET['already_loaded']) ? (string)$_GET['already_loaded'] : false);
+	$already_loaded = (!empty($_GET['already_loaded']) ? (string)$_GET['already_loaded'] : 'no');
 
 	$wordMatrix = get_wordMatrix($wordlist_id, $already_loaded);
-
 
 	if ($already_loaded != 'yes') {
 
