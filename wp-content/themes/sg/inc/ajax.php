@@ -185,9 +185,9 @@ function get_wordImage($wordmatrix)
 	$upload_dir = wp_upload_dir();
 	foreach ($wordmatrix as $wordline) {
 		$word = strtolower($wordline['word']);
-
+		$wordcode = rawurlencode($word);
 		//parameters refer to https://developers.google.com/custom-search/v1/cse/list
-		$word_url =  'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $word;
+		$word_url =  'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode;
 
 
 		$result = curl_request($word_url);
@@ -282,7 +282,8 @@ add_action('wp_ajax_updateScore', 'ajax_updateScore');
 function ajax_get_images()
 {
 	$start = (intval($_GET["page"]) - 1) * 9 + 1;
-	$url =  'https://www.googleapis.com/customsearch/v1?start=' . $start . '&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $_GET["word"];
+	$wordcode = rawurlencode($_GET["word"]);
+	$url =  'https://www.googleapis.com/customsearch/v1?start=' . $start . '&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode;
 
 
 	$result = curl_request($url);
