@@ -8,6 +8,10 @@ html,body{
 	@include font-smoothing(on);
 }
 
+body.book-open{
+	overflow: hidden;
+}
+
 .wrapper {
 	// overflow-x:hidden;
 }

@@ -69,3 +69,4 @@ function printDate($date, $the_weekday)
 
 
 <?php include_once('library_modal.php'); ?>
+<?php include_once('library_modal_update.php'); ?>

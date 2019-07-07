@@ -20,7 +20,9 @@
 
 
         <div class="vocabulary">
-            <h1></h1>
+            <h1 data-toggle="modal" data-target="#updateModal"></h1>
+
+
             <dl>
 
             </dl>
