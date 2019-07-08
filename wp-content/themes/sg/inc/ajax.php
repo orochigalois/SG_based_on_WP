@@ -221,7 +221,7 @@ function get_wordImage($wordmatrix)
 //_____________________________________________________________________________________Get all words
 function ajax_getWords()
 {
-	$wordlist_id = (!empty($_GET['wordlist_id']) ? (string)$_GET['wordlist_id'] : '');
+	$wordlist_id = $_GET['wordlist_id'];
 
 	$already_loaded = (!empty($_GET['already_loaded']) ? (string)$_GET['already_loaded'] : 'no');
 
@@ -331,9 +331,9 @@ add_action('wp_ajax_save_images', 'ajax_save_images');
 
 function ajax_update_title()
 {
-	$wordlist_id = (!empty($_GET['wordlist_id']) ? (string)$_GET['wordlist_id'] : '');
+	$wordlist_id = $_GET['wordlist_id'];
 
-	$title = (!empty($_GET['title']) ? (string)$_GET['title'] : '');
+	$title = $_GET['title'];
 
 	$file = get_attached_file($wordlist_id);
     $path = pathinfo($file);
@@ -361,3 +361,26 @@ function ajax_update_title()
 }
 add_action('wp_ajax_nopriv_update_title', 'ajax_update_title');
 add_action('wp_ajax_update_title', 'ajax_update_title');
+
+
+
+function ajax_update_word()
+{
+	$wordlist_id = $_GET['wordlist_id'];
+	$index = $_GET['index'];
+
+	$word = $_GET['word'];
+	$sentence = $_GET['sentence'];
+
+	$file = get_attached_file($wordlist_id);
+
+	$lines = file($file, FILE_IGNORE_NEW_LINES);
+	$lines[$index] = $word.','.$sentence;
+	file_put_contents($file, implode("\n", $lines));
+
+	$result['status'] = "success";
+	print json_encode($result);
+	wp_die();
+}
+add_action('wp_ajax_nopriv_update_word', 'ajax_update_word');
+add_action('wp_ajax_update_word', 'ajax_update_word');

@@ -171,9 +171,32 @@
 
     dt{
         cursor: pointer;
+        display: flex;
+        span:last-child{
+            background-image: url(../../images/audio.png);
+            background-size: 25px 25px;
+            background-repeat: no-repeat;
+            background-position: center, center;
+            width: 25px;
+            height: 25px;
+            display: block;
+            margin-left:10px;
+        }
+       
     }
     dd{
         cursor: pointer;
+        display: flex;
+        span:last-child{
+            background-image: url(../../images/audio.png);
+            background-size: 25px 25px;
+            background-repeat: no-repeat;
+            background-position: center, center;
+            width: 25px;
+            height: 25px;
+            display: block;
+            margin-left:10px;
+        }
     }
     img{
         margin-top:50px;

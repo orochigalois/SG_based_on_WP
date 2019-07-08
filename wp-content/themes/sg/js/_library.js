@@ -7,6 +7,8 @@ var currentPostID;
 var currentTitle;
 
 var $currentBook;
+var $currentWord;
+var $currentSentence;
 
 jQuery(document).ready(function ($) {
 	userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
@@ -81,6 +83,9 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 
 				sentenceSoundHandler();
 
+				wordUpdateHandler();
+				sentenceUpdateHandler();
+
 				imageHandler();
 
 				titleHandler(wordlist_id);
@@ -115,17 +120,17 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 
 function generateVocabularyHTML(wordMatrix) {
 	jQuery.each(wordMatrix, function (i, item) {
-		wordHTML = "<dt>" + wordMatrix[i].word + "</dt>";
-		sentenceHTML = "<dd>" + wordMatrix[i].sentence + "</dd>";
+		wordHTML = "<dt><span data-toggle='modal' data-target='#updateModal'>" + wordMatrix[i].word + "</span><span></span></dt>";
+		sentenceHTML = "<dd><span data-toggle='modal' data-target='#updateModal'>" + wordMatrix[i].sentence + "</span><span></span></dd>";
 		imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + wordMatrix[i].word + "'/>";
 		jQuery(".md-modal .vocabulary>dl").append(imageHTML + wordHTML + sentenceHTML);
 	});
 }
 
 function wordSoundHandler() {
-	jQuery(".md-modal .vocabulary>dl>dt").each(function (index) {
+	jQuery(".md-modal .vocabulary>dl>dt>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
-			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + jQuery(this).text() + ".mp3");
+			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + jQuery(this).prev().text() + ".mp3");
 			wordSound.pause();
 			wordSound.currentTime = 0;
 			wordSound.play();
@@ -134,15 +139,110 @@ function wordSoundHandler() {
 }
 
 function sentenceSoundHandler() {
-	jQuery(".md-modal .vocabulary>dl>dd").each(function (index) {
+	jQuery(".md-modal .vocabulary>dl>dd>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
-			sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).prev().text() + ".mp3");
+			sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).parent().prev().children().first().text() + ".mp3");
 			sentenceSound.pause();
 			sentenceSound.currentTime = 0;
 			sentenceSound.play();
 		});
 	});
 }
+
+function wordUpdateHandler() {
+	
+	jQuery(".md-modal .vocabulary>dl>dt>span:first-child").each(function (index) {
+		jQuery(this).on("click", function () {
+			var word=jQuery(this).text();
+			var sentence = jQuery(this).parent().next().children().first().text();
+			$currentWord =jQuery(this);
+			$currentSentence =jQuery(this).parent().next().children().first();
+
+			jQuery(".modal-body").empty().append(`
+				<form id="updateWord" action="">
+					 <label for="word">Word</label>
+					 <input class="form-control" type="text" name="word" value="${word}"/>
+					 <label for="sentence">Sentence</label>
+					 <input class="form-control" type="text" name="sentence" value="${sentence}"/>
+				</form>
+             `);
+
+			jQuery(".modal-footer").empty().append(`
+                     <button type="button" type="submit" class="btn btn-primary" onClick="updateWord(${index},${currentPostID})">Save changes</button>
+                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                 
+			 `);
+			 
+		});
+	});
+}
+function sentenceUpdateHandler() {
+	jQuery(".md-modal .vocabulary>dl>dd>span:first-child").each(function (index) {
+		jQuery(this).on("click", function () {
+			var word = jQuery(this).parent().prev().children().first().text();
+			var sentence = jQuery(this).text();
+
+			$currentWord =jQuery(this).parent().prev().children().first();
+			$currentSentence =jQuery(this);
+			jQuery(".modal-body").empty().append(`
+				<form id="updateWord" action="">
+					 <label for="word">Word</label>
+					 <input class="form-control" type="text" name="word" value="${word}"/>
+					 <label for="sentence">Sentence</label>
+					 <input class="form-control" type="text" name="sentence" value="${sentence}"/>
+				</form>
+             `);
+
+			jQuery(".modal-footer").empty().append(`
+                     <button type="button" type="submit" class="btn btn-primary" onClick="updateWord(${index},${currentPostID})">Save changes</button>
+                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                 
+			 `);
+		});
+	});
+}
+
+function updateWord(index,wordlist_id){
+	var word=jQuery('#updateWord>input[name=word]').val();
+	var sentence=jQuery('#updateWord>input[name=sentence]').val();
+	jQuery('#updateModal').modal('hide');
+	jQuery("#loadIcon").fadeIn();
+	jQuery.ajax({
+		url: _ajaxurl,
+		method: 'GET',
+		data: {
+			action: 'update_word',
+			index: index,
+			wordlist_id: wordlist_id,
+			word:word,
+			sentence:sentence,
+		},
+		dataType: 'json',
+		success: function (response) {
+			if (response.status == 'success') {
+				jQuery("#loadIcon").fadeOut();
+				$currentWord.text(word);
+				$currentSentence.text(sentence);
+			}
+	
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert('An error occurred... Look at the console (F12 or Ctrl+Shift+I, Console tab) for more information!');
+	
+			alert('<p>status code: ' + jqXHR.status + '</p><p>errorThrown: ' + errorThrown + '</p><p>jqXHR.responseText:</p><div>' + jqXHR.responseText + '</div>');
+			console.log('jqXHR:');
+			console.log(jqXHR);
+			console.log('textStatus:');
+			console.log(textStatus);
+			console.log('errorThrown:');
+			console.log(errorThrown);
+		},
+	});
+
+}
+
+
+
 
 function imageHandler() {
 	jQuery(".md-modal .vocabulary>dl>img").each(function (index) {
