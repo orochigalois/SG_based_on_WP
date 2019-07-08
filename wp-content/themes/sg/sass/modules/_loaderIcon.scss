@@ -30,11 +30,12 @@
     margin: auto;
     height: 120px;
     width: 120px;
-    position: absolute;
+    position: fixed;
     left:0;
     right:0;
-    top:70px;
-    z-index: 300000;
+    top:40%;
+    z-index: 400000;
+    display: none;
 
 
     div {

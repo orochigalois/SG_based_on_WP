@@ -53,7 +53,7 @@ function prepare_loading() {
 	jQuery("body").addClass('book-open');
 	jQuery(".md-modal .vocabulary>dl").empty();
 	jQuery(".md-modal .vocabulary h1").empty();
-	jQuery(".md-modal .vocabulary #loadIcon").fadeIn();
+	jQuery("#loadIcon").fadeIn();
 	jQuery('.md-modal').addClass('md-show');
 	jQuery('.md-modal button').attr("disabled", true);
 	jQuery('.md-modal select').attr("disabled", true);
@@ -72,7 +72,7 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 		success: function (response) {
 			if (response.status == 'success') {
 				jQuery(".sg-current-label>span").text(title);
-				jQuery(".md-modal .vocabulary #loadIcon").fadeOut();
+				jQuery("#loadIcon").fadeOut();
 				jQuery(".md-modal .vocabulary h1").empty().append("Vocabulary - " + title);
 
 				generateVocabularyHTML(response.wordMatrix);
@@ -147,6 +147,7 @@ function sentenceSoundHandler() {
 function imageHandler() {
 	jQuery(".md-modal .vocabulary>dl>img").each(function (index) {
 		jQuery(this).on("click", function () {
+			jQuery("#loadIcon").fadeIn();
 
 			currentWord = jQuery(this).next().text();
 			currentImg = jQuery(this);
@@ -170,6 +171,7 @@ function imageHandler() {
 
 
 					ajax_save_images();
+					jQuery("#loadIcon").fadeOut();
 
 
 
@@ -183,7 +185,7 @@ function imageHandler() {
 
 	//prev page
 	jQuery("#image-overlay .prev").on("click", document, function () {
-		jQuery("body").css("cursor", "waiting");
+		jQuery("#loadIcon").fadeIn();
 		if (currentPage > 1) {
 			currentPage--;
 			jQuery.ajax({
@@ -198,8 +200,7 @@ function imageHandler() {
 				success: function (response) {
 					jQuery("#image-overlay>ul").remove();
 					jQuery("#image-overlay").append(response);
-					jQuery("body").css("cursor", "default");
-
+					jQuery("#loadIcon").fadeOut();
 					if (currentPage == 1) {
 						jQuery("#image-overlay .prev").addClass("greyout");
 					}
@@ -213,7 +214,7 @@ function imageHandler() {
 	});
 	//next page
 	jQuery("#image-overlay .next").on("click", document, function () {
-		jQuery("body").css("cursor", "waiting");
+		jQuery("#loadIcon").fadeIn();
 		currentPage++;
 		jQuery.ajax({
 			url: _ajaxurl,
@@ -227,7 +228,7 @@ function imageHandler() {
 			success: function (response) {
 				jQuery("#image-overlay>ul").remove();
 				jQuery("#image-overlay").append(response);
-				jQuery("body").css("cursor", "default");
+				jQuery("#loadIcon").fadeOut();
 				jQuery("#image-overlay .prev").removeClass("greyout");
 				ajax_save_images();
 			},
@@ -255,7 +256,7 @@ function titleHandler(wordlist_id) {
 function updateTitle(wordlist_id) {
 	currentTitle=jQuery('#updateTitle>input').val();
 	jQuery('#updateModal').modal('hide');
-	jQuery(".md-modal .vocabulary #loadIcon").fadeIn();
+	jQuery("#loadIcon").fadeIn();
 	jQuery.ajax({
 		url: _ajaxurl,
 		method: 'GET',
@@ -267,7 +268,7 @@ function updateTitle(wordlist_id) {
 		dataType: 'json',
 		success: function (response) {
 			if (response.status == 'success') {
-				jQuery(".md-modal .vocabulary #loadIcon").fadeOut();
+				jQuery("#loadIcon").fadeOut();
 				jQuery(".md-modal .vocabulary h1").empty().append("Vocabulary - " + currentTitle);
 				$currentBook.text(currentTitle);
 			}

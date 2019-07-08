@@ -26,12 +26,7 @@
             <dl>
 
             </dl>
-            <div id="loadIcon">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
+            
 
 
         </div>
@@ -48,6 +43,9 @@
     <img class="next" src="<?php lp_image_dir(); ?>/next-arrow.png" alt="next" />
 </div>
 
-
-<!-- <a target="_blank" href="<?php echo wp_get_attachment_url(get_the_ID()); ?>" title="<?php the_title_attribute(); ?>"><?php the_title(); ?></a>        -->
-<!-- <a class="sg_wordlist" target="_blank" href="<?php the_permalink(); ?>" title="<?php the_title_attribute(); ?>" data-wordlist_id="<?= get_the_ID(); ?>"><?php the_title(); ?></a>        -->
+<div id="loadIcon">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+</div>
