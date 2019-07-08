@@ -326,3 +326,30 @@ function ajax_save_images()
 }
 add_action('wp_ajax_nopriv_save_images', 'ajax_save_images');
 add_action('wp_ajax_save_images', 'ajax_save_images');
+
+
+
+function ajax_update_title()
+{
+	$wordlist_id = (!empty($_GET['wordlist_id']) ? (string)$_GET['wordlist_id'] : '');
+
+	$title = (!empty($_GET['title']) ? (string)$_GET['title'] : '');
+
+	$file = get_attached_file($wordlist_id);
+    $path = pathinfo($file);
+        //dirname   = File Path
+        //basename  = Filename.Extension
+        //extension = Extension
+        //filename  = Filename
+
+    $newfile = $path['dirname']."/".$title.".".$path['extension'];
+
+    rename($file, $newfile);    
+	update_attached_file( $wordlist_id, $newfile );
+
+	$result['status'] = "success";
+	print json_encode($result);
+	wp_die();
+}
+add_action('wp_ajax_nopriv_update_title', 'ajax_update_title');
+add_action('wp_ajax_update_title', 'ajax_update_title');

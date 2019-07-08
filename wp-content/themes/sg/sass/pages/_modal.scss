@@ -164,6 +164,10 @@
     color: blue;
     position: relative;
 
+    >h1{
+        cursor: pointer;
+    }
+
 
     dt{
         cursor: pointer;

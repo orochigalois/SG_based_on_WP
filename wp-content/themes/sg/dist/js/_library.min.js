@@ -73,21 +73,21 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 				jQuery(".md-modal .vocabulary h1").append("Vocabulary - " + title);
 
 				generateVocabularyHTML(response.wordMatrix);
-				
+
 				wordSoundHandler();
 
 				sentenceSoundHandler();
 
 				imageHandler();
 
-				titleHandler();
+				titleHandler(title, wordlist_id);
 
-				
 
-				
 
-				
-				
+
+
+
+
 
 				jQuery('.md-modal button').attr("disabled", false);
 				jQuery('.md-modal select').attr("disabled", false);
@@ -110,7 +110,7 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 }
 
 
-function generateVocabularyHTML(wordMatrix){
+function generateVocabularyHTML(wordMatrix) {
 	jQuery.each(wordMatrix, function (i, item) {
 		wordHTML = "<dt>" + wordMatrix[i].word + "</dt>";
 		sentenceHTML = "<dd>" + wordMatrix[i].sentence + "</dd>";
@@ -119,7 +119,7 @@ function generateVocabularyHTML(wordMatrix){
 	});
 }
 
-function wordSoundHandler(){
+function wordSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dt").each(function (index) {
 		jQuery(this).on("click", function () {
 			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + jQuery(this).text() + ".mp3");
@@ -129,7 +129,8 @@ function wordSoundHandler(){
 		});
 	});
 }
-function sentenceSoundHandler(){
+
+function sentenceSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dd").each(function (index) {
 		jQuery(this).on("click", function () {
 			sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).prev().text() + ".mp3");
@@ -140,7 +141,7 @@ function sentenceSoundHandler(){
 	});
 }
 
-function imageHandler(){
+function imageHandler() {
 	jQuery(".md-modal .vocabulary>dl>img").each(function (index) {
 		jQuery(this).on("click", function () {
 
@@ -232,25 +233,62 @@ function imageHandler(){
 	});
 }
 
-function titleHandler(){
+function titleHandler(title, wordlist_id) {
 	jQuery(".md-modal .vocabulary>h1").on("click", function () {
 		jQuery(".modal-body").empty().append(`
-                 <form id="updateUser" action="">
-                     <label for="name">Name</label>
-                     <input class="form-control" type="text" name="name" value="11"/>
-                     <label for="address">Address</label>
-                     <input class="form-control" type="text" name="address" value="22"/>
-                     <label for="age">Age</label>
-                     <input class="form-control" type="number" name="age" value="33" min=10 max=100/>
+                <form id="updateTitle" action="">
+					 <input class="form-control" type="text" name="title" value="${title}"/>
+				</form>
              `);
-             
-			 jQuery(".modal-footer").empty().append(`
-                     <button type="button" type="submit" class="btn btn-primary" onClick="updateUser(44)">Save changes</button>
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                 </form>
+
+		jQuery(".modal-footer").empty().append(`
+                     <button type="button" type="submit" class="btn btn-primary" onClick="updateTitle(${wordlist_id})">Save changes</button>
+                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                 
              `);
 	});
 }
+
+function updateTitle(wordlist_id) {
+	jQuery.ajax({
+		url: _ajaxurl,
+		method: 'GET',
+		data: {
+			action: 'update_title',
+			title: jQuery('#updateTitle>input').val(),
+			wordlist_id: wordlist_id,
+		},
+		dataType: 'json',
+		success: function (response) {
+			if (response.status == 'success') {
+				console.log(response);
+			}
+	
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert('An error occurred... Look at the console (F12 or Ctrl+Shift+I, Console tab) for more information!');
+	
+			alert('<p>status code: ' + jqXHR.status + '</p><p>errorThrown: ' + errorThrown + '</p><p>jqXHR.responseText:</p><div>' + jqXHR.responseText + '</div>');
+			console.log('jqXHR:');
+			console.log(jqXHR);
+			console.log('textStatus:');
+			console.log(textStatus);
+			console.log('errorThrown:');
+			console.log(errorThrown);
+		},
+	});
+
+}
+
+
+
+
+
+
+
+
+
+
 
 function ajax_save_images() {
 	jQuery("#image-overlay>ul>li>img").each(function (index) {
