@@ -6,6 +6,8 @@ var currentImg;
 var currentPostID;
 var currentTitle;
 
+var $currentBook;
+
 jQuery(document).ready(function ($) {
 	userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
 	initChangeFont();
@@ -38,6 +40,7 @@ function initOpenModal() {
 
 	jQuery(".shelf .book").on("click", document, function (event) {
 		prepare_loading();
+		$currentBook =jQuery(this);
 		currentPostID = jQuery(this).data("wordlist_id");
 		currentTitle = jQuery(this).text();
 		var already_loaded = jQuery(this).data("already_loaded")
@@ -70,7 +73,7 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 			if (response.status == 'success') {
 				jQuery(".sg-current-label>span").text(title);
 				jQuery(".md-modal .vocabulary #loadIcon").fadeOut();
-				jQuery(".md-modal .vocabulary h1").append("Vocabulary - " + title);
+				jQuery(".md-modal .vocabulary h1").empty().append("Vocabulary - " + title);
 
 				generateVocabularyHTML(response.wordMatrix);
 
@@ -80,7 +83,7 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 
 				imageHandler();
 
-				titleHandler(title, wordlist_id);
+				titleHandler(wordlist_id);
 
 
 
@@ -233,11 +236,11 @@ function imageHandler() {
 	});
 }
 
-function titleHandler(title, wordlist_id) {
+function titleHandler(wordlist_id) {
 	jQuery(".md-modal .vocabulary>h1").on("click", function () {
 		jQuery(".modal-body").empty().append(`
                 <form id="updateTitle" action="">
-					 <input class="form-control" type="text" name="title" value="${title}"/>
+					 <input class="form-control" type="text" name="title" value="${currentTitle}"/>
 				</form>
              `);
 
@@ -250,18 +253,23 @@ function titleHandler(title, wordlist_id) {
 }
 
 function updateTitle(wordlist_id) {
+	currentTitle=jQuery('#updateTitle>input').val();
+	jQuery('#updateModal').modal('hide');
+	jQuery(".md-modal .vocabulary #loadIcon").fadeIn();
 	jQuery.ajax({
 		url: _ajaxurl,
 		method: 'GET',
 		data: {
 			action: 'update_title',
-			title: jQuery('#updateTitle>input').val(),
+			title: currentTitle,
 			wordlist_id: wordlist_id,
 		},
 		dataType: 'json',
 		success: function (response) {
 			if (response.status == 'success') {
-				console.log(response);
+				jQuery(".md-modal .vocabulary #loadIcon").fadeOut();
+				jQuery(".md-modal .vocabulary h1").empty().append("Vocabulary - " + currentTitle);
+				$currentBook.text(currentTitle);
 			}
 	
 		},

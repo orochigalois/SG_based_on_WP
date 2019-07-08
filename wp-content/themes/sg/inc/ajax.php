@@ -347,6 +347,14 @@ function ajax_update_title()
     rename($file, $newfile);    
 	update_attached_file( $wordlist_id, $newfile );
 
+
+	$my_post = array(
+		'ID'           => $wordlist_id,
+		'post_title'   => $title,
+	);
+  
+	wp_update_post( $my_post );
+
 	$result['status'] = "success";
 	print json_encode($result);
 	wp_die();
