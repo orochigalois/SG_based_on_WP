@@ -5,7 +5,7 @@ putenv('GOOGLE_APPLICATION_CREDENTIALS=' . getcwd() . '/../wp-content/themes/sg/
 
 // [START tts_quickstart]
 // includes the autoloader for libraries installed with composer
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 // Imports the Cloud Client Library
 use Google\Cloud\TextToSpeech\V1\AudioConfig;
