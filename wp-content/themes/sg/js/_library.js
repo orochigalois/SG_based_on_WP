@@ -130,7 +130,7 @@ function generateVocabularyHTML(wordMatrix) {
 function wordSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dt>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
-			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + jQuery(this).prev().text() + ".mp3");
+			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + jQuery(this).prev().text().toLowerCase() + ".mp3");
 			wordSound.pause();
 			wordSound.currentTime = 0;
 			wordSound.play();
@@ -141,7 +141,7 @@ function wordSoundHandler() {
 function sentenceSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dd>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
-			sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).parent().prev().children().first().text() + ".mp3");
+			sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).parent().prev().children().first().text().toLowerCase() + ".mp3");
 			sentenceSound.pause();
 			sentenceSound.currentTime = 0;
 			sentenceSound.play();
