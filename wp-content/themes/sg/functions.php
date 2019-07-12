@@ -181,6 +181,55 @@ add_action( 'admin_bar_menu', 'wpse_form_in_admin_bar' );
 
 
 
+function sg_main_entry( $wp_admin_bar ) {
+
+	$wp_logo_menu_args = array(
+		'id'    => 'wp-logo',
+		'title' => '<span class="ab-icon"></span><span class="screen-reader-text">' . __( 'About WordPress' ) . '</span>',
+		'href'  => '#',
+	);
+
+	// Set tabindex="0" to make sub menus accessible when no URL is available.
+	
+		$wp_logo_menu_args['meta'] = array(
+			'tabindex' => 0,
+		);
+	
+
+	$wp_admin_bar->add_menu( $wp_logo_menu_args );
+
+	$wp_admin_bar->add_menu(
+		array(
+			'parent' => 'wp-logo',
+			'id'     => 'word',
+			'title'  => __( 'Word' ),
+			'href'   => 'index.php?main_entry=word',
+		)
+	);
+
+
+	$wp_admin_bar->add_menu(
+		array(
+			'parent' => 'wp-logo',
+			'id'     => 'sentence',
+			'title'  => __( 'Sentence' ),
+			'href'   => 'index.php?main_entry=sentence',
+		)
+	);
+
+
+}
+
+
+
+function customize_menu(){
+	remove_action( 'admin_bar_menu', 'wp_admin_bar_wp_menu', 10 );
+	remove_action( 'admin_bar_menu', 'wp_admin_bar_site_menu', 30 );
+
+	add_action( 'admin_bar_menu', 'sg_main_entry', 10 );
+}
+//choose the right time to remove_action, that's why the priority '100' being there
+add_action('admin_init', 'customize_menu', 100);
 
 
 
