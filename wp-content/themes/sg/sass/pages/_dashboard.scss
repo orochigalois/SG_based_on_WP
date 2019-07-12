@@ -24,3 +24,10 @@
 .postbox-container{
     width: 100% !important;
 }
+
+#wpadminbar #wp-admin-bar-wp-logo>.ab-item .ab-icon:before{
+    content:"LEARN_WORD" !important;
+}
+#wpadminbar #wp-admin-bar-wp-logo>.ab-item .ab-icon.ab-sentence:before{
+    content:"LEARN_SENTENCE" !important;
+}

@@ -183,11 +183,24 @@ add_action( 'admin_bar_menu', 'wpse_form_in_admin_bar' );
 
 function sg_main_entry( $wp_admin_bar ) {
 
-	$wp_logo_menu_args = array(
-		'id'    => 'wp-logo',
-		'title' => '<span class="ab-icon"></span><span class="screen-reader-text">' . __( 'About WordPress' ) . '</span>',
-		'href'  => '#',
-	);
+	$user = wp_get_current_user();
+	$main_entry = get_user_meta( $user->ID, 'main_entry', true);
+
+	if($main_entry=="sentence"){
+		$wp_logo_menu_args = array(
+			'id'    => 'wp-logo',
+			'title' => '<span class="ab-icon ab-sentence"></span>',
+			'href'  => '#',
+		);
+	}
+	else{
+		$wp_logo_menu_args = array(
+			'id'    => 'wp-logo',
+			'title' => '<span class="ab-icon"></span>',
+			'href'  => '#',
+		);
+	}
+	
 
 	// Set tabindex="0" to make sub menus accessible when no URL is available.
 	
@@ -222,6 +235,8 @@ function sg_main_entry( $wp_admin_bar ) {
 
 
 
+
+
 function customize_menu(){
 	remove_action( 'admin_bar_menu', 'wp_admin_bar_wp_menu', 10 );
 	remove_action( 'admin_bar_menu', 'wp_admin_bar_site_menu', 30 );
@@ -230,6 +245,16 @@ function customize_menu(){
 }
 //choose the right time to remove_action, that's why the priority '100' being there
 add_action('admin_init', 'customize_menu', 100);
+
+
+function main_entry(){
+	if(isset($_GET['main_entry']))
+	{
+		$user = wp_get_current_user();
+		update_user_meta( $user->ID, 'main_entry', $_GET['main_entry'] );
+	}
+}
+add_action( 'load-index.php', 'main_entry', 1, 0 );
 
 
 
