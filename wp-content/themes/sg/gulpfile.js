@@ -56,6 +56,18 @@ gulp.task('scripts_game_dictation', function() {
       // }))
       .pipe(gulp.dest('dist/js'));
   });
+gulp.task('scripts_game_sentence', function() {
+    return gulp.src([
+      'js/_game_sentence.js',
+      ])
+      .pipe(concat('_game_sentence.js'))
+      .pipe(rename({suffix: '.min'}))
+      // .pipe(uglify().on('error', function(error){
+      //     gutil.log(gutil.colors.red('[Error]'), error.toString());
+      //     this.emit('end');
+      // }))
+      .pipe(gulp.dest('dist/js'));
+  });
 gulp.task('scripts_library', function() {
     return gulp.src([
       'js/_library.js',
@@ -114,6 +126,7 @@ gulp.task('watch', ['browser-sync'], function() {
     gulp.watch('sass/**/*.scss',['styles']);
     gulp.watch('js/**/[^_]*.js',['scripts']);
     gulp.watch('js/**/_game_dictation.js',['scripts_game_dictation']);
+    gulp.watch('js/**/_game_sentence.js',['scripts_game_sentence']);
     gulp.watch('js/**/_library.js',['scripts_library']);
     gulp.watch('js/vendor/[^_]*.js',['vendor']);
     gulp.watch('../**/*.php', function() {
