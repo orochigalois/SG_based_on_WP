@@ -3,6 +3,7 @@ var isSentenceGame;
 
 var currentPage = 1;
 var currentWord;
+var currentSentence;
 var currentImg;
 
 var currentPostID;
@@ -174,7 +175,12 @@ function generateVocabularyHTML(wordMatrix) {
 		}
 
 		sentenceHTML = "<dd><span data-toggle='modal' data-target='#updateModal'>" + wordMatrix[i].sentence + "</span><span></span></dd>";
-		imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + wordMatrix[i].word + "'/>";
+		if (isSentenceGame == 'yes') {
+			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID +"_"+i + "'/>";
+		} else {
+			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + wordMatrix[i].word + "'/>";
+		}
+	
 		jQuery(".md-modal .vocabulary>dl").append(imageHTML + wordHTML + sentenceHTML);
 	});
 }
@@ -194,7 +200,7 @@ function sentenceSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dd>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
 			if (isSentenceGame == 'yes') {
-				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + string_to_slug(jQuery(this).prev().text().toLowerCase()) + ".mp3");
+				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + + currentPostID +"_"+index + ".mp3");
 			} else {
 				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).parent().prev().children().first().text().toLowerCase() + ".mp3");
 			}
@@ -309,6 +315,8 @@ function imageHandler() {
 
 			
 			currentWord = jQuery(this).next().children().eq(0).text();
+
+			currentSentence = currentPostID+"_"+index;
 			currentImg = jQuery(this);
 			currentPage = 1;
 
@@ -472,6 +480,8 @@ function ajax_save_images() {
 					action: 'save_images',
 					imageUrl: src,
 					word: currentWord,
+					sentence: currentSentence,
+					isSentenceGame:isSentenceGame,
 				},
 				dataType: 'json',
 				success: function (response) {

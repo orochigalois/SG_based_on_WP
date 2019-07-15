@@ -72,7 +72,8 @@ function get_wordMatrix($wordlist_id, $already_loaded, $isSentenceGame)
 		$lines = explode(".", $csvdata); // split data by .
 		foreach ($lines as $i => $line) {
 			$count++;
-			$wordmatrix[$i]['sentence'] = $line;
+			if(trim($line)!="")
+				$wordmatrix[$i]['sentence'] = trim($line);
 		}
 		//save word count
 		if (!add_post_meta($wordlist_id, '_sg_word_count', $count, true)) {
@@ -104,7 +105,7 @@ function get_wordMatrix($wordlist_id, $already_loaded, $isSentenceGame)
 	return $wordmatrix;
 }
 
-function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame)
+function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $wordlist_id)
 {
 	global $current_user;
 
@@ -128,13 +129,13 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame)
 		->setAudioEncoding(AudioEncoding::MP3)
 		->setEffectsProfileId(array($effectsProfileId));
 
-	foreach ($wordmatrix as $wordline) {
+	foreach ($wordmatrix as $i => $wordline) {
 		
 
 		if ($isSentenceGame == 'yes') {
 			$sentence = str_replace("\r", "", $wordline['sentence']);
 
-			$sanitized_sentence = sanitize_title($sentence);
+			
 
 			if ($sentence != '') {
 				$synthesisInputText = (new SynthesisInput())
@@ -142,7 +143,7 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame)
 
 				$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
 				$audioContent = $response->getAudioContent();
-				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $sanitized_sentence . '.mp3';
+				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' .$wordlist_id.'_'. $i . '.mp3';
 
 				file_put_contents($sentence_saveTo, $audioContent);
 			}
@@ -224,12 +225,12 @@ function get_wordSound_by_voicerss_tts($wordmatrix, $isSentenceGame)
 }
 
 
-function get_wordImage($wordmatrix,$isSentenceGame)
+function get_wordImage($wordmatrix,$isSentenceGame, $wordlist_id)
 {
 	global $current_user;
 
 	$upload_dir = wp_upload_dir();
-	foreach ($wordmatrix as $wordline) {
+	foreach ($wordmatrix as $i => $wordline) {
 		
 		if($isSentenceGame=='yes'){
 			$word = strtolower($wordline['sentence']);
@@ -256,9 +257,9 @@ function get_wordImage($wordmatrix,$isSentenceGame)
 
 		if($isSentenceGame=='yes'){
 
-			$sanitized_sentence = sanitize_title($word);
+			
 
-			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $sanitized_sentence;
+			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $wordlist_id. '_'. $i;
 		}
 		else
 		{
@@ -294,13 +295,13 @@ function ajax_getWords()
 			if ($user_info['tts'][0] == 'voicerss') {
 				get_wordSound_by_voicerss_tts($wordMatrix, $isSentenceGame);
 			} else {
-				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame);
+				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame,$wordlist_id);
 			}
 		} else {
-			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame);
+			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame,$wordlist_id);
 		}
 
-		get_wordImage($wordMatrix, $isSentenceGame);
+		get_wordImage($wordMatrix, $isSentenceGame, $wordlist_id);
 	}
 
 
@@ -375,8 +376,14 @@ function ajax_save_images()
 	global $current_user;
 
 	$upload_dir = wp_upload_dir();
-	$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["word"];
+	$isSentenceGame = $_GET['isSentenceGame'];
 
+	if($isSentenceGame=='yes'){
+		$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["sentence"];
+	}
+	else{
+		$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["word"];
+	}
 	curl_save_file($_GET["imageUrl"], $image_saveTo);
 	$result['status'] = "success";
 	print json_encode($result);
