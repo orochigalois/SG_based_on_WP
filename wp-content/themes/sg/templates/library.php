@@ -13,8 +13,19 @@
 	if (is_user_logged_in()) :
 		$first_in = true;
 		global $current_user;
+
+		$main_entry = get_user_meta( $current_user->ID, 'main_entry', true);
+
+		if($main_entry=="sentence"){
+			$meta_value='sentence';
+		}
+		else{
+			$meta_value='word';
+		}
+
+
 		$date = '';
-		$author_query = array('posts_per_page' => '-1', 'author' => $current_user->ID, 'post_type' => 'attachment', 'post_status' => 'inherit', 'orderby' => 'publish_date', 'order' => 'DESC');
+		$author_query = array('posts_per_page' => '-1', 'author' => $current_user->ID, 'post_type' => 'attachment', 'post_status' => 'inherit', 'orderby' => 'publish_date', 'order' => 'DESC', 'meta_key' => 'main_entry', 'meta_value' => $meta_value);
 		$author_posts = new WP_Query($author_query);
 		while ($author_posts->have_posts()) : $author_posts->the_post();
 

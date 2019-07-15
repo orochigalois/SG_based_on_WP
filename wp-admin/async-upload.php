@@ -98,6 +98,17 @@ if ( is_wp_error( $id ) ) {
 	esc_html( $id->get_error_message() ) . '</div>';
 	exit;
 }
+else{
+	$user = wp_get_current_user();
+	$main_entry = get_user_meta( $user->ID, 'main_entry', true);
+
+	if($main_entry=="sentence"){
+		update_post_meta( $id, 'main_entry', 'sentence' );
+	}
+	else{
+		update_post_meta( $id, 'main_entry', 'word' );
+	}
+}
 
 if ( $_REQUEST['short'] ) {
 	// Short form response - attachment ID only.
