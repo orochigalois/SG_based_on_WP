@@ -161,6 +161,7 @@ function create_user_folder( $user_id ) {
 
 	$upload_dir = wp_upload_dir();
 	mkdir($upload_dir['basedir'].'/userdata'.$user_id,0777);
+	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/paragraph',0777);
 	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/sentence',0777);
 	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/word',0777);
 	mkdir($upload_dir['basedir'].'/userdata'.$user_id.'/picture',0777);

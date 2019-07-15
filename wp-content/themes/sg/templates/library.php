@@ -4,6 +4,16 @@
 		echo $current_user->ID;
 		?>
 	</div>
+	<div class="hidden_data__isSentenceGame">
+		<?php 
+		if(is_sentence_game()){
+			echo 'yes';
+		}
+		else{
+			echo 'no';
+		}
+		?>
+	</div>
 </div>
 <div class="library_container">
 	<?php
@@ -14,9 +24,8 @@
 		$first_in = true;
 		global $current_user;
 
-		$main_entry = get_user_meta( $current_user->ID, 'main_entry', true);
 
-		if($main_entry=="sentence"){
+		if(is_sentence_game()){
 			$meta_value='sentence';
 		}
 		else{

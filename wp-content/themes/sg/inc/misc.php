@@ -222,3 +222,17 @@ function lp_add_params_to_embed($embed, $params) {
 
 	return $embed;
 }
+
+function is_sentence_game(){
+	global $current_user;
+
+	$main_entry = get_user_meta( $current_user->ID, 'main_entry', true);
+
+	if($main_entry=="sentence"){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
