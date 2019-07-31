@@ -16,7 +16,7 @@ jQuery(document).ready(function ($) {
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
 
-    var button = document.querySelector(".startBtn");
+    var startBtn = document.querySelector(".startBtn");
     var words = document.querySelector(".words");
     var scoreDiv = document.querySelector(".score");
     var errorDiv = document.querySelector(".error");
@@ -40,17 +40,16 @@ jQuery(document).ready(function ($) {
     $(".startBtn").on("click", document, function () {
         init();
         show_me_one_sentence();
-        button.disabled = true;
     });
 
     function init() {
-        button.disabled = false;
         points = 0;
         errors = 0;
         sentenceIndex = 0;
         scoreDiv.innerHTML = points.toString() + '/' + sentenceList.length.toString();
         errorDiv.innerHTML = errors;
         jQuery(".wordsWrap").hide();
+        startBtn.disabled = true;
     }
 
     function show_me_one_sentence() {
@@ -69,7 +68,7 @@ jQuery(document).ready(function ($) {
 
 
         //b. show picture
-        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + wordlist_id + "_" + sentenceIndex + ")");
+        jQuery(".game_sentence").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + wordlist_id + "_" + sentenceIndex + ")");
 
 
 
@@ -204,7 +203,7 @@ jQuery(document).ready(function ($) {
                 turn_off_typing_listener();
                 setTimeout(function () {
                     if (sentenceIndex == sentenceList.length) {
-                        if (errors == 0) {
+                        if (errors <= 3) {
                             alert("well done! There should be fireworks");
 
                             //update score
@@ -219,26 +218,21 @@ jQuery(document).ready(function ($) {
                                 dataType: 'json',
                                 success: function (response) {
                                     if (response.status == 'success') {
+
                                         console.log(response);
+                                        startBtn.disabled = false;
                                     }
 
                                 },
                             });
 
-                            init();
-                            words.className = "words"; // restart the classes
-                            show_me_one_sentence(); // give another word
                         } else {
                             alert("please try again!");
-                            init();
-                            words.className = "words"; // restart the classes
-                            show_me_one_sentence(); // give another word
+                            startBtn.disabled = false;
                         }
 
                     } else {
-                        words.className = "words"; // restart the classes
                         show_me_one_sentence(); // give another word
-
                     }
 
 

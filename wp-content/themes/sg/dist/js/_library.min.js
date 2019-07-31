@@ -105,18 +105,20 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 
 				if (isSentenceGame == 'no') {
 					wordUpdateHandler();
-					sentenceUpdateHandler();
+
 				}
+
+				sentenceUpdateHandler();
 
 
 
 				imageHandler();
 
-				
 
-				if (isSentenceGame == 'no') {
-					titleHandler(wordlist_id);
-				}
+
+
+				titleHandler(wordlist_id);
+
 
 
 
@@ -156,11 +158,11 @@ function generateVocabularyHTML(wordMatrix) {
 
 		sentenceHTML = "<dd><span data-toggle='modal' data-target='#updateModal'>" + wordMatrix[i].sentence + "</span><span></span></dd>";
 		if (isSentenceGame == 'yes') {
-			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID +"_"+i + "'/>";
+			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID + "_" + i + "'/>";
 		} else {
 			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + wordMatrix[i].word + "'/>";
 		}
-	
+
 		jQuery(".md-modal .vocabulary>dl").append(imageHTML + wordHTML + sentenceHTML);
 	});
 }
@@ -180,7 +182,7 @@ function sentenceSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dd>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
 			if (isSentenceGame == 'yes') {
-				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + + currentPostID +"_"+index + ".mp3");
+				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + +currentPostID + "_" + index + ".mp3");
 			} else {
 				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).parent().prev().children().first().text().toLowerCase() + ".mp3");
 			}
@@ -228,7 +230,9 @@ function sentenceUpdateHandler() {
 
 			$currentWord = jQuery(this).parent().prev().children().first();
 			$currentSentence = jQuery(this);
-			jQuery(".modal-body").empty().append(`
+
+			if (isSentenceGame == 'no') {
+				jQuery(".modal-body").empty().append(`
 				<form id="updateWord" action="">
 					 <label for="word">Word</label>
 					 <input class="form-control" type="text" name="word" value="${word}"/>
@@ -237,11 +241,28 @@ function sentenceUpdateHandler() {
 				</form>
              `);
 
-			jQuery(".modal-footer").empty().append(`
+				jQuery(".modal-footer").empty().append(`
                      <button type="button" type="submit" class="btn btn-primary" onClick="updateWord(${index},${currentPostID})">Save changes</button>
                      <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
                  
 			 `);
+
+			} else {
+
+				jQuery(".modal-body").empty().append(`
+				<form id="updateWord" action="">
+					 <label for="sentence">Sentence</label>
+					 <input class="form-control" type="text" name="sentence" value="${sentence}"/>
+				</form>
+             `);
+
+				jQuery(".modal-footer").empty().append(`
+                     <button type="button" type="submit" class="btn btn-primary" onClick="updateSentence(${index},${currentPostID})">Save changes</button>
+                     <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                 
+			 `);
+
+			}
 		});
 	});
 }
@@ -285,6 +306,42 @@ function updateWord(index, wordlist_id) {
 
 }
 
+function updateSentence(index, wordlist_id) {
+	var sentence = jQuery('#updateWord>input[name=sentence]').val();
+	jQuery('#updateModal').modal('hide');
+	jQuery("#loadIcon").fadeIn();
+	jQuery.ajax({
+		url: _ajaxurl,
+		method: 'GET',
+		data: {
+			action: 'update_sentence',
+			index: index,
+			wordlist_id: wordlist_id,
+			sentence: sentence,
+		},
+		dataType: 'json',
+		success: function (response) {
+			if (response.status == 'success') {
+				jQuery("#loadIcon").fadeOut();
+				$currentSentence.text(sentence);
+			}
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert('An error occurred... Look at the console (F12 or Ctrl+Shift+I, Console tab) for more information!');
+
+			alert('<p>status code: ' + jqXHR.status + '</p><p>errorThrown: ' + errorThrown + '</p><p>jqXHR.responseText:</p><div>' + jqXHR.responseText + '</div>');
+			console.log('jqXHR:');
+			console.log(jqXHR);
+			console.log('textStatus:');
+			console.log(textStatus);
+			console.log('errorThrown:');
+			console.log(errorThrown);
+		},
+	});
+
+}
+
 
 
 
@@ -293,10 +350,10 @@ function imageHandler() {
 		jQuery(this).on("click", function () {
 			jQuery("#loadIcon").fadeIn();
 
-			
+
 			currentWord = jQuery(this).next().children().eq(0).text();
 
-			currentSentence = currentPostID+"_"+index;
+			currentSentence = currentPostID + "_" + index;
 			currentImg = jQuery(this);
 			currentPage = 1;
 
@@ -461,7 +518,7 @@ function ajax_save_images() {
 					imageUrl: src,
 					word: currentWord,
 					sentence: currentSentence,
-					isSentenceGame:isSentenceGame,
+					isSentenceGame: isSentenceGame,
 				},
 				dataType: 'json',
 				success: function (response) {

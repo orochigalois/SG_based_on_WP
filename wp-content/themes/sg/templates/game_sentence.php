@@ -22,7 +22,7 @@
     </div>
 </div>
 
-<div class="game_dictation">
+<div class="game_sentence">
     <button class="startBtn">START</button>
     <button class="replayBtn">REPLAY</button>
     <div class="outerWrap">
@@ -40,7 +40,6 @@
     </div>
 
     <div class="wordsWrap">
-        <img src="">
         <p class="words"></p>
     </div>
 

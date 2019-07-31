@@ -22,7 +22,7 @@ if ($main_entry == "sentence") {
     foreach ($all_ids as $all_id) {
         $filepath = get_attached_file($all_id->ID);
         $csvdata = file_get_contents($filepath);
-        $lines = explode(".", $csvdata);
+        $lines = multiexplode(array("?", ".", "!", ":"), $csvdata);
         foreach ($lines as $i => $line) {
             if (trim($line) != "") {
                 echo "<tr>";

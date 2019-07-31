@@ -259,3 +259,15 @@ function multiexplode($delimiters, $string)
 	$launch = explode($delimiters[0], $ready);
 	return  $launch;
 }
+
+
+function get_all_delimiters($string, &$delimiters)
+{
+	$array = str_split($string);
+
+	foreach ($array as $char) {
+
+		if ($char == '?' || $char == '!' || $char == '.' || $char == ':')
+			$delimiters[] = $char;
+	}
+}

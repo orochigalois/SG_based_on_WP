@@ -1,11 +1,13 @@
-#toplevel_page_sg_sentence_page{
-    display:none;
+#toplevel_page_sg_sentence_page {
+    display: none;
 }
-.toplevel_page_sg_sentence_page{
-    background-color:#282e3a;
+
+.toplevel_page_sg_sentence_page {
+    background-color: #282e3a;
 }
-.game_dictation {
-    
+
+.game_sentence {
+
     max-width: 600px;
     margin: 0 auto;
     width: 100%;
@@ -62,11 +64,11 @@
         background-color: #04AF71 !important;
     }
 
-    .transparent{
-        color:transparent;
+    .transparent {
+        color: transparent;
     }
 
-    
+
 
     .scoreWrap p,
     .scoreWrap span,
@@ -83,20 +85,20 @@
     .words span {
         font-size: 20px;
         letter-spacing: 1px;
-        background-color:#ECF0F1;
+        background-color: #ECF0F1;
         /* color: #ECF0F1; */
     }
 
 
-    .flashcard{
+    .flashcard {
         font-size: 20px;
-        background-color:#ECF0F1;
+        background-color: #ECF0F1;
     }
 
 }
 
-.sentenceWrap{
-    color:white;
-    margin:20px auto;
+.sentenceWrap {
+    color: white;
+    margin: 20px auto;
     text-align: center;
 }

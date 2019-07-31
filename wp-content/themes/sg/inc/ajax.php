@@ -59,28 +59,47 @@ function get_wordMatrix($wordlist_id, $already_loaded, $isSentenceGame)
 
 	$csvdata = file_get_contents($filepath);
 
-	if ($already_loaded != 'yes') {
-		//trim and put it back
-		$csvdata = trim($csvdata);
-		$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
-		$csvdata = preg_replace("/[，]/u", ',', $csvdata);
 
-		file_put_contents($filepath, $csvdata);
-	}
 	$count = 0;
 	if ($isSentenceGame == "yes") {
 
+		if ($already_loaded != 'yes') {
+			//trim and put it back
+			$csvdata = trim($csvdata);
+			$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
+			$csvdata = preg_replace("/[，]/u", ',', $csvdata);
+			$csvdata = preg_replace("/[。]/u", '.', $csvdata);
+			$csvdata = preg_replace("/[？]/u", '?', $csvdata);
+			$csvdata = preg_replace("/[！]/u", '!', $csvdata);
+			file_put_contents($filepath, $csvdata);
+		}
+
+
+
+
 		$lines = multiexplode(array("?", ".", "!", ":"), $csvdata);
 		foreach ($lines as $i => $line) {
-			$count++;
-			if (trim($line) != "")
+
+			if (trim($line) != "") {
+				$count++;
 				$wordmatrix[$i]['sentence'] = trim($line);
+			}
 		}
+
 		//save word count
 		if (!add_post_meta($wordlist_id, '_sg_sentence_count', $count, true)) {
 			update_post_meta($wordlist_id, '_sg_sentence_count', $count);
 		}
 	} else {
+
+		if ($already_loaded != 'yes') {
+			//trim and put it back
+			$csvdata = trim($csvdata);
+			$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
+			$csvdata = preg_replace("/[，]/u", ',', $csvdata);
+
+			file_put_contents($filepath, $csvdata);
+		}
 
 		$lines = explode("\n", $csvdata); // split data by new lines
 		foreach ($lines as $i => $line) {
@@ -342,6 +361,7 @@ function ajax_updateScore()
 
 	$result['status'] = "success";
 	print json_encode($result);
+	wp_die();
 }
 add_action('wp_ajax_nopriv_updateScore', 'ajax_updateScore');
 add_action('wp_ajax_updateScore', 'ajax_updateScore');
@@ -453,3 +473,49 @@ function ajax_update_word()
 }
 add_action('wp_ajax_nopriv_update_word', 'ajax_update_word');
 add_action('wp_ajax_update_word', 'ajax_update_word');
+
+
+function ajax_update_sentence()
+{
+	$wordlist_id = $_GET['wordlist_id'];
+	$index = $_GET['index'];
+
+	$sentence = stripslashes($_GET['sentence']);
+
+	$filepath = get_attached_file($wordlist_id);
+	$csvdata = file_get_contents($filepath);
+
+	$delimiters = array();
+	$snippets = array();
+
+	$result_string = "";
+
+	get_all_delimiters($csvdata, $delimiters);
+
+	$lines = multiexplode(array("?", ".", "!", ":"), $csvdata);
+	foreach ($lines as $i => $line) {
+
+		if (trim($line) != "") {
+
+			$snippets[$i] = trim($line);
+		}
+	}
+
+	$snippets[$index] = $sentence;
+
+	foreach ($snippets as $i => $part) {
+		if (isset($delimiters[$i]))
+			$result_string .= $part . $delimiters[$i];
+		else
+			$result_string .= $part;
+	}
+
+
+	file_put_contents($filepath, $result_string);
+
+	$result['status'] = "success";
+	print json_encode($result);
+	wp_die();
+}
+add_action('wp_ajax_nopriv_update_sentence', 'ajax_update_sentence');
+add_action('wp_ajax_update_sentence', 'ajax_update_sentence');
