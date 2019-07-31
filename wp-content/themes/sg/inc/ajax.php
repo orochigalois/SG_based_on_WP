@@ -69,7 +69,8 @@ function get_wordMatrix($wordlist_id, $already_loaded, $isSentenceGame)
 	}
 	$count = 0;
 	if ($isSentenceGame == "yes") {
-		$lines = explode(".", $csvdata); // split data by .
+
+		$lines = multiexplode(array("?", ".", "!", ":"), $csvdata);
 		foreach ($lines as $i => $line) {
 			$count++;
 			if (trim($line) != "")
