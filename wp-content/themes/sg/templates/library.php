@@ -5,11 +5,10 @@
 		?>
 	</div>
 	<div class="hidden_data__isSentenceGame">
-		<?php 
-		if(is_sentence_game()){
+		<?php
+		if (is_sentence_game()) {
 			echo 'yes';
-		}
-		else{
+		} else {
 			echo 'no';
 		}
 		?>
@@ -25,17 +24,16 @@
 		global $current_user;
 
 
-		if(is_sentence_game()){
-			$meta_value='sentence';
-		}
-		else{
-			$meta_value='word';
+		if (is_sentence_game()) {
+			$meta_value = 'sentence';
+		} else {
+			$meta_value = 'word';
 		}
 
 
 		$date = '';
-		$author_query = array('posts_per_page' => '-1', 'author' => $current_user->ID, 'post_type' => 'attachment', 'post_status' => 'inherit', 'orderby' => 'publish_date', 'order' => 'DESC', 'meta_key' => 'main_entry', 'meta_value' => $meta_value);
-		$author_posts = new WP_Query($author_query);
+		$custom_query = array('posts_per_page' => '-1', 'author' => $current_user->ID, 'post_type' => 'attachment', 'post_status' => 'inherit', 'orderby' => 'publish_date', 'order' => 'DESC', 'meta_key' => 'main_entry', 'meta_value' => $meta_value);
+		$author_posts = new WP_Query($custom_query);
 		while ($author_posts->have_posts()) : $author_posts->the_post();
 
 			$first_in = false;
@@ -65,22 +63,25 @@
 
 
 		<?php
-	endwhile;
-	echo '</div>';
+		endwhile;
+		wp_reset_postdata();
+		echo '</div>';
 
-endif;
-
-
-function printDate($date, $the_weekday)
-{
-	echo '<div class="app-calendar">';
-	echo "<div id=\"weekday\">{$the_weekday}</div>";
-	echo '<div id="day">' . $date . '</div>';
-	echo '</div>';
-}
+	endif;
 
 
-?>
+
+
+	function printDate($date, $the_weekday)
+	{
+		echo '<div class="app-calendar">';
+		echo "<div id=\"weekday\">{$the_weekday}</div>";
+		echo '<div id="day">' . $date . '</div>';
+		echo '</div>';
+	}
+
+
+	?>
 
 	<?php if ($first_in) : ?>
 		<h1 style="color:white;">Welcome! It's empty in the library! Please go to <a href="<?php echo esc_url(get_admin_url() . "admin.php?page=sg_upload_page"); ?>">Upload</a> page first.</h1>

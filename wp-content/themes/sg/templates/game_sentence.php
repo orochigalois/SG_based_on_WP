@@ -6,7 +6,7 @@
         ?>
     </div>
     <div class="hidden_data__wordlist_id">
-        <?php 
+        <?php
         echo $_SESSION['wordlist_id'];
         ?>
     </div>
@@ -17,7 +17,6 @@
         foreach ($wordMatrix as $wordline) {
             $sentence = strtolower($wordline['sentence']);
             echo '<div class="sentence">' . $sentence . '</div>';
-            
         }
         ?>
     </div>
@@ -36,11 +35,13 @@
             <span class="error"></span>
         </div>
     </div>
+    <progress value="0" max="20" id="progressBar"></progress>
+    <div class="flashcard">
+    </div>
+
     <div class="wordsWrap">
         <img src="">
         <p class="words"></p>
     </div>
-    
+
 </div>
-<h1 class="sentenceWrap">
-</h1>

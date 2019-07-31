@@ -3,8 +3,9 @@ jQuery(document).ready(function ($) {
     //1.get hidden_data & init
 
     var sentenceList = [];
+    var sentenceIndex;
 
-   
+
     jQuery(".hidden_data .hidden_data__wordlist .sentence").each(function () {
         sentenceList.push($(this).text());
     });
@@ -19,126 +20,155 @@ jQuery(document).ready(function ($) {
     var words = document.querySelector(".words");
     var scoreDiv = document.querySelector(".score");
     var errorDiv = document.querySelector(".error");
-    
+
     var spans;
     var typed;
 
 
     var points;
     var errors;
-    var wordIndex;
+
 
     var wordSound;
-    
-    var currentSentence;
+
+
+    var letterIndex = 0;
 
 
 
     //2.start game
-
-    $( ".startBtn" ).on( "click", document, function() {
+    $(".startBtn").on("click", document, function () {
         init();
-        getWord();
+        show_me_one_sentence();
         button.disabled = true;
     });
 
-    function init(){
+    function init() {
         button.disabled = false;
         points = 0;
         errors = 0;
-        wordIndex=0;
-        scoreDiv.innerHTML = points.toString()+'/'+sentenceList.length.toString();
+        sentenceIndex = 0;
+        scoreDiv.innerHTML = points.toString() + '/' + sentenceList.length.toString();
         errorDiv.innerHTML = errors;
+        jQuery(".wordsWrap").hide();
     }
 
-    function getWord() {
+    function show_me_one_sentence() {
+
         //a. build word spans
         words.innerHTML = "";
-        var wordArray = sentenceList[wordIndex].split("");
-        for (var i = 0; i < wordArray.length; i++) { //building the words with spans around the letters
+        var letterArray = sentenceList[sentenceIndex].split("");
+        for (var i = 0; i < letterArray.length; i++) { //building the words with spans around the letters
             var span = document.createElement("span");
             span.classList.add("span");
             span.classList.add("transparent");
-            span.innerHTML = wordArray[i];
+            span.innerHTML = letterArray[i];
             words.appendChild(span);
         }
         spans = document.querySelectorAll(".span");
 
 
         //b. show picture
-        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + wordlist_id +"_"+ wordIndex+")");
+        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + wordlist_id + "_" + sentenceIndex + ")");
 
 
 
         //c. play sound
-        wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + wordlist_id +"_"+ wordIndex+ ".mp3");
+        wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + wordlist_id + "_" + sentenceIndex + ".mp3");
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
 
+        //d. show flashcard
+        jQuery(".flashcard").text(sentenceList[sentenceIndex]);
+        var timeleft = 0;
+        var downloadTimer = setInterval(function () {
+            document.getElementById("progressBar").value = timeleft;
+            timeleft += 1;
+            if (timeleft > 20) {
+                clearInterval(downloadTimer);
+                jQuery(".flashcard").hide();
+                jQuery(".wordsWrap").show();
+                turn_on_typing_listener();
+            }
+        }, 1000);
 
-        //d. store current sentence
-        currentSentence=sentenceList[wordIndex];
 
         //e. prepare moving to next word
-        wordIndex++;
+        sentenceIndex++;
+        letterIndex = 0;
 
-        
+
 
     }
 
 
-    $( ".replayBtn" ).on( "click", document, function() {
+    $(".replayBtn").on("click", document, function () {
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
     });
 
-    
+
 
     //3.keydown
     function isLetterOrSpaceOrDash(str) {
-        return str.length === 1 && str.match(/[a-z-]/i) ||str==' ';
+        return str.length === 1 && str.match(/[a-z-]/i) || str == ' ';
     }
-    
-    document.addEventListener("keydown", typing, false);
+
+    function isSymbol(str) {
+        return str.length === 1 && str.match(/[\'\"\:\;\,\<\>\/\?!@#\$%\^\&*\)\(+=._-]/i) || str == ' ';
+    }
+
+    function turn_on_typing_listener() {
+        document.addEventListener("keydown", typing, false);
+    }
+
+    function turn_off_typing_listener() {
+        document.removeEventListener("keydown", typing, false);
+    }
+
+
     function typing(e) {
-        
+
         typed = e.key;
-        if(!isLetterOrSpaceOrDash(typed))
-            return;
-        var isTypo=true;
-        for (var i = 0; i < spans.length; i++) {
-            if (spans[i].innerHTML.toUpperCase() === typed.toUpperCase()) { // if typed letter is the one from the word
-                __typewriter.pause();
-                __typewriter.currentTime = 0;
-                __typewriter.play();
-                isTypo=false;
+        var isTypo = true;
 
-                
-                spans[i].classList.remove("transparent");
-
-                if (spans[i].classList.contains("bg")) { // if it already has class with the bacground color then check the next one
-                    continue;
-                } else if (spans[i].classList.contains("bg") === false && spans[i - 1] === undefined || spans[i - 1].classList.contains("bg") !== false) { // if it dont have class, if it is not first letter or if the letter before it dont have class (this is done to avoid marking the letters who are not in order for being checked, for example if you have two "A"s so to avoid marking both of them if the first one is at the index 0 and second at index 5 for example)
-                    spans[i].classList.add("bg");
-                    break;
-                }
+        if (isSymbol(spans[letterIndex].innerHTML.toUpperCase())) {
+            isTypo = false;
+        } else {
+            if (!isLetterOrSpaceOrDash(typed))
+                return;
+            if (spans[letterIndex].innerHTML.toUpperCase() === typed.toUpperCase()) {
+                isTypo = false;
             }
         }
 
-        if(isTypo)
-        {
+
+        if (!isTypo) {
+            __typewriter.pause();
+            __typewriter.currentTime = 0;
+            __typewriter.play();
+
+
+
+            spans[letterIndex].classList.remove("transparent");
+            spans[letterIndex].classList.add("bg");
+
+            letterIndex++;
+        } else {
             __error.pause();
             __error.currentTime = 0;
-         
+
 
             var promise = __error.play();
 
-         
+
             if (promise) {
                 //Older browsers may not return a promise, according to the MDN website
-                promise.catch(function(error) { console.error(error); });
+                promise.catch(function (error) {
+                    console.error(error);
+                });
             }
 
             // if (promise !== undefined) {
@@ -153,6 +183,8 @@ jQuery(document).ready(function ($) {
             errors++;
             errorDiv.innerHTML = errors; //add points to the points div
         }
+
+
         var checker = 0;
         for (var j = 0; j < spans.length; j++) { //checking if all the letters are typed
             if (spans[j].className === "span bg") {
@@ -161,23 +193,18 @@ jQuery(document).ready(function ($) {
             if (checker === spans.length) { // if so, animate the words with animate.css class
 
 
-                
-                jQuery(".sentenceWrap").text(currentSentence);
+                jQuery(".wordsWrap").hide();
+                jQuery(".flashcard").show();
 
 
-                words.classList.add("animated");
-                words.classList.add("fadeOut");
                 points++; // increment the points
-                scoreDiv.innerHTML = points.toString()+'/'+sentenceList.length.toString();
+                scoreDiv.innerHTML = points.toString() + '/' + sentenceList.length.toString();
 
-                
 
-                document.removeEventListener("keydown", typing, false);
+                turn_off_typing_listener();
                 setTimeout(function () {
-                    if(wordIndex==sentenceList.length)
-                    {
-                        if(errors==0)
-                        {
+                    if (sentenceIndex == sentenceList.length) {
+                        if (errors == 0) {
                             alert("well done! There should be fireworks");
 
                             //update score
@@ -186,43 +213,41 @@ jQuery(document).ready(function ($) {
                                 method: 'GET',
                                 data: {
                                     action: 'updateScore',
-                                    wordlist_id:wordlist_id,
+                                    wordlist_id: wordlist_id,
+                                    isSentenceGame: 'yes',
                                 },
                                 dataType: 'json',
                                 success: function (response) {
                                     if (response.status == 'success') {
                                         console.log(response);
                                     }
-                            
+
                                 },
                             });
 
                             init();
                             words.className = "words"; // restart the classes
-                            getWord(); // give another word
-                            document.addEventListener("keydown", typing, false);
-                        }
-                        else
-                        {
+                            show_me_one_sentence(); // give another word
+                        } else {
                             alert("please try again!");
                             init();
                             words.className = "words"; // restart the classes
-                            getWord(); // give another word
-                            document.addEventListener("keydown", typing, false);
+                            show_me_one_sentence(); // give another word
                         }
-                    }
-                    else{
+
+                    } else {
                         words.className = "words"; // restart the classes
-                        getWord(); // give another word
-                        document.addEventListener("keydown", typing, false);
+                        show_me_one_sentence(); // give another word
+
                     }
-                        
+
+
                 }, 400);
             }
 
         }
     }
 
-    
+
 
 });

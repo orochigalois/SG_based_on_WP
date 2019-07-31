@@ -72,12 +72,12 @@ function get_wordMatrix($wordlist_id, $already_loaded, $isSentenceGame)
 		$lines = explode(".", $csvdata); // split data by .
 		foreach ($lines as $i => $line) {
 			$count++;
-			if(trim($line)!="")
+			if (trim($line) != "")
 				$wordmatrix[$i]['sentence'] = trim($line);
 		}
 		//save word count
-		if (!add_post_meta($wordlist_id, '_sg_word_count', $count, true)) {
-			update_post_meta($wordlist_id, '_sg_word_count', $count);
+		if (!add_post_meta($wordlist_id, '_sg_sentence_count', $count, true)) {
+			update_post_meta($wordlist_id, '_sg_sentence_count', $count);
 		}
 	} else {
 
@@ -130,12 +130,12 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $wordlist_id)
 		->setEffectsProfileId(array($effectsProfileId));
 
 	foreach ($wordmatrix as $i => $wordline) {
-		
+
 
 		if ($isSentenceGame == 'yes') {
 			$sentence = str_replace("\r", "", $wordline['sentence']);
 
-			
+
 
 			if ($sentence != '') {
 				$synthesisInputText = (new SynthesisInput())
@@ -143,7 +143,7 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $wordlist_id)
 
 				$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
 				$audioContent = $response->getAudioContent();
-				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' .$wordlist_id.'_'. $i . '.mp3';
+				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $wordlist_id . '_' . $i . '.mp3';
 
 				file_put_contents($sentence_saveTo, $audioContent);
 			}
@@ -225,17 +225,16 @@ function get_wordSound_by_voicerss_tts($wordmatrix, $isSentenceGame)
 }
 
 
-function get_wordImage($wordmatrix,$isSentenceGame, $wordlist_id)
+function get_wordImage($wordmatrix, $isSentenceGame, $wordlist_id)
 {
 	global $current_user;
 
 	$upload_dir = wp_upload_dir();
 	foreach ($wordmatrix as $i => $wordline) {
-		
-		if($isSentenceGame=='yes'){
+
+		if ($isSentenceGame == 'yes') {
 			$word = strtolower($wordline['sentence']);
-		}
-		else{
+		} else {
 			$word = strtolower($wordline['word']);
 		}
 		$wordcode = rawurlencode($word);
@@ -255,17 +254,15 @@ function get_wordImage($wordmatrix,$isSentenceGame, $wordlist_id)
 		}
 		// write_log($image_link);
 
-		if($isSentenceGame=='yes'){
+		if ($isSentenceGame == 'yes') {
 
-			
 
-			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $wordlist_id. '_'. $i;
-		}
-		else
-		{
+
+			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $wordlist_id . '_' . $i;
+		} else {
 			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $word;
 		}
-		
+
 
 
 		curl_save_file($image_link, $image_saveTo);
@@ -295,10 +292,10 @@ function ajax_getWords()
 			if ($user_info['tts'][0] == 'voicerss') {
 				get_wordSound_by_voicerss_tts($wordMatrix, $isSentenceGame);
 			} else {
-				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame,$wordlist_id);
+				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $wordlist_id);
 			}
 		} else {
-			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame,$wordlist_id);
+			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $wordlist_id);
 		}
 
 		get_wordImage($wordMatrix, $isSentenceGame, $wordlist_id);
@@ -332,7 +329,14 @@ function ajax_updateScore()
 {
 	date_default_timezone_set('Australia/Melbourne');
 	$score_meta = date("Y-m-d H:i:s");
-	add_post_meta($_GET['wordlist_id'], '_sg_dictation_score', $score_meta);
+
+	$isSentenceGame = $_GET['isSentenceGame'];
+
+	if ($isSentenceGame == 'yes') {
+		add_post_meta($_GET['wordlist_id'], '_sg_sentence_score', $score_meta);
+	} else {
+		add_post_meta($_GET['wordlist_id'], '_sg_dictation_score', $score_meta);
+	}
 
 
 	$result['status'] = "success";
@@ -378,10 +382,9 @@ function ajax_save_images()
 	$upload_dir = wp_upload_dir();
 	$isSentenceGame = $_GET['isSentenceGame'];
 
-	if($isSentenceGame=='yes'){
+	if ($isSentenceGame == 'yes') {
 		$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["sentence"];
-	}
-	else{
+	} else {
 		$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["word"];
 	}
 	curl_save_file($_GET["imageUrl"], $image_saveTo);
