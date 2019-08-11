@@ -33,7 +33,7 @@ jQuery(document).ready(function ($) {
 
 
     var letterIndex = 0;
-
+    var timeleft;
 
 
     //2.start game
@@ -50,7 +50,19 @@ jQuery(document).ready(function ($) {
         errorDiv.innerHTML = errors;
         jQuery(".wordsWrap").hide();
         startBtn.disabled = true;
+
+
+        document.addEventListener("keyup", function(event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+              // Cancel the default action, if needed
+              event.preventDefault();
+              
+              timeleft=100;
+            }
+        });
     }
+    
 
     function show_me_one_sentence() {
 
@@ -80,7 +92,7 @@ jQuery(document).ready(function ($) {
 
         //d. show flashcard
         jQuery(".flashcard").text(sentenceList[sentenceIndex]);
-        var timeleft = 0;
+        timeleft = 0;
         var downloadTimer = setInterval(function () {
             document.getElementById("progressBar").value = timeleft;
             timeleft += 1;
@@ -106,6 +118,7 @@ jQuery(document).ready(function ($) {
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
+        $(this).blur();
     });
 
 
@@ -116,7 +129,7 @@ jQuery(document).ready(function ($) {
     }
 
     function isSymbol(str) {
-        return str.length === 1 && str.match(/[\'\"\:\;\,\<\>\/\?!@#\$%\^\&*\)\(+=._-]/i) || str == ' ';
+        return str.length === 1 && str.match(/[\？\！\“\”\：\；\，\。\‘\’\'\"\:\;\,\<\>\/\?!@#\$%\^\&*\)\(+=._-]/i) || str == ' ';
     }
 
     function turn_on_typing_listener() {
