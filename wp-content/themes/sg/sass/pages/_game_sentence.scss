@@ -4,19 +4,33 @@
 
 .toplevel_page_sg_sentence_page {
     background-color: #282e3a;
+
+
+    #wpcontent{
+        padding:0;
+    }
+
+    #wpbody-content{
+        padding:0;
+    }
 }
 
 .game_sentence {
 
-    max-width: 600px;
-    margin: 0 auto;
+    .grey_background{
+        background-color: rgba(0,0,0,0.7);
+    }
+
+    // max-width: 600px;
+    // margin: 0 auto;
     width: 100%;
+    height:calc(100vh - 32px);
     text-align: center;
     padding: 2%;
-    background-color: #424242;
-    height: 500px;
+    background-color: black;
     background-repeat: no-repeat;
     background-size: 100% 100%;
+    
 
 
     .startBtn {
@@ -48,10 +62,12 @@
 
     .scoreWrap {
         float: left;
+        padding: 0 30px;
     }
 
     .errorWrap {
         float: right;
+        padding: 0 30px;
     }
 
     .outerWrap:after {

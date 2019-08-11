@@ -23,6 +23,7 @@
 </div>
 
 <div class="game_sentence">
+    <div class="grey_background">
     <button class="startBtn">START</button>
     <button class="replayBtn">REPLAY</button>
     <div class="outerWrap">
@@ -42,5 +43,7 @@
     <div class="wordsWrap">
         <p class="words"></p>
     </div>
+    </div>
+    
 
 </div>
