@@ -15,6 +15,7 @@ jQuery(document).ready(function (jQuery) {
 
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
+    
 
     var startBtn = document.querySelector(".startBtn");
     var words = document.querySelector(".words");
@@ -261,6 +262,7 @@ jQuery(document).ready(function (jQuery) {
 });
 
 //__________________________Fireworks
+var __explosion = new Audio("../wp-content/themes/sg/sound/__explosion_firework.mp3");
 var fireworks;
 
 var SCREEN_WIDTH = window.innerWidth,
@@ -493,6 +495,11 @@ Rocket.prototype.explode = function () {
 
         particles.push(particle);
     }
+
+    //play sound
+    __explosion.pause();
+    __explosion.currentTime = 0;
+    __explosion.play();
 };
 
 Rocket.prototype.render = function (c) {
