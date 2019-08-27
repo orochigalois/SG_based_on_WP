@@ -181,6 +181,14 @@ function create_user_folder($user_id)
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/picture', 0777);
 }
 
+add_action('user_register', 'create_user_token', 11, 1);
+
+function create_user_token($user_id)
+{
+	$password=randomPassword();
+	update_user_meta($user_id, "user_token", $password);
+}
+
 
 
 function wpse_form_in_admin_bar()

@@ -293,7 +293,7 @@ function get_wordImage($wordmatrix, $isSentenceGame, $wordlist_id)
 
 
 
-//_____________________________________________________________________________________Get all words
+//_____________________________________________________________________________________ALL ajax interface
 function ajax_getWords()
 {
 	$wordlist_id = $_GET['wordlist_id'];
@@ -519,3 +519,80 @@ function ajax_update_sentence()
 }
 add_action('wp_ajax_nopriv_update_sentence', 'ajax_update_sentence');
 add_action('wp_ajax_update_sentence', 'ajax_update_sentence');
+
+
+
+/*
+http://sg.local/wp-admin/admin-ajax.php?action=collect_sentence&sentence=I love you.&user_id=7
+*/
+function ajax_collect_sentence()
+{
+
+
+	$sentence = $_GET['sentence'];
+	//remove backslash
+	$sentence = str_replace('\\', '', $sentence);
+	$user_token = $_GET['user_token'];
+
+	$users=get_users(array('meta_key' => 'user_token', 'meta_value' => $user_token));
+
+	if(isset($users[0]))
+		$user_id=$users[0]->id;
+	else{
+		$result['status'] = "Your token is not correct";
+		print json_encode($result);
+		wp_die();
+	}
+
+
+	$file_exist=false;
+
+	//It opens and writes to the end of the file or creates a new file if it doesn’t exist.
+	$wp_upload_dir = wp_upload_dir();
+	$my_file_name = $wp_upload_dir['path']. '/' . $user_id. '_collection_'.date('Y-m-d').'.txt';
+
+	if (file_exists($my_file_name)) {
+		$file_exist=true;
+	}
+
+	$fp = fopen($my_file_name, "a");
+
+	fwrite($fp,$sentence);
+	fclose($fp);
+
+	if (!$file_exist) {
+		// $filename should be the path to a file in the upload directory.
+		$filename = $my_file_name;
+
+		// The ID of the post this attachment is for.
+		$parent_post_id = 0;
+
+		// Check the type of file. We'll use this as the 'post_mime_type'.
+		$filetype = wp_check_filetype(basename($filename), null);
+
+
+		// Prepare an array of post data for the attachment.
+		$attachment = array(
+			'guid'           => $wp_upload_dir['url'] . '/' . basename($filename),
+			'post_mime_type' => $filetype['type'],
+			'post_title'     => preg_replace('/\.[^.]+$/', '', basename($filename)),
+			'post_content'   => '',
+			'post_status'    => 'inherit',
+			'post_author'    => $user_id
+		);
+
+		// Insert the attachment.
+		$post_id = wp_insert_attachment($attachment, $filename, $parent_post_id);
+		update_post_meta( $post_id, 'main_entry', 'sentence' );
+	}
+
+	
+	
+
+
+	$result['status'] = "success";
+	print json_encode($result);
+	wp_die();
+}
+add_action('wp_ajax_nopriv_collect_sentence', 'ajax_collect_sentence');
+add_action('wp_ajax_collect_sentence', 'ajax_collect_sentence');
