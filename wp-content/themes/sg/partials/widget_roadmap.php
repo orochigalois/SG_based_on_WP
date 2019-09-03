@@ -5,10 +5,10 @@ global $wpdb;
 global $current_user;
 
 $user = wp_get_current_user();
-$main_entry = get_user_meta($user->ID, 'main_entry', true);
+$sg_word_or_sentence = get_user_meta($user->ID, 'sg_word_or_sentence', true);
 
-if ($main_entry == "sentence") {
-    $score_meta_key = '_sg_sentence_score';
+if ($sg_word_or_sentence == "sentence") {
+    $score_meta_key = 'sg_done_once';
 } else {
     $score_meta_key = '_sg_dictation_score';
 }

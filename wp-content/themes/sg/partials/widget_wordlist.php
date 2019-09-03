@@ -5,9 +5,9 @@ global $wpdb;
 global $current_user;
 
 $user = wp_get_current_user();
-$main_entry = get_user_meta($user->ID, 'main_entry', true);
+$sg_word_or_sentence = get_user_meta($user->ID, 'sg_word_or_sentence', true);
 
-if ($main_entry == "sentence") {
+if ($sg_word_or_sentence == "sentence") {
     echo "<table><tr>
     <th>sentence</th>
     <th>date</th>
@@ -15,7 +15,7 @@ if ($main_entry == "sentence") {
 
     $all_ids = $wpdb->get_results(
         "
-        SELECT a.ID,a.post_date from {$wpdb->posts} a left join {$wpdb->postmeta} b on a.id=b.post_id WHERE post_author='{$current_user->ID}' and meta_key='main_entry' and meta_value='sentence'
+        SELECT a.ID,a.post_date from {$wpdb->posts} a left join {$wpdb->postmeta} b on a.id=b.post_id WHERE post_author='{$current_user->ID}' and meta_key='sg_word_or_sentence' and meta_value='sentence'
         "
     );
 
@@ -43,7 +43,7 @@ if ($main_entry == "sentence") {
 
     $all_ids = $wpdb->get_results(
         "
-	SELECT a.ID,a.post_date from {$wpdb->posts} a left join {$wpdb->postmeta} b on a.id=b.post_id WHERE post_author='{$current_user->ID}' and meta_key='main_entry' and meta_value='word'
+	SELECT a.ID,a.post_date from {$wpdb->posts} a left join {$wpdb->postmeta} b on a.id=b.post_id WHERE post_author='{$current_user->ID}' and meta_key='sg_word_or_sentence' and meta_value='word'
     "
     );
 

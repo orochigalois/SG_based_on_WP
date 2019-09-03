@@ -99,15 +99,55 @@ if ( is_wp_error( $id ) ) {
 	exit;
 }
 else{
+	//Step1. update post meta 'sg_word_or_sentence'
 	$user = wp_get_current_user();
-	$main_entry = get_user_meta( $user->ID, 'main_entry', true);
+	$sg_word_or_sentence = get_user_meta( $user->ID, 'sg_word_or_sentence', true);
 
-	if($main_entry=="sentence"){
-		update_post_meta( $id, 'main_entry', 'sentence' );
+	if($sg_word_or_sentence=="sentence"){
+		update_post_meta( $id, 'sg_word_or_sentence', 'sentence' );
 	}
 	else{
-		update_post_meta( $id, 'main_entry', 'word' );
+		update_post_meta( $id, 'sg_word_or_sentence', 'word' );
 	}
+
+	//Step2. import&serialize file data to field 'post_content'
+	$filepath = get_attached_file($id);
+	$filedata = file_get_contents($filepath);
+
+	//tidy up the raw data
+	$filedata = trim($filedata);
+
+	$filedata = preg_replace('/\s+/', ' ', $filedata);//Multiple spaces and newlines are replaced with a single space.
+	$filedata = preg_replace("/[，]/u", ',', $filedata);
+	$filedata = preg_replace("/[。]/u", '.', $filedata);
+	$filedata = preg_replace("/[？]/u", '?', $filedata);
+	$filedata = preg_replace("/[！]/u", '!', $filedata);
+
+	//loop data
+	$count = 0;
+	$lines = multiexplode(array("?", ".", "!", ":"), $filedata);
+
+	$serialized_data = array();
+
+
+	foreach ($lines as $i => $line) {
+
+		if (trim($line) != "") {
+			$count++;
+			$serialized_data[] = trim($line);
+		}
+	}
+	$serialized_data = maybe_serialize( $serialized_data );
+
+
+	$my_post = array(
+		'ID'           => $id,
+		'post_content' => $serialized_data,
+	);
+    // Update the post into the database
+	wp_update_post( $my_post );
+
+	update_post_meta($id, 'sg_how_many_sentences', $count);
 }
 
 if ( $_REQUEST['short'] ) {

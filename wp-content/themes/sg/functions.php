@@ -83,7 +83,7 @@ function redirect_to_url()
 add_action('template_redirect', 'redirect_to_url');
 
 
-
+//_____________________________________________SG logic begins
 function wpse239290_user_welcome_notice()
 {
 	// Make sure that the user is assigned to the subscriber role, specifically.
@@ -205,13 +205,13 @@ add_action('admin_bar_menu', 'wpse_form_in_admin_bar');
 
 
 
-function sg_main_entry($wp_admin_bar)
+function print_word_or_sentence_icon_on_admin_bar($wp_admin_bar)
 {
 
 	$user = wp_get_current_user();
-	$main_entry = get_user_meta($user->ID, 'main_entry', true);
+	$sg_word_or_sentence = get_user_meta($user->ID, 'sg_word_or_sentence', true);
 
-	if ($main_entry == "sentence") {
+	if ($sg_word_or_sentence == "sentence") {
 		$wp_logo_menu_args = array(
 			'id'    => 'wp-logo',
 			'title' => '<span class="ab-icon ab-sentence"></span>',
@@ -240,7 +240,7 @@ function sg_main_entry($wp_admin_bar)
 			'parent' => 'wp-logo',
 			'id'     => 'word',
 			'title'  => __('Word'),
-			'href'   => 'index.php?main_entry=word',
+			'href'   => 'index.php?sg_word_or_sentence=word',
 		)
 	);
 
@@ -250,7 +250,7 @@ function sg_main_entry($wp_admin_bar)
 			'parent' => 'wp-logo',
 			'id'     => 'sentence',
 			'title'  => __('Sentence'),
-			'href'   => 'index.php?main_entry=sentence',
+			'href'   => 'index.php?sg_word_or_sentence=sentence',
 		)
 	);
 }
@@ -264,20 +264,20 @@ function customize_menu()
 	remove_action('admin_bar_menu', 'wp_admin_bar_wp_menu', 10);
 	remove_action('admin_bar_menu', 'wp_admin_bar_site_menu', 30);
 
-	add_action('admin_bar_menu', 'sg_main_entry', 10);
+	add_action('admin_bar_menu', 'print_word_or_sentence_icon_on_admin_bar', 10);
 }
 //choose the right time to remove_action, that's why the priority '100' being there
 add_action('admin_init', 'customize_menu', 100);
 
 
-function main_entry()
+function sg_word_or_sentence()
 {
-	if (isset($_GET['main_entry'])) {
+	if (isset($_GET['sg_word_or_sentence'])) {
 		$user = wp_get_current_user();
-		update_user_meta($user->ID, 'main_entry', $_GET['main_entry']);
+		update_user_meta($user->ID, 'sg_word_or_sentence', $_GET['sg_word_or_sentence']);
 	}
 }
-add_action('load-index.php', 'main_entry', 1, 0);
+add_action('load-index.php', 'sg_word_or_sentence', 1, 0);
 
 
 
@@ -401,7 +401,7 @@ function dashboard_widget_wordlist_function()
 
 
 // 	while ($author_posts->have_posts()) : $author_posts->the_post();
-// 		update_post_meta(get_the_ID(), 'main_entry', 'word');
+// 		update_post_meta(get_the_ID(), 'sg_word_or_sentence', 'word');
 
 // 	endwhile;
 // 	wp_reset_postdata();

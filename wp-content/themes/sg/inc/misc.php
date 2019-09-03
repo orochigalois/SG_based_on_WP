@@ -242,9 +242,9 @@ function is_sentence_game()
 {
 	global $current_user;
 
-	$main_entry = get_user_meta($current_user->ID, 'main_entry', true);
+	$sg_word_or_sentence = get_user_meta($current_user->ID, 'sg_word_or_sentence', true);
 
-	if ($main_entry == "sentence") {
+	if ($sg_word_or_sentence == "sentence") {
 		return true;
 	} else {
 		return false;

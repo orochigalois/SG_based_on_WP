@@ -32,7 +32,7 @@
 
 
 		$date = '';
-		$custom_query = array('posts_per_page' => '-1', 'author' => $current_user->ID, 'post_type' => 'attachment', 'post_status' => 'inherit', 'orderby' => 'publish_date', 'order' => 'DESC', 'meta_key' => 'main_entry', 'meta_value' => $meta_value);
+		$custom_query = array('posts_per_page' => '-1', 'author' => $current_user->ID, 'post_type' => 'attachment', 'post_status' => 'inherit', 'orderby' => 'publish_date', 'order' => 'DESC', 'meta_key' => 'sg_word_or_sentence', 'meta_value' => $meta_value);
 		$author_posts = new WP_Query($custom_query);
 		while ($author_posts->have_posts()) : $author_posts->the_post();
 
@@ -50,7 +50,7 @@
 			}
 
 
-			$already_loaded = get_post_meta(get_the_ID(), '_sg_wordlist_already_loaded', true);
+			$already_loaded = get_post_meta(get_the_ID(), 'sg_already_loaded', true);
 			if (empty($already_loaded))
 				$already_loaded = 'no';
 
