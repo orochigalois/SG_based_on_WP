@@ -5,9 +5,9 @@
         echo $current_user->ID;
         ?>
     </div>
-    <div class="hidden_data__wordlist_id">
+    <div class="hidden_data__post_id">
         <?php
-        echo $_SESSION['wordlist_id'];
+        echo $_SESSION['post_id'];
         ?>
     </div>
 

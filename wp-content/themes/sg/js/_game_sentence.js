@@ -11,7 +11,7 @@ jQuery(document).ready(function (jQuery) {
     });
 
     var userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
-    var wordlist_id = jQuery(".hidden_data .hidden_data__wordlist_id").text().trim();
+    var post_id = jQuery(".hidden_data .hidden_data__post_id").text().trim();
 
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
@@ -81,12 +81,12 @@ jQuery(document).ready(function (jQuery) {
 
 
         //b. show picture
-        jQuery(".game_sentence").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + wordlist_id + "_" + sentenceIndex + ")");
+        jQuery(".game_sentence").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + post_id + "_" + sentenceIndex + ")");
 
 
 
         //c. play sound
-        wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + wordlist_id + "_" + sentenceIndex + ".mp3");
+        wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + post_id + "_" + sentenceIndex + ".mp3");
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
@@ -227,7 +227,7 @@ jQuery(document).ready(function (jQuery) {
                                 method: 'GET',
                                 data: {
                                     action: 'updateScore',
-                                    wordlist_id: wordlist_id,
+                                    post_id: post_id,
                                     isSentenceGame: 'yes',
                                 },
                                 dataType: 'json',

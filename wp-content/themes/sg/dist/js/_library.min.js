@@ -56,7 +56,7 @@ function initOpenModal() {
 	jQuery(".shelf .book").on("click", document, function (event) {
 		prepare_loading();
 		$currentBook = jQuery(this);
-		currentPostID = jQuery(this).data("wordlist_id");
+		currentPostID = jQuery(this).data("post_id");
 		currentTitle = jQuery(this).text();
 		var already_loaded = jQuery(this).data("already_loaded")
 		ajax_get_words(currentPostID, already_loaded, currentTitle);
@@ -77,13 +77,13 @@ function prepare_loading() {
 	jQuery('.md-modal select').attr("disabled", true);
 }
 
-function ajax_get_words(wordlist_id, already_loaded, title) {
+function ajax_get_words(post_id, already_loaded, title) {
 	jQuery.ajax({
 		url: _ajaxurl,
 		method: 'GET',
 		data: {
 			action: 'getWords',
-			wordlist_id: wordlist_id,
+			post_id: post_id,
 			already_loaded: already_loaded,
 			isSentenceGame: isSentenceGame,
 		},
@@ -117,7 +117,7 @@ function ajax_get_words(wordlist_id, already_loaded, title) {
 
 
 
-				titleHandler(wordlist_id);
+				titleHandler(post_id);
 
 
 
@@ -267,7 +267,7 @@ function sentenceUpdateHandler() {
 	});
 }
 
-function updateWord(index, wordlist_id) {
+function updateWord(index, post_id) {
 	var word = jQuery('#updateWord>input[name=word]').val();
 	var sentence = jQuery('#updateWord>input[name=sentence]').val();
 	jQuery('#updateModal').modal('hide');
@@ -278,7 +278,7 @@ function updateWord(index, wordlist_id) {
 		data: {
 			action: 'update_word',
 			index: index,
-			wordlist_id: wordlist_id,
+			post_id: post_id,
 			word: word,
 			sentence: sentence,
 		},
@@ -306,7 +306,7 @@ function updateWord(index, wordlist_id) {
 
 }
 
-function updateSentence(index, wordlist_id) {
+function updateSentence(index, post_id) {
 	var sentence = jQuery('#updateWord>input[name=sentence]').val();
 	jQuery('#updateModal').modal('hide');
 	jQuery("#loadIcon").fadeIn();
@@ -316,7 +316,7 @@ function updateSentence(index, wordlist_id) {
 		data: {
 			action: 'update_sentence',
 			index: index,
-			wordlist_id: wordlist_id,
+			post_id: post_id,
 			sentence: sentence,
 		},
 		dataType: 'json',
@@ -441,7 +441,7 @@ function imageHandler() {
 	});
 }
 
-function titleHandler(wordlist_id) {
+function titleHandler(post_id) {
 	jQuery(".md-modal .vocabulary>h1").on("click", function () {
 		jQuery(".modal-body").empty().append(`
                 <form id="updateTitle" action="">
@@ -450,14 +450,14 @@ function titleHandler(wordlist_id) {
              `);
 
 		jQuery(".modal-footer").empty().append(`
-                     <button type="button" type="submit" class="btn btn-primary" onClick="updateTitle(${wordlist_id})">Save changes</button>
+                     <button type="button" type="submit" class="btn btn-primary" onClick="updateTitle(${post_id})">Save changes</button>
                      <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
                  
              `);
 	});
 }
 
-function updateTitle(wordlist_id) {
+function updateTitle(post_id) {
 	currentTitle = jQuery('#updateTitle>input').val();
 	jQuery('#updateModal').modal('hide');
 	jQuery("#loadIcon").fadeIn();
@@ -467,7 +467,7 @@ function updateTitle(wordlist_id) {
 		data: {
 			action: 'update_title',
 			title: currentTitle,
-			wordlist_id: wordlist_id,
+			post_id: post_id,
 		},
 		dataType: 'json',
 		success: function (response) {

@@ -11,13 +11,13 @@ if ($sg_word_or_sentence == "sentence") :
     $scores = $wpdb->get_results(
         "select c.post_id, c.post_title, c.times, d.`meta_value` as words FROM 
         (SELECT post_id, post_title,COUNT(meta_key) as times FROM wp_postmeta a left join wp_posts b on a.post_id=b.id
-            WHERE meta_key='sg_done_once' and b.post_author='{$current_user->ID}' group by post_id order by COUNT(meta_key) desc,`meta_value` desc) c left join wp_postmeta d on c.post_id=d.post_id where d.`meta_key`='sg_how_many_sentences'"
+            WHERE meta_key='sg_done_once' and b.post_author='{$current_user->ID}' group by post_id order by COUNT(meta_key) desc,`meta_value` desc) c left join wp_postmeta d on c.post_id=d.post_id where d.`meta_key`='sg_how_many_items'"
     );
 
     $all_ids = $wpdb->get_results(
         "
         SELECT ID,post_title,b.`meta_value` as words from {$wpdb->posts} a left join wp_postmeta b on a.id=b.post_id 
-        WHERE post_author='{$current_user->ID}' and b.`meta_key`='sg_how_many_sentences'
+        WHERE post_author='{$current_user->ID}' and b.`meta_key`='sg_how_many_items'
         "
     );
     $total_words = 0;
@@ -51,13 +51,13 @@ else :
     $scores = $wpdb->get_results(
         "select c.post_id, c.post_title, c.times, d.`meta_value` as words FROM 
         (SELECT post_id, post_title,COUNT(meta_key) as times FROM wp_postmeta a left join wp_posts b on a.post_id=b.id
-            WHERE meta_key='_sg_dictation_score' and b.post_author='{$current_user->ID}' group by post_id order by COUNT(meta_key) desc,`meta_value` desc) c left join wp_postmeta d on c.post_id=d.post_id where d.`meta_key`='_sg_word_count'"
+            WHERE meta_key='sg_done_once' and b.post_author='{$current_user->ID}' group by post_id order by COUNT(meta_key) desc,`meta_value` desc) c left join wp_postmeta d on c.post_id=d.post_id where d.`meta_key`='sg_how_many_items'"
     );
 
     $all_ids = $wpdb->get_results(
         "
         SELECT ID,post_title,b.`meta_value` as words from {$wpdb->posts} a left join wp_postmeta b on a.id=b.post_id 
-        WHERE post_author='{$current_user->ID}' and b.`meta_key`='_sg_word_count'
+        WHERE post_author='{$current_user->ID}' and b.`meta_key`='sg_how_many_items'
         "
     );
     $total_words = 0;

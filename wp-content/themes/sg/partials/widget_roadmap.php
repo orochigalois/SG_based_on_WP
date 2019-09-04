@@ -10,7 +10,7 @@ $sg_word_or_sentence = get_user_meta($user->ID, 'sg_word_or_sentence', true);
 if ($sg_word_or_sentence == "sentence") {
     $score_meta_key = 'sg_done_once';
 } else {
-    $score_meta_key = '_sg_dictation_score';
+    $score_meta_key = 'sg_done_once';
 }
 
 $scores = $wpdb->get_results(

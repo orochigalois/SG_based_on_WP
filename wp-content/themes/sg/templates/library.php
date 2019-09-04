@@ -55,7 +55,7 @@
 				$already_loaded = 'no';
 
 			echo '<div class="book_container">';
-			echo '<div class="book" data-already_loaded="' . $already_loaded . '" data-wordlist_id="' . get_the_ID() . '">' . get_the_title() . '</div>';
+			echo '<div class="book" data-already_loaded="' . $already_loaded . '" data-post_id="' . get_the_ID() . '">' . get_the_title() . '</div>';
 			echo '</div>';
 
 

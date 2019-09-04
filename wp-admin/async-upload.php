@@ -116,29 +116,50 @@ else{
 
 	//tidy up the raw data
 	$filedata = trim($filedata);
-
-	$filedata = preg_replace('/\s+/', ' ', $filedata);//Multiple spaces and newlines are replaced with a single space.
 	$filedata = preg_replace("/[，]/u", ',', $filedata);
 	$filedata = preg_replace("/[。]/u", '.', $filedata);
 	$filedata = preg_replace("/[？]/u", '?', $filedata);
 	$filedata = preg_replace("/[！]/u", '!', $filedata);
 
-	//loop data
 	$count = 0;
-	$lines = multiexplode(array("?", ".", "!", ":"), $filedata);
-
 	$serialized_data = array();
 
+	if ($sg_word_or_sentence == "sentence") {
+		//Multiple spaces and newlines are replaced with a single space.
+		$filedata = preg_replace('/\s+/', ' ', $filedata); 
+		
+		$lines = multiexplode(array("?", ".", "!", ":"), $filedata);
 
-	foreach ($lines as $i => $line) {
 
-		if (trim($line) != "") {
-			$count++;
-			$serialized_data[] = trim($line);
+		foreach ($lines as $i => $line) {
+
+			if (trim($line) != "") {
+				$count++;
+				$serialized_data[] = trim($line);
+			}
 		}
-	}
-	$serialized_data = maybe_serialize( $serialized_data );
+		
+	} else {
+		$filedata = preg_replace("/[\r\n]+/", "\n", $filedata);
 
+		$lines = explode("\n", $filedata); // split data by new lines
+		foreach ($lines as $i => $line) {
+			$count++;
+			$values = explode(',', $line, 2); // split lines by commas
+			$serialized_data[$i]['word'] = trim($values[0]);
+			unset($values[0]);
+			if (isset($values[1])) {
+				$serialized_data[$i]['sentence'] = trim($values[1]);
+				unset($values[1]);
+			} else {
+				$serialized_data[$i]['sentence'] = "";
+			}
+		}
+	
+	 }
+
+
+	$serialized_data = maybe_serialize( $serialized_data );
 
 	$my_post = array(
 		'ID'           => $id,
@@ -146,8 +167,8 @@ else{
 	);
     // Update the post into the database
 	wp_update_post( $my_post );
-
-	update_post_meta($id, 'sg_how_many_sentences', $count);
+	update_post_meta($id, 'sg_how_many_items', $count);
+	
 }
 
 if ( $_REQUEST['short'] ) {

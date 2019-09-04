@@ -12,7 +12,7 @@ jQuery(document).ready(function ($) {
     });
 
     var userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
-    var wordlist_id = jQuery(".hidden_data .hidden_data__wordlist_id").text().trim();
+    var post_id = jQuery(".hidden_data .hidden_data__post_id").text().trim();
 
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
@@ -188,7 +188,7 @@ jQuery(document).ready(function ($) {
                                 method: 'GET',
                                 data: {
                                     action: 'updateScore',
-                                    wordlist_id:wordlist_id,
+                                    post_id:post_id,
                                 },
                                 dataType: 'json',
                                 success: function (response) {

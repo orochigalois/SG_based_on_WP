@@ -51,59 +51,22 @@ function curl_save_file($url, $saveTo)
 
 
 
-function get_wordMatrix($post_id, $already_loaded, $isSentenceGame)
+function prepare_wordMatrix($post_id, $already_loaded, $isSentenceGame)
 {
-
-	//parse csv
-	$filepath = get_attached_file($post_id);
-
-	$csvdata = file_get_contents($filepath);
-
-
-	$count = 0;
+	$my_post = get_post($post_id);
+	$content = $my_post->post_content;
+	$lines = maybe_unserialize( $content );
 	if ($isSentenceGame == "yes") {
-		$my_post = get_post($post_id);
-		$content = $my_post->post_content;
-		$lines = maybe_unserialize( $content );
 		foreach ($lines as $i => $line) {
 			$wordmatrix[$i]['sentence'] = $line;
 		}
 	} else {
-
-		if ($already_loaded != 'yes') {
-			//trim and put it back
-			$csvdata = trim($csvdata);
-			$csvdata = preg_replace("/[\r\n]+/", "\n", $csvdata);
-			$csvdata = preg_replace("/[，]/u", ',', $csvdata);
-
-			file_put_contents($filepath, $csvdata);
-		}
-
-		$lines = explode("\n", $csvdata); // split data by new lines
-		foreach ($lines as $i => $line) {
-			$count++;
-			$values = explode(',', $line, 2); // split lines by commas
-			$wordmatrix[$i]['word'] = trim($values[0]);
-			unset($values[0]);
-			if (isset($values[1])) {
-				$wordmatrix[$i]['sentence'] = trim($values[1]);
-				unset($values[1]);
-			} else {
-				$wordmatrix[$i]['sentence'] = "";
-			}
-		}
-		//save word count
-		if (!add_post_meta($post_id, '_sg_word_count', $count, true)) {
-			update_post_meta($post_id, '_sg_word_count', $count);
-		}
+		$wordmatrix=$lines;
 	}
-
-
-
 	return $wordmatrix;
 }
 
-function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $wordlist_id)
+function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id)
 {
 	global $current_user;
 
@@ -141,7 +104,7 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $wordlist_id)
 
 				$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
 				$audioContent = $response->getAudioContent();
-				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $wordlist_id . '_' . $i . '.mp3';
+				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $post_id . '_' . $i . '.mp3';
 
 				file_put_contents($sentence_saveTo, $audioContent);
 			}
@@ -223,7 +186,7 @@ function get_wordSound_by_voicerss_tts($wordmatrix, $isSentenceGame)
 }
 
 
-function get_wordImage($wordmatrix, $isSentenceGame, $wordlist_id)
+function get_wordImage($wordmatrix, $isSentenceGame, $post_id)
 {
 	global $current_user;
 
@@ -256,7 +219,7 @@ function get_wordImage($wordmatrix, $isSentenceGame, $wordlist_id)
 
 
 
-			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $wordlist_id . '_' . $i;
+			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $post_id . '_' . $i;
 		} else {
 			$image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $word;
 		}
@@ -274,11 +237,11 @@ function get_wordImage($wordmatrix, $isSentenceGame, $wordlist_id)
 //_____________________________________________________________________________________ALL ajax interface
 function ajax_getWords()
 {
-	$wordlist_id = $_GET['wordlist_id'];
+	$post_id = $_GET['post_id'];
 	$isSentenceGame = $_GET['isSentenceGame'];
 	$already_loaded = (!empty($_GET['already_loaded']) ? (string) $_GET['already_loaded'] : 'no');
 
-	$wordMatrix = get_wordMatrix($wordlist_id, $already_loaded, $isSentenceGame);
+	$wordMatrix = prepare_wordMatrix($post_id, $already_loaded, $isSentenceGame);
 
 	if ($already_loaded != 'yes') {
 
@@ -289,13 +252,15 @@ function ajax_getWords()
 			if ($user_info['tts'][0] == 'voicerss') {
 				get_wordSound_by_voicerss_tts($wordMatrix, $isSentenceGame);
 			} else {
-				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $wordlist_id);
+				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id);
 			}
 		} else {
-			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $wordlist_id);
+			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id);
 		}
 
-		get_wordImage($wordMatrix, $isSentenceGame, $wordlist_id);
+		get_wordImage($wordMatrix, $isSentenceGame, $post_id);
+
+		update_post_meta($post_id, 'sg_already_loaded', 'yes');
 	}
 
 
@@ -303,15 +268,11 @@ function ajax_getWords()
 	$result['wordMatrix'] = $wordMatrix;;
 
 
-	update_post_meta($wordlist_id, 'sg_already_loaded', 'yes');
-
-
-
 	//store $wordmatrix
 	$_SESSION['wordMatrix'] = $wordMatrix;
 
-	//store $wordlist_id
-	$_SESSION['wordlist_id'] = $wordlist_id;
+	//store $post_id
+	$_SESSION['post_id'] = $post_id;
 	print json_encode($result);
 	wp_die();
 }
@@ -326,16 +287,8 @@ function ajax_updateScore()
 {
 	date_default_timezone_set('Australia/Melbourne');
 	$score_meta = date("Y-m-d H:i:s");
-
-	$isSentenceGame = $_GET['isSentenceGame'];
-
-	if ($isSentenceGame == 'yes') {
-		add_post_meta($_GET['wordlist_id'], 'sg_done_once', $score_meta);
-	} else {
-		add_post_meta($_GET['wordlist_id'], '_sg_dictation_score', $score_meta);
-	}
-
-
+	add_post_meta($_GET['post_id'], 'sg_done_once', $score_meta);
+	
 	$result['status'] = "success";
 	print json_encode($result);
 	wp_die();
@@ -397,11 +350,11 @@ add_action('wp_ajax_save_images', 'ajax_save_images');
 
 function ajax_update_title()
 {
-	$wordlist_id = $_GET['wordlist_id'];
+	$post_id = $_GET['post_id'];
 
 	$title = $_GET['title'];
 
-	$file = get_attached_file($wordlist_id);
+	$file = get_attached_file($post_id);
 	$path = pathinfo($file);
 	//dirname   = File Path
 	//basename  = Filename.Extension
@@ -411,11 +364,11 @@ function ajax_update_title()
 	$newfile = $path['dirname'] . "/" . $title . "." . $path['extension'];
 
 	rename($file, $newfile);
-	update_attached_file($wordlist_id, $newfile);
+	update_attached_file($post_id, $newfile);
 
 
 	$my_post = array(
-		'ID'           => $wordlist_id,
+		'ID'           => $post_id,
 		'post_title'   => $title,
 	);
 
@@ -432,13 +385,13 @@ add_action('wp_ajax_update_title', 'ajax_update_title');
 
 function ajax_update_word()
 {
-	$wordlist_id = $_GET['wordlist_id'];
+	$post_id = $_GET['post_id'];
 	$index = $_GET['index'];
 
 	$word = $_GET['word'];
 	$sentence = $_GET['sentence'];
 
-	$file = get_attached_file($wordlist_id);
+	$file = get_attached_file($post_id);
 
 	$lines = file($file, FILE_IGNORE_NEW_LINES);
 	$lines[$index] = $word . ',' . $sentence;
@@ -454,12 +407,12 @@ add_action('wp_ajax_update_word', 'ajax_update_word');
 
 function ajax_update_sentence()
 {
-	$wordlist_id = $_GET['wordlist_id'];
+	$post_id = $_GET['post_id'];
 	$index = $_GET['index'];
 
 	$sentence = stripslashes($_GET['sentence']);
 
-	$filepath = get_attached_file($wordlist_id);
+	$filepath = get_attached_file($post_id);
 	$csvdata = file_get_contents($filepath);
 
 	$delimiters = array();
