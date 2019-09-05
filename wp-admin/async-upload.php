@@ -167,7 +167,6 @@ else{
 	);
     // Update the post into the database
 	wp_update_post( $my_post );
-	update_post_meta($id, 'sg_how_many_items', $count);
 	
 }
 

@@ -1,14 +1,5 @@
 <?php
 
-function write_log($log)
-{
-
-	if (is_array($log) || is_object($log)) {
-		error_log(print_r($log, true));
-	} else {
-		error_log($log);
-	}
-}
 
 function lp_is_plugin_active($plugin_file)
 {
@@ -238,6 +229,19 @@ function lp_add_params_to_embed($embed, $params)
 	return $embed;
 }
 
+
+
+//_______________________________________________________________________________________SG logic begins
+function write_log($log)
+{
+
+	if (is_array($log) || is_object($log)) {
+		error_log(print_r($log, true));
+	} else {
+		error_log($log);
+	}
+}
+
 function is_sentence_game()
 {
 	global $current_user;
@@ -282,4 +286,19 @@ function randomPassword() {
         $pass[] = $alphabet[$n];
     }
     return implode($pass); //turn the array into a string
+}
+
+
+
+
+function get_content_in_the($post_id){
+	$my_post = get_post($post_id);
+	$content = $my_post->post_content;
+	$lines = maybe_unserialize( $content );
+	return $lines;
+}
+
+function get_how_many_items_in_the($post_id){
+	$lines = get_content_in_the($post_id);
+	return count($lines);
 }

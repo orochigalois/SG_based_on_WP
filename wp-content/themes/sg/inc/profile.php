@@ -73,7 +73,7 @@ add_action('edit_user_profile', 'show_token',11);
 
 function show_token($user)
 { 
-    $user_token = get_user_meta($user->ID, 'user_token', true);
+    $sg_user_token = get_user_meta($user->ID, 'sg_user_token', true);
     // $protocol = stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0 ? 'https://' : 'http://';
     // $domainName = $_SERVER['SERVER_NAME'];
     ?>
@@ -88,7 +88,7 @@ function show_token($user)
                     <label for="tts">Your token:</label>
                 </th>
                 <td>
-                    <?= $user_token; ?>
+                    <?= $sg_user_token; ?>
                  </td>
             </tr>
 
@@ -106,7 +106,7 @@ function show_token($user)
 
 <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
 <pre data-lang='lua' class='prettyprint'>
-YOUR_TOKEN = "<?= $user_token; ?>";
+YOUR_TOKEN = "<?= $sg_user_token; ?>";
 REMOTE_URL = "<?= site_url(); ?>";
 
 hs.hotkey.bind({"cmd", "alt", "ctrl"}, "0", function()
@@ -114,7 +114,7 @@ hs.hotkey.bind({"cmd", "alt", "ctrl"}, "0", function()
     local text = current_selection()
     local url =
     REMOTE_URL .. "/wp-admin/admin-ajax.php?action=collect_sentence&sentence=" ..
-            encodeURI(text) .. ".&user_token=" .. YOUR_TOKEN
+            encodeURI(text) .. ".&sg_user_token=" .. YOUR_TOKEN
 
     local res = hs.urlevent.openURL(url)
     print(res)

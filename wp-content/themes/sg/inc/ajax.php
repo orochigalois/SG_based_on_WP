@@ -51,22 +51,24 @@ function curl_save_file($url, $saveTo)
 
 
 
-function prepare_wordMatrix($post_id, $already_loaded, $isSentenceGame)
+function prepare_wordMatrix($post_id, $isSentenceGame)
 {
-	$my_post = get_post($post_id);
-	$content = $my_post->post_content;
-	$lines = maybe_unserialize( $content );
+	$lines = get_content_in_the($post_id);
 	if ($isSentenceGame == "yes") {
 		foreach ($lines as $i => $line) {
 			$wordmatrix[$i]['sentence'] = $line;
 		}
 	} else {
-		$wordmatrix=$lines;
+		$wordmatrix = $lines;
 	}
 	return $wordmatrix;
 }
 
-function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id)
+
+/**
+ * if $line_index=NULL, then reload all
+ */
+function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id, $line_index)
 {
 	global $current_user;
 
@@ -90,11 +92,75 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id)
 		->setAudioEncoding(AudioEncoding::MP3)
 		->setEffectsProfileId(array($effectsProfileId));
 
-	foreach ($wordmatrix as $i => $wordline) {
+	if (is_null($line_index)) {
+		foreach ($wordmatrix as $i => $wordline) {
+
+
+			if ($isSentenceGame == 'yes') {
+				$sentence = str_replace("\r", "", $wordline['sentence']);
+
+
+
+				if ($sentence != '') {
+					$synthesisInputText = (new SynthesisInput())
+						->setText($sentence);
+
+					$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+					$audioContent = $response->getAudioContent();
+					$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $post_id . '_' . $i . '.mp3';
+
+					file_put_contents($sentence_saveTo, $audioContent);
+				}
+			} else {
+				$word = strtolower($wordline['word']);
+				//If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
+				$sentence = str_replace("\r", "", $wordline['sentence']);
+
+
+
+
+				// sets text to be synthesised
+				$synthesisInputText = (new SynthesisInput())
+					->setText($word);
+
+
+
+				// perform text-to-speech request on the text input with selected voice
+				// parameters and audio file type
+				$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+				$audioContent = $response->getAudioContent();
+
+
+
+
+
+				$word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/word' . '/' . $word . '.mp3';
+
+
+				// the response's audioContent is binary
+				file_put_contents($word_saveTo, $audioContent);
+
+
+
+				if ($sentence != '') {
+
+					$synthesisInputText->setText($sentence);
+
+					$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+					$audioContent = $response->getAudioContent();
+					$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
+
+					file_put_contents($sentence_saveTo, $audioContent);
+				}
+			}
+		}
+	} else {
+
+
 
 
 		if ($isSentenceGame == 'yes') {
-			$sentence = str_replace("\r", "", $wordline['sentence']);
+			$sentence = str_replace("\r", "", $wordmatrix[$line_index]['sentence']);
 
 
 
@@ -104,14 +170,14 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id)
 
 				$response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
 				$audioContent = $response->getAudioContent();
-				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $post_id . '_' . $i . '.mp3';
+				$sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $post_id . '_' . $line_index . '.mp3';
 
 				file_put_contents($sentence_saveTo, $audioContent);
 			}
 		} else {
-			$word = strtolower($wordline['word']);
+			$word = strtolower($wordmatrix[$line_index]['word']);
 			//If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
-			$sentence = str_replace("\r", "", $wordline['sentence']);
+			$sentence = str_replace("\r", "", $wordmatrix[$line_index]['sentence']);
 
 
 
@@ -234,14 +300,14 @@ function get_wordImage($wordmatrix, $isSentenceGame, $post_id)
 
 
 
-//_____________________________________________________________________________________ALL ajax interface
+//__________________________________________________________________________________________________________ALL ajax interface
 function ajax_getWords()
 {
 	$post_id = $_GET['post_id'];
 	$isSentenceGame = $_GET['isSentenceGame'];
 	$already_loaded = (!empty($_GET['already_loaded']) ? (string) $_GET['already_loaded'] : 'no');
 
-	$wordMatrix = prepare_wordMatrix($post_id, $already_loaded, $isSentenceGame);
+	$wordMatrix = prepare_wordMatrix($post_id, $isSentenceGame);
 
 	if ($already_loaded != 'yes') {
 
@@ -252,10 +318,10 @@ function ajax_getWords()
 			if ($user_info['tts'][0] == 'voicerss') {
 				get_wordSound_by_voicerss_tts($wordMatrix, $isSentenceGame);
 			} else {
-				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id);
+				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id, NULL);
 			}
 		} else {
-			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id);
+			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id, NULL);
 		}
 
 		get_wordImage($wordMatrix, $isSentenceGame, $post_id);
@@ -288,7 +354,7 @@ function ajax_updateScore()
 	date_default_timezone_set('Australia/Melbourne');
 	$score_meta = date("Y-m-d H:i:s");
 	add_post_meta($_GET['post_id'], 'sg_done_once', $score_meta);
-	
+
 	$result['status'] = "success";
 	print json_encode($result);
 	wp_die();
@@ -351,9 +417,9 @@ add_action('wp_ajax_save_images', 'ajax_save_images');
 function ajax_update_title()
 {
 	$post_id = $_GET['post_id'];
-
 	$title = $_GET['title'];
 
+	//Step1. update file name in upload folder
 	$file = get_attached_file($post_id);
 	$path = pathinfo($file);
 	//dirname   = File Path
@@ -366,7 +432,7 @@ function ajax_update_title()
 	rename($file, $newfile);
 	update_attached_file($post_id, $newfile);
 
-
+	//Step2. update file name in wp_post
 	$my_post = array(
 		'ID'           => $post_id,
 		'post_title'   => $title,
@@ -391,12 +457,39 @@ function ajax_update_word()
 	$word = $_GET['word'];
 	$sentence = $_GET['sentence'];
 
+	//Step1. update sentence in file
 	$file = get_attached_file($post_id);
 
 	$lines = file($file, FILE_IGNORE_NEW_LINES);
 	$lines[$index] = $word . ',' . $sentence;
 	file_put_contents($file, implode("\n", $lines));
 
+	//Step2. update sentence in db
+	$lines = get_content_in_the($post_id);
+
+	$lines[$index]['word'] = $word;
+	$lines[$index]['sentence'] = $sentence;
+
+	$serialized_data = maybe_serialize($lines);
+
+	$my_post = array(
+		'ID'           => $post_id,
+		'post_content' => $serialized_data,
+	);
+	wp_update_post($my_post);
+
+	//Step3. refresh the wordMatrix
+
+	$wordMatrix = $_SESSION['wordMatrix'];
+	$wordMatrix[$index]['word'] = $word;
+	$wordMatrix[$index]['sentence'] = $sentence;
+	$_SESSION['wordMatrix'] = $wordMatrix;
+
+	//Step4. reload the voice
+	get_wordSound_by_google_tts($_SESSION['wordMatrix'], "no", $post_id, $index);
+
+
+	//Step5. return
 	$result['status'] = "success";
 	print json_encode($result);
 	wp_die();
@@ -412,6 +505,8 @@ function ajax_update_sentence()
 
 	$sentence = stripslashes($_GET['sentence']);
 
+
+	//Step1. update sentence in file
 	$filepath = get_attached_file($post_id);
 	$csvdata = file_get_contents($filepath);
 
@@ -443,6 +538,32 @@ function ajax_update_sentence()
 
 	file_put_contents($filepath, $result_string);
 
+
+	//Step2. update sentence in db
+	$lines = get_content_in_the($post_id);
+
+	$lines[$index] = $sentence;
+
+	$serialized_data = maybe_serialize($lines);
+
+	$my_post = array(
+		'ID'           => $post_id,
+		'post_content' => $serialized_data,
+	);
+	wp_update_post($my_post);
+
+
+
+	//Step3. refresh the wordMatrix
+
+	$wordMatrix = $_SESSION['wordMatrix'];
+	$wordMatrix[$index] = $sentence;
+	$_SESSION['wordMatrix'] = $wordMatrix;
+
+	//Step4. reload the voice
+	get_wordSound_by_google_tts($_SESSION['wordMatrix'], "yes", $post_id, $index);
+
+	//Step5. return
 	$result['status'] = "success";
 	print json_encode($result);
 	wp_die();
@@ -462,32 +583,32 @@ function ajax_collect_sentence()
 	$sentence = $_GET['sentence'];
 	//remove backslash
 	$sentence = str_replace('\\', '', $sentence);
-	$user_token = $_GET['user_token'];
+	$sg_user_token = $_GET['sg_user_token'];
 
-	$users=get_users(array('meta_key' => 'user_token', 'meta_value' => $user_token));
+	$users = get_users(array('meta_key' => 'sg_user_token', 'meta_value' => $sg_user_token));
 
-	if(isset($users[0]))
-		$user_id=$users[0]->id;
-	else{
+	if (isset($users[0]))
+		$user_id = $users[0]->id;
+	else {
 		$result['status'] = "Your token is not correct";
 		print json_encode($result);
 		wp_die();
 	}
 
 
-	$file_exist=false;
+	$file_exist = false;
 
 	//It opens and writes to the end of the file or creates a new file if it doesn’t exist.
 	$wp_upload_dir = wp_upload_dir();
-	$my_file_name = $wp_upload_dir['path']. '/' . $user_id. '_collection_'.date('Y-m-d').'.txt';
+	$my_file_name = $wp_upload_dir['path'] . '/' . $user_id . '_collection_' . date('Y-m-d') . '.txt';
 
 	if (file_exists($my_file_name)) {
-		$file_exist=true;
+		$file_exist = true;
 	}
 
 	$fp = fopen($my_file_name, "a");
 
-	fwrite($fp,$sentence);
+	fwrite($fp, $sentence);
 	fclose($fp);
 
 	if (!$file_exist) {
@@ -500,24 +621,39 @@ function ajax_collect_sentence()
 		// Check the type of file. We'll use this as the 'post_mime_type'.
 		$filetype = wp_check_filetype(basename($filename), null);
 
+		$serialized_data = array();
+		$serialized_data[] = trim($sentence);
+		$serialized_data = maybe_serialize($serialized_data);
 
 		// Prepare an array of post data for the attachment.
 		$attachment = array(
 			'guid'           => $wp_upload_dir['url'] . '/' . basename($filename),
 			'post_mime_type' => $filetype['type'],
 			'post_title'     => preg_replace('/\.[^.]+$/', '', basename($filename)),
-			'post_content'   => '',
+			'post_content'   => $serialized_data,
 			'post_status'    => 'inherit',
 			'post_author'    => $user_id
 		);
 
 		// Insert the attachment.
 		$post_id = wp_insert_attachment($attachment, $filename, $parent_post_id);
-		update_post_meta( $post_id, 'sg_word_or_sentence', 'sentence' );
+		update_post_meta($post_id, 'sg_word_or_sentence', 'sentence');
+		update_user_meta($user_id, 'sg_current_sentence_post_id_for_REST_API', $post_id);
+	} else {
+		$sg_current_sentence_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_sentence_post_id_for_REST_API', true);
+
+		$serialized_data = get_content_in_the($sg_current_sentence_post_id_for_REST_API);
+		$serialized_data[] = trim($sentence);
+		$serialized_data = maybe_serialize($serialized_data);
+
+		$my_post = array(
+			'ID'           => $sg_current_sentence_post_id_for_REST_API,
+			'post_content' => $serialized_data,
+		);
+		// Update the post into the database
+		wp_update_post($my_post);
 	}
 
-	
-	
 
 
 	$result['status'] = "success";

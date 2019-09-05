@@ -83,7 +83,7 @@ function redirect_to_url()
 add_action('template_redirect', 'redirect_to_url');
 
 
-//_____________________________________________SG logic begins
+//_______________________________________________________________________________________SG logic begins
 function wpse239290_user_welcome_notice()
 {
 	// Make sure that the user is assigned to the subscriber role, specifically.
@@ -113,7 +113,9 @@ function wpse239290_user_welcome_notice()
 
 
 
-
+/**
+ * All pages
+ */
 function sg_admin_menu()
 {
 	$user = wp_get_current_user();
@@ -139,7 +141,6 @@ function sg_test()
 {
 	require 'templates/test.php';
 }
-
 function sg_dictation()
 {
 	require 'templates/game_dictation.php';
@@ -148,12 +149,12 @@ function sg_sentence()
 {
 	require 'templates/game_sentence.php';
 }
-
-
 add_action('admin_menu', 'sg_admin_menu');
 
 
-
+/**
+ * prepare ajax script
+ */
 function add_to_admin_header()
 {
 	?>
@@ -168,30 +169,36 @@ add_action('admin_head', 'add_to_admin_header');
 
 
 
-add_action('user_register', 'create_user_folder', 10, 1);
 
-function create_user_folder($user_id)
+/**
+ * sg_initialize_user
+ */
+function sg_initialize_user($user_id)
 {
-
+	//step1. create folders
 	$upload_dir = wp_upload_dir();
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id, 0777);
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/paragraph', 0777);
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/sentence', 0777);
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/word', 0777);
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/picture', 0777);
-}
 
-add_action('user_register', 'create_user_token', 11, 1);
+	//step2. create 'sg_word_or_sentence' meta
+	update_user_meta($user_id, 'sg_word_or_sentence', 'word'); //It's a word game by default
 
-function create_user_token($user_id)
-{
+	//step3. create 'sg_user_token' meta, used by REST API
 	$password=randomPassword();
-	update_user_meta($user_id, "user_token", $password);
+	update_user_meta($user_id, "sg_user_token", $password);
 }
+add_action('user_register', 'sg_initialize_user', 10, 1);
 
 
 
-function wpse_form_in_admin_bar()
+
+/**
+ * add_current_wordlist_in_admin_bar
+ */
+function add_current_wordlist_in_admin_bar()
 {
 	global $wp_admin_bar;
 
@@ -201,10 +208,14 @@ function wpse_form_in_admin_bar()
 		'title' => '<p class="sg-current-label">Current wordlist: <span></span></p>'
 	));
 }
-add_action('admin_bar_menu', 'wpse_form_in_admin_bar');
+add_action('admin_bar_menu', 'add_current_wordlist_in_admin_bar');
 
 
 
+
+/**
+ * print_word_or_sentence_icon_on_admin_bar
+ */
 function print_word_or_sentence_icon_on_admin_bar($wp_admin_bar)
 {
 
@@ -257,8 +268,6 @@ function print_word_or_sentence_icon_on_admin_bar($wp_admin_bar)
 
 
 
-
-
 function customize_menu()
 {
 	remove_action('admin_bar_menu', 'wp_admin_bar_wp_menu', 10);
@@ -270,6 +279,10 @@ function customize_menu()
 add_action('admin_init', 'customize_menu', 100);
 
 
+
+/**
+ * fire when switch word/sentence game
+ */
 function sg_word_or_sentence()
 {
 	if (isset($_GET['sg_word_or_sentence'])) {
@@ -280,8 +293,10 @@ function sg_word_or_sentence()
 add_action('load-index.php', 'sg_word_or_sentence', 1, 0);
 
 
-
-function my_footer_shh()
+/**
+ * customize_footer
+ */
+function customize_footer()
 {
 	remove_filter('update_footer', 'core_update_footer');
 	add_filter('update_footer', 'code_is_poetry', 5);
@@ -291,11 +306,12 @@ function my_footer_shh()
 		return 'Code is Poetry';
 	}
 }
+add_action('admin_menu', 'customize_footer');
 
-add_action('admin_menu', 'my_footer_shh');
 
-
-// disable default dashboard widgets
+/**
+ * disable_default_dashboard_widgets
+ */
 function disable_default_dashboard_widgets()
 {
 	global $wp_meta_boxes;
@@ -320,9 +336,7 @@ add_action('wp_dashboard_setup', 'disable_default_dashboard_widgets', 999);
 
 
 /**
- * Add a widget to the dashboard.
- *
- * This function is hooked into the 'wp_dashboard_setup' action below.
+ * add_roadmap_widgets
  */
 function add_roadmap_widgets()
 {
@@ -337,18 +351,17 @@ function add_roadmap_widgets()
 		'dashboard_widget_roadmap_function' // Display function.
 	);
 }
-add_action('wp_dashboard_setup', 'add_roadmap_widgets');
-
-/**
- * Create the function to output the contents of our Dashboard Widget.
- */
 function dashboard_widget_roadmap_function()
 {
 
 	include_once('partials/widget_roadmap.php');
 }
+add_action('wp_dashboard_setup', 'add_roadmap_widgets');
 
 
+/**
+ * add_overview_widgets
+ */
 function add_overview_widgets()
 {
 	$user = wp_get_current_user();
@@ -362,14 +375,17 @@ function add_overview_widgets()
 		'dashboard_widget_overview_function' // Display function.
 	);
 }
-add_action('wp_dashboard_setup', 'add_overview_widgets');
-
 function dashboard_widget_overview_function()
 {
-
 	include_once('partials/widget_overview.php');
 }
+add_action('wp_dashboard_setup', 'add_overview_widgets');
 
+
+
+/**
+ * add_wordlist_widgets
+ */
 function add_wordlist_widgets()
 {
 	$user = wp_get_current_user();
@@ -383,13 +399,13 @@ function add_wordlist_widgets()
 		'dashboard_widget_wordlist_function' // Display function.
 	);
 }
-add_action('wp_dashboard_setup', 'add_wordlist_widgets');
-
 function dashboard_widget_wordlist_function()
 {
-
 	include_once('partials/widget_wordlist.php');
 }
+add_action('wp_dashboard_setup', 'add_wordlist_widgets');
+
+
 
 
 //temporary use
