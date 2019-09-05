@@ -38,7 +38,7 @@ if ($sg_word_or_sentence == "sentence") {
 <th>date</th>
 </tr>";
 
-$all_posts = $wpdb->get_results(
+    $all_posts = $wpdb->get_results(
         "
 	SELECT a.ID,a.post_date from {$wpdb->posts} a left join {$wpdb->postmeta} b on a.id=b.post_id WHERE post_author='{$current_user->ID}' and meta_key='sg_word_or_sentence' and meta_value='word'
     "
@@ -47,6 +47,7 @@ $all_posts = $wpdb->get_results(
     foreach ($all_posts as $word_post) {
 
         $lines = get_content_in_the($word_post->ID);
+
         foreach ($lines as $i => $line) {
             echo "<tr>";
             echo "<td>" . $line['word'] . "</td>";

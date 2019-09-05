@@ -1,7 +1,10 @@
 <?php
+session_start();
+set_time_limit(0);
+date_default_timezone_set('Australia/Melbourne');
+
 
 require 'inc/constants.php';
-
 require 'inc/acf.php';
 require 'inc/admin.php';
 require 'inc/ajax.php';
@@ -11,6 +14,12 @@ require 'inc/menus.php';
 require 'inc/misc.php';
 require 'inc/register.php';
 require 'inc/profile.php';
+require 'inc/hammerspoon.php';
+require 'inc/update.php';
+require 'inc/curl.php';
+require 'inc/googleimage.php';
+require 'inc/score.php';
+require 'inc/tts.php';
 
 
 function is_blog()
@@ -187,7 +196,7 @@ function sg_initialize_user($user_id)
 	update_user_meta($user_id, 'sg_word_or_sentence', 'word'); //It's a word game by default
 
 	//step3. create 'sg_user_token' meta, used by REST API
-	$password=randomPassword();
+	$password = randomPassword();
 	update_user_meta($user_id, "sg_user_token", $password);
 }
 add_action('user_register', 'sg_initialize_user', 10, 1);
