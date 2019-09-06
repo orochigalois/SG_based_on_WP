@@ -23,4 +23,9 @@ b.remove all under wp-content\uploads\
 
 c.upload all files to server
 
+d.chmod -R 777 wp-content/upload
+
 d.register a new user and it's good to go
+
+e.update admin password,deactive all plugins
+
