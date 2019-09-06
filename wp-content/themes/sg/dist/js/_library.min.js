@@ -16,9 +16,16 @@ var $currentSentence;
 jQuery(document).ready(function ($) {
 	userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
 	isSentenceGame = jQuery(".hidden_data .hidden_data__isSentenceGame").text().trim();
+	initDeleteBook();
 	initChangeFont();
 	initOpenModal();
 });
+
+function initDeleteBook() {
+	jQuery(document).on("click", ".delete-icon", function () {
+		jQuery('body').toggleClass("delete-mode");
+	});
+}
 
 function initChangeFont() {
 	jQuery("#font-id").change(function () {
@@ -54,12 +61,23 @@ function initOpenModal() {
 	});
 
 	jQuery(".shelf .book").on("click", document, function (event) {
-		prepare_loading();
-		$currentBook = jQuery(this);
-		currentPostID = jQuery(this).data("post_id");
-		currentTitle = jQuery(this).text();
-		var already_loaded = jQuery(this).data("already_loaded")
-		ajax_get_words(currentPostID, already_loaded, currentTitle);
+		if (jQuery("body").hasClass("delete-mode")) {
+			jQuery("#loadIcon").fadeIn();
+			currentPostID = jQuery(this).data("post_id");
+			$currentBook = jQuery(this);
+			ajax_delete_book(currentPostID);
+
+
+
+		} else {
+			prepare_loading();
+			$currentBook = jQuery(this);
+			currentPostID = jQuery(this).data("post_id");
+			currentTitle = jQuery(this).text();
+			var already_loaded = jQuery(this).data("already_loaded")
+			ajax_get_words(currentPostID, already_loaded, currentTitle);
+		}
+
 
 	});
 
@@ -93,45 +111,20 @@ function ajax_get_words(post_id, already_loaded, title) {
 				jQuery(".sg-current-label>span").text(title);
 				jQuery("#loadIcon").fadeOut();
 				jQuery(".md-modal .vocabulary h1").empty().append("Vocabulary - " + title);
-
 				generateVocabularyHTML(response.wordMatrix);
-
 				if (isSentenceGame == 'no') {
 					wordSoundHandler();
 				}
-
-
 				sentenceSoundHandler();
-
 				if (isSentenceGame == 'no') {
 					wordUpdateHandler();
-
 				}
-
 				sentenceUpdateHandler();
-
-
-
 				imageHandler();
-
-
-
-
 				titleHandler(post_id);
-
-
-
-
-
-
-
-
-
 				jQuery('.md-modal button').attr("disabled", false);
 				jQuery('.md-modal select').attr("disabled", false);
-
 			}
-
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			alert('An error occurred... Look at the console (F12 or Ctrl+Shift+I, Console tab) for more information!');
@@ -502,14 +495,9 @@ function updateTitle(post_id) {
 function ajax_save_images() {
 	jQuery("#image-overlay>ul>li>img").each(function (index) {
 		jQuery(this).on("click", function () {
-
 			var src = jQuery(this).attr("src");
 			currentImg.attr("src", src);
 			jQuery("#image-overlay").hide();
-
-
-
-
 			jQuery.ajax({
 				url: _ajaxurl,
 				method: 'GET',
@@ -529,5 +517,36 @@ function ajax_save_images() {
 				},
 			});
 		});
+	});
+}
+
+
+
+function ajax_delete_book(post_id) {
+	jQuery.ajax({
+		url: _ajaxurl,
+		method: 'GET',
+		data: {
+			action: 'delete_book',
+			post_id: post_id,
+		},
+		dataType: 'json',
+		success: function (response) {
+			if (response.status == 'success') {
+				jQuery("#loadIcon").fadeOut();
+				$currentBook.parent().remove();
+			}
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert('An error occurred... Look at the console (F12 or Ctrl+Shift+I, Console tab) for more information!');
+
+			alert('<p>status code: ' + jqXHR.status + '</p><p>errorThrown: ' + errorThrown + '</p><p>jqXHR.responseText:</p><div>' + jqXHR.responseText + '</div>');
+			console.log('jqXHR:');
+			console.log(jqXHR);
+			console.log('textStatus:');
+			console.log(textStatus);
+			console.log('errorThrown:');
+			console.log(errorThrown);
+		},
 	});
 }

@@ -15,6 +15,9 @@
 	</div>
 </div>
 <div class="library_container">
+	<div class="delete-icon">
+
+	</div>
 	<?php
 	//
 	// use this to gererate image for text file
@@ -62,7 +65,7 @@
 			?>
 
 
-		<?php
+	<?php
 		endwhile;
 		wp_reset_postdata();
 		echo '</div>';

@@ -4,9 +4,27 @@ body.toplevel_page_sg_library_page {
 
     .library_container {
 
-        display:flex;
+
+        display: flex;
         flex-direction: column;
         align-items: center;
+
+        .delete-icon {
+            width: 50px;
+            height: 50px;
+            background-image: url(../../images/bin.png);
+            background-size: contain;
+            position: absolute;
+            right: 20px;
+            top: 0px;
+            z-index: 2;
+            cursor: pointer;
+
+            @media screen and (max-width:782px) {
+                top: 50px;
+            }
+        }
+
         .app-calendar {
             margin: auto;
             margin-bottom: 24px;
@@ -66,8 +84,8 @@ body.toplevel_page_sg_library_page {
         .shelf {
             width: 426px;
             margin: 150px auto;
-            @media screen and (max-width:$screen-xs-max) 
-            {
+
+            @media screen and (max-width:$screen-xs-max) {
                 width: 300px;
             }
 
@@ -77,6 +95,10 @@ body.toplevel_page_sg_library_page {
                 margin: auto;
                 position: relative;
                 margin-bottom: 60px;
+
+
+
+
 
                 &:nth-child(3n+1) {
                     &:after {
@@ -92,7 +114,7 @@ body.toplevel_page_sg_library_page {
                         top: 0;
                         left: 0;
 
-                        @media screen and (max-width:$screen-xs-max)  {
+                        @media screen and (max-width:$screen-xs-max) {
                             height: 165px;
                             width: 300px;
                         }
@@ -115,8 +137,22 @@ body.toplevel_page_sg_library_page {
                     height: 125px;
                     position: relative;
 
-                    @media screen and (max-width:$screen-xs-max)  {
+                    @media screen and (max-width:$screen-xs-max) {
                         padding: 18px 10px 0 30px;
+                    }
+
+                    &:before {
+                        display: none;
+                        content: '';
+                        width: 50px;
+                        height: 50px;
+                        background-image: url(../../images/remove.png);
+                        background-size: contain;
+                        position: absolute;
+                        z-index: 3;
+                        cursor: pointer;
+                        top: -25px;
+                        left: 0px;
                     }
 
 
@@ -125,6 +161,8 @@ body.toplevel_page_sg_library_page {
                         cursor: pointer;
                         transform: scale3d(1.1, 1.1, 1) translate3d(0, -5px, 0);
                     }
+
+
 
                 }
 
@@ -140,4 +178,13 @@ body.toplevel_page_sg_library_page {
 
 
 
+}
+
+body.delete-mode .library_container .shelf .book_container .book:before {
+    display: block;
+}
+
+body.delete-mode .library_container .shelf .book_container .book:hover {
+    display: block;
+    transform: translate(0, 0);
 }

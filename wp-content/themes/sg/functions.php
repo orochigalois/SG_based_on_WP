@@ -16,6 +16,7 @@ require 'inc/register.php';
 require 'inc/profile.php';
 require 'inc/hammerspoon.php';
 require 'inc/update.php';
+require 'inc/delete.php';
 require 'inc/curl.php';
 require 'inc/googleimage.php';
 require 'inc/score.php';
