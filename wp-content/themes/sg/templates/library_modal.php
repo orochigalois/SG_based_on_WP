@@ -14,7 +14,14 @@
                 </select>
             </div>
             <button class="reload-all">Reload Sound/Image</button>
-            <button class="game-dictation">Dictation</button>
+            <div class="select-style">
+                <select id="game-id">
+                    <option value="Sound">Start Game</option>
+                    <option value="Sound">Sound</option>
+                    <option value="Picture">Picture</option>
+                    <option value="Sentence">Sentence</option>
+                </select>
+            </div>
             <button class="md-close">Close</button>
         </div>
 
@@ -26,7 +33,7 @@
             <dl>
 
             </dl>
-            
+
 
 
         </div>
