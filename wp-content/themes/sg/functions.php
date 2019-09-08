@@ -4,6 +4,7 @@ set_time_limit(0);
 date_default_timezone_set('Australia/Melbourne');
 
 
+require 'inc/misc.php';
 require 'inc/constants.php';
 require 'inc/acf.php';
 require 'inc/admin.php';
@@ -11,7 +12,6 @@ require 'inc/ajax.php';
 require 'inc/cf7.php';
 require 'inc/enqueue.php';
 require 'inc/menus.php';
-require 'inc/misc.php';
 require 'inc/register.php';
 require 'inc/profile.php';
 require 'inc/hammerspoon.php';
