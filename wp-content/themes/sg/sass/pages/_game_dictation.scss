@@ -1,18 +1,190 @@
-#toplevel_page_sg_dictation_page{
-    display:none;
+#toplevel_page_sg_dictation_page {
+    display: none;
 }
-.toplevel_page_sg_dictation_page{
-    background-color:#282e3a;
+
+.toplevel_page_sg_dictation_page {
+    background-color: #282e3a;
+    overflow: hidden;
+
+
+    #wpcontent {
+        padding: 0;
+    }
+
+    #wpbody-content {
+        padding: 0;
+    }
 }
-.game_dictation {
-    
-    max-width: 600px;
-    margin: 0 auto;
+
+
+.alert {
+    display: none;
+    background-color: #0DFF92;
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 300;
+    height: 50px;
+    font-family: Audiowide;
+
+    h2 {
+        font-size: 20px;
+        color: black;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+}
+
+
+
+#game_staging_area {
+    background-color: black;
+    width: 100%;
+    height: calc(100vh - 32px);
+    font-family: Audiowide;
+    display: flex;
+    align-items: center;
+
+
+    .container {
+        display: block;
+        position: relative;
+        max-width: 500px;
+
+        p {
+            color: #FF9900;
+            font-family: Audiowide;
+            font-size: 7em;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        p:hover {
+            -webkit-animation: neon5 1.5s ease-in-out infinite alternate;
+            -moz-animation: neon5 1.5s ease-in-out infinite alternate;
+            animation: neon5 1.5s ease-in-out infinite alternate;
+            color: #ffffff;
+        }
+
+
+        /*glow for webkit*/
+        @-webkit-keyframes neon5 {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF9900, 0 0 70px #FF9900, 0 0 80px #FF9900, 0 0 100px #FF9900, 0 0 150px #FF9900;
+            }
+
+            to {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF9900, 0 0 35px #FF9900, 0 0 40px #FF9900, 0 0 50px #FF9900, 0 0 75px #FF9900;
+            }
+        }
+
+
+    }
+
+
+
+    .container ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+    }
+
+    ul li {
+        color: #AAAAAA;
+        display: block;
+        position: relative;
+        float: left;
+        width: 100%;
+        height: 100px;
+        border-bottom: 1px solid #333;
+    }
+
+    ul li input[type=checkbox] {
+        position: absolute;
+        visibility: hidden;
+    }
+
+    ul li label {
+        display: block;
+        position: relative;
+        font-weight: 300;
+        font-size: 1.35em;
+        padding: 25px 25px 25px 80px;
+        margin: 10px auto;
+        height: 30px;
+        z-index: 9;
+        cursor: pointer;
+        -webkit-transition: all 0.25s linear;
+    }
+
+    ul li:hover label {
+        color: #FFFFFF;
+    }
+
+    ul li .check {
+        display: block;
+        position: absolute;
+        border: 5px solid #AAAAAA;
+        border-radius: 100%;
+        height: 25px;
+        width: 25px;
+        top: 30px;
+        left: 20px;
+        z-index: 5;
+        transition: border .25s linear;
+        -webkit-transition: border .25s linear;
+        box-sizing: content-box;
+    }
+
+    ul li:hover .check {
+        border: 5px solid #FFFFFF;
+    }
+
+    ul li .check::before {
+        display: block;
+        position: absolute;
+        content: '';
+        border-radius: 100%;
+        height: 15px;
+        width: 15px;
+        top: 5px;
+        left: 5px;
+        margin: auto;
+        transition: background 0.25s linear;
+        -webkit-transition: background 0.25s linear;
+    }
+
+    input[type=checkbox]:checked~.check {
+        border: 5px solid #0DFF92;
+    }
+
+    input[type=checkbox]:checked~.check::before {
+        background: #0DFF92;
+    }
+
+    input[type=checkbox]:checked~label {
+        color: #0DFF92;
+    }
+
+}
+
+.game_dictation {
+
+
+
+    width: 100%;
+    height: calc(100vh - 32px);
     text-align: center;
     padding: 2%;
-    background-color: #424242;
-    height: 500px;
+    background-color: black;
+
     background-repeat: no-repeat;
     background-size: 100% 100%;
 
@@ -46,10 +218,12 @@
 
     .scoreWrap {
         float: left;
+        padding: 0 30px;
     }
 
     .errorWrap {
         float: right;
+        padding: 0 30px;
     }
 
     .outerWrap:after {
@@ -62,11 +236,11 @@
         background-color: #04AF71 !important;
     }
 
-    .transparent{
-        color:transparent;
+    .transparent {
+        color: transparent;
     }
 
-    
+
 
     .scoreWrap p,
     .scoreWrap span,
@@ -83,14 +257,14 @@
     .words span {
         font-size: 60px;
         letter-spacing: 1px;
-        background-color:#ECF0F1;
+        background-color: #ECF0F1;
         /* color: #ECF0F1; */
     }
 
 }
 
-.sentenceWrap{
-    color:white;
-    margin:20px auto;
+.sentenceWrap {
+    color: white;
+    margin: 20px auto;
     text-align: center;
 }

@@ -21,7 +21,7 @@ jQuery(document).ready(function ($) {
     var words = document.querySelector(".words");
     var scoreDiv = document.querySelector(".score");
     var errorDiv = document.querySelector(".error");
-    
+
     var spans;
     var typed;
 
@@ -31,25 +31,39 @@ jQuery(document).ready(function ($) {
     var wordIndex;
 
     var wordSound;
-    
+
     var currentSentence;
+
+
+    //2.staging screen logic
+    $("#game_staging_area_start_btn").on("click", document, function () {
+
+        var atLeastOneIsChecked = $('#game_staging_area input[type="checkbox"]:checked').length > 0;
+        if (atLeastOneIsChecked) {
+            $("#game_staging_area").slideUp();
+            $(".alert").hide();
+        } else {
+            $(".alert>h2").text("At least select one option below!");
+            $(".alert").show();
+        }
+    });
 
 
 
     //2.start game
 
-    $( ".startBtn" ).on( "click", document, function() {
+    $(".startBtn").on("click", document, function () {
         init();
         getWord();
         button.disabled = true;
     });
 
-    function init(){
+    function init() {
         button.disabled = false;
         points = 0;
         errors = 0;
-        wordIndex=0;
-        scoreDiv.innerHTML = points.toString()+'/'+list.length.toString();
+        wordIndex = 0;
+        scoreDiv.innerHTML = points.toString() + '/' + list.length.toString();
         errorDiv.innerHTML = errors;
     }
 
@@ -68,7 +82,7 @@ jQuery(document).ready(function ($) {
 
 
         //b. show picture
-        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + list[wordIndex]+")");
+        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + list[wordIndex] + ")");
 
 
 
@@ -80,44 +94,45 @@ jQuery(document).ready(function ($) {
 
 
         //d. store current sentence
-        currentSentence=sentenceList[wordIndex];
+        currentSentence = sentenceList[wordIndex];
 
         //e. prepare moving to next word
         wordIndex++;
 
-        
+
 
     }
 
 
-    $( ".replayBtn" ).on( "click", document, function() {
+    $(".replayBtn").on("click", document, function () {
         wordSound.pause();
         wordSound.currentTime = 0;
         wordSound.play();
     });
 
-    
+
 
     //3.keydown
     function isLetterOrSpaceOrDash(str) {
-        return str.length === 1 && str.match(/[a-z-]/i) ||str==' ';
+        return str.length === 1 && str.match(/[a-z-]/i) || str == ' ';
     }
-    
+
     document.addEventListener("keydown", typing, false);
+
     function typing(e) {
-        
+
         typed = e.key;
-        if(!isLetterOrSpaceOrDash(typed))
+        if (!isLetterOrSpaceOrDash(typed))
             return;
-        var isTypo=true;
+        var isTypo = true;
         for (var i = 0; i < spans.length; i++) {
             if (spans[i].innerHTML.toUpperCase() === typed.toUpperCase()) { // if typed letter is the one from the word
                 __typewriter.pause();
                 __typewriter.currentTime = 0;
                 __typewriter.play();
-                isTypo=false;
+                isTypo = false;
 
-                
+
                 spans[i].classList.remove("transparent");
 
                 if (spans[i].classList.contains("bg")) { // if it already has class with the bacground color then check the next one
@@ -129,18 +144,19 @@ jQuery(document).ready(function ($) {
             }
         }
 
-        if(isTypo)
-        {
+        if (isTypo) {
             __error.pause();
             __error.currentTime = 0;
-         
+
 
             var promise = __error.play();
 
-         
+
             if (promise) {
                 //Older browsers may not return a promise, according to the MDN website
-                promise.catch(function(error) { console.error(error); });
+                promise.catch(function (error) {
+                    console.error(error);
+                });
             }
 
             // if (promise !== undefined) {
@@ -163,23 +179,21 @@ jQuery(document).ready(function ($) {
             if (checker === spans.length) { // if so, animate the words with animate.css class
 
 
-                
+
                 jQuery(".sentenceWrap").text(currentSentence);
 
 
                 words.classList.add("animated");
                 words.classList.add("fadeOut");
                 points++; // increment the points
-                scoreDiv.innerHTML = points.toString()+'/'+list.length.toString();
+                scoreDiv.innerHTML = points.toString() + '/' + list.length.toString();
 
-                
+
 
                 document.removeEventListener("keydown", typing, false);
                 setTimeout(function () {
-                    if(wordIndex==list.length)
-                    {
-                        if(errors==0)
-                        {
+                    if (wordIndex == list.length) {
+                        if (errors == 0) {
                             alert("well done! There should be fireworks");
 
                             //update score
@@ -188,14 +202,14 @@ jQuery(document).ready(function ($) {
                                 method: 'GET',
                                 data: {
                                     action: 'updateScore',
-                                    post_id:post_id,
+                                    post_id: post_id,
                                 },
                                 dataType: 'json',
                                 success: function (response) {
                                     if (response.status == 'success') {
                                         console.log(response);
                                     }
-                            
+
                                 },
                             });
 
@@ -203,28 +217,25 @@ jQuery(document).ready(function ($) {
                             words.className = "words"; // restart the classes
                             getWord(); // give another word
                             document.addEventListener("keydown", typing, false);
-                        }
-                        else
-                        {
+                        } else {
                             alert("please try again!");
                             init();
                             words.className = "words"; // restart the classes
                             getWord(); // give another word
                             document.addEventListener("keydown", typing, false);
                         }
-                    }
-                    else{
+                    } else {
                         words.className = "words"; // restart the classes
                         getWord(); // give another word
                         document.addEventListener("keydown", typing, false);
                     }
-                        
+
                 }, 400);
             }
 
         }
     }
 
-    
+
 
 });

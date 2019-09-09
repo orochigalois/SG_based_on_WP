@@ -6,7 +6,7 @@
         ?>
     </div>
     <div class="hidden_data__post_id">
-        <?php 
+        <?php
         echo $_SESSION['post_id'];
         ?>
     </div>
@@ -19,12 +19,45 @@
             echo '<div class="word">' . $word . '</div>';
             $sentence = strtolower($wordline['sentence']);
             echo '<div class="sentence">' . $sentence . '</div>';
-            
         }
         ?>
     </div>
 </div>
+<link href='https://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet' type='text/css'>
+<div class="alert">
+    <h2></h2>
+</div>
+<div id="game_staging_area">
+    <div class="container">
+        <ul>
+            <li>
+                <input type="checkbox" id="sound-option" name="sound" checked>
+                <label for="sound-option">Sound</label>
 
+                <div class="check"></div>
+            </li>
+
+            <li>
+                <input type="checkbox" id="picture-option" name="picture">
+                <label for="picture-option">Picture</label>
+
+                <div class="check">
+                    <div class="inside"></div>
+                </div>
+            </li>
+
+            <li>
+                <input type="checkbox" id="sentence-option" name="sentence">
+                <label for="sentence-option">Sentence</label>
+
+                <div class="check">
+                    <div class="inside"></div>
+                </div>
+            </li>
+        </ul>
+        <p id="game_staging_area_start_btn">START</p>
+    </div>
+</div>
 <div class="game_dictation">
     <button class="startBtn">START</button>
     <button class="replayBtn">REPLAY</button>
@@ -42,7 +75,8 @@
         <img src="">
         <p class="words"></p>
     </div>
-    
+
+    <h1 class="sentenceWrap">
+    </h1>
+
 </div>
-<h1 class="sentenceWrap">
-</h1>
