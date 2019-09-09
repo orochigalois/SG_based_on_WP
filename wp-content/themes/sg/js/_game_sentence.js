@@ -15,7 +15,7 @@ jQuery(document).ready(function (jQuery) {
 
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
-    
+
 
     var startBtn = document.querySelector(".startBtn");
     var words = document.querySelector(".words");
@@ -30,7 +30,7 @@ jQuery(document).ready(function (jQuery) {
     var errors;
 
 
-    var wordSound;
+    var __word;
 
 
     var letterIndex = 0;
@@ -42,6 +42,57 @@ jQuery(document).ready(function (jQuery) {
         init();
         show_me_one_sentence();
     });
+
+    function init_sound() {
+        __word = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + post_id + "_" + sentenceIndex + ".mp3");
+    }
+
+    function play_sound() {
+
+        __word.pause();
+        __word.currentTime = 0;
+        const playedPromise = __word.play();
+        if (playedPromise) {
+            playedPromise.catch((e) => {
+                if (e.name === 'NotAllowedError' ||
+                    e.name === 'NotSupportedError') {
+                    //console.log(e.name);
+                }
+            });
+        }
+    }
+
+
+    function play_typewriter_sound() {
+
+        __typewriter.pause();
+        __typewriter.currentTime = 0;
+        const playedPromise = __typewriter.play();
+        if (playedPromise) {
+            playedPromise.catch((e) => {
+                if (e.name === 'NotAllowedError' ||
+                    e.name === 'NotSupportedError') {
+                    //console.log(e.name);
+                }
+            });
+        }
+    }
+
+    function play_error_sound() {
+
+        __error.pause();
+        __error.currentTime = 0;
+        const playedPromise = __error.play();
+        if (playedPromise) {
+            playedPromise.catch((e) => {
+                if (e.name === 'NotAllowedError' ||
+                    e.name === 'NotSupportedError') {
+                    //console.log(e.name);
+                }
+            });
+        }
+    }
+
 
     function init() {
         points = 0;
@@ -86,10 +137,9 @@ jQuery(document).ready(function (jQuery) {
 
 
         //c. play sound
-        wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + post_id + "_" + sentenceIndex + ".mp3");
-        wordSound.pause();
-        wordSound.currentTime = 0;
-        wordSound.play();
+
+        init_sound();
+        play_sound();
 
         //d. show flashcard
         jQuery(".flashcard").text(sentenceList[sentenceIndex]);
@@ -116,9 +166,7 @@ jQuery(document).ready(function (jQuery) {
 
 
     jQuery(".replayBtn").on("click", document, function () {
-        wordSound.pause();
-        wordSound.currentTime = 0;
-        wordSound.play();
+        play_sound();
         jQuery(this).blur();
     });
 
@@ -159,9 +207,7 @@ jQuery(document).ready(function (jQuery) {
 
 
         if (!isTypo) {
-            __typewriter.pause();
-            __typewriter.currentTime = 0;
-            __typewriter.play();
+            play_typewriter_sound();
 
 
 
@@ -170,28 +216,7 @@ jQuery(document).ready(function (jQuery) {
 
             letterIndex++;
         } else {
-            __error.pause();
-            __error.currentTime = 0;
-
-
-            var promise = __error.play();
-
-
-            if (promise) {
-                //Older browsers may not return a promise, according to the MDN website
-                promise.catch(function (error) {
-                    console.error(error);
-                });
-            }
-
-            // if (promise !== undefined) {
-            //   promise.then(_ => {
-            //     // Autoplay started!
-            //   }).catch(error => {
-            //     // Autoplay was prevented.
-            //     // Show a "Play" button so that user can start playback.
-            //   });
-            // }
+            play_error_sound();
 
             errors++;
             errorDiv.innerHTML = errors; //add points to the points div
@@ -260,271 +285,3 @@ jQuery(document).ready(function (jQuery) {
 
 
 });
-
-//__________________________Fireworks
-var __explosion = new Audio("../wp-content/themes/sg/sound/__explosion_firework.mp3");
-var fireworks;
-
-var SCREEN_WIDTH = window.innerWidth,
-    SCREEN_HEIGHT = window.innerHeight,
-    mousePos = {
-        x: 400,
-        y: 300
-    },
-
-    // create canvas
-    canvas = document.createElement('canvas'),
-    context = canvas.getContext('2d'),
-    particles = [],
-    rockets = [],
-    MAX_PARTICLES = 400,
-    colorCode = 0;
-
-// init
-jQuery(document).ready(function () {
-    // jQuery('.game_sentence .for_canvas').append(canvas);
-    document.body.appendChild(canvas);
-    canvas.width = SCREEN_WIDTH;
-    canvas.height = SCREEN_HEIGHT;
-
-    setInterval(loop, 1000 / 50);
-});
-
-// update mouse position
-jQuery(document).mousemove(function (e) {
-    e.preventDefault();
-    mousePos = {
-        x: e.clientX,
-        y: e.clientY
-    };
-});
-
-// launch more rockets!!!
-jQuery(document).mousedown(function (e) {
-    jQuery("body canvas").fadeOut(2000);
-    clearInterval(fireworks);
-});
-
-function launch() {
-    for (var i = 0; i < 3; i++) {
-        launchFrom(Math.random() * SCREEN_WIDTH * 2 / 3 + SCREEN_WIDTH / 6);
-    }
-}
-
-function launchFrom(x) {
-    if (rockets.length < 10) {
-        var rocket = new Rocket(x);
-        rocket.explosionColor = Math.floor(Math.random() * 360 / 10) * 10;
-        rocket.vel.y = Math.random() * -3 - 4;
-        rocket.vel.x = Math.random() * 6 - 3;
-        rocket.size = 8;
-        rocket.shrink = 0.999;
-        rocket.gravity = 0.01;
-        rockets.push(rocket);
-    }
-}
-
-function loop() {
-    // update screen size
-    if (SCREEN_WIDTH != window.innerWidth) {
-        canvas.width = SCREEN_WIDTH = window.innerWidth;
-    }
-    if (SCREEN_HEIGHT != window.innerHeight) {
-        canvas.height = SCREEN_HEIGHT = window.innerHeight;
-    }
-
-    // clear canvas
-    context.fillStyle = "rgba(0, 0, 0, 0.05)";
-    context.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-    var existingRockets = [];
-
-    for (var i = 0; i < rockets.length; i++) {
-        // update and render
-        rockets[i].update();
-        rockets[i].render(context);
-
-        // calculate distance with Pythagoras
-        var distance = Math.sqrt(Math.pow(mousePos.x - rockets[i].pos.x, 2) + Math.pow(mousePos.y - rockets[i].pos.y, 2));
-
-        // random chance of 1% if rockets is above the middle
-        var randomChance = rockets[i].pos.y < (SCREEN_HEIGHT * 2 / 3) ? (Math.random() * 100 <= 1) : false;
-
-        /* Explosion rules
-         - 80% of screen
-         - going down
-         - close to the mouse
-         - 1% chance of random explosion
-         */
-        if (rockets[i].pos.y < SCREEN_HEIGHT / 5 || rockets[i].vel.y >= 0 || distance < 50 || randomChance) {
-            rockets[i].explode();
-        } else {
-            existingRockets.push(rockets[i]);
-        }
-    }
-
-    rockets = existingRockets;
-
-    var existingParticles = [];
-
-    for (var i = 0; i < particles.length; i++) {
-        particles[i].update();
-
-        // render and save particles that can be rendered
-        if (particles[i].exists()) {
-            particles[i].render(context);
-            existingParticles.push(particles[i]);
-        }
-    }
-
-    // update array with existing particles - old particles should be garbage collected
-    particles = existingParticles;
-
-    while (particles.length > MAX_PARTICLES) {
-        particles.shift();
-    }
-}
-
-function Particle(pos) {
-    this.pos = {
-        x: pos ? pos.x : 0,
-        y: pos ? pos.y : 0
-    };
-    this.vel = {
-        x: 0,
-        y: 0
-    };
-    this.shrink = .97;
-    this.size = 2;
-
-    this.resistance = 1;
-    this.gravity = 0;
-
-    this.flick = false;
-
-    this.alpha = 1;
-    this.fade = 0;
-    this.color = 0;
-}
-
-Particle.prototype.update = function () {
-    // apply resistance
-    this.vel.x *= this.resistance;
-    this.vel.y *= this.resistance;
-
-    // gravity down
-    this.vel.y += this.gravity;
-
-    // update position based on speed
-    this.pos.x += this.vel.x;
-    this.pos.y += this.vel.y;
-
-    // shrink
-    this.size *= this.shrink;
-
-    // fade out
-    this.alpha -= this.fade;
-};
-
-Particle.prototype.render = function (c) {
-    if (!this.exists()) {
-        return;
-    }
-
-    c.save();
-
-    c.globalCompositeOperation = 'lighter';
-
-    var x = this.pos.x,
-        y = this.pos.y,
-        r = this.size / 2;
-
-    var gradient = c.createRadialGradient(x, y, 0.1, x, y, r);
-    gradient.addColorStop(0.1, "rgba(255,255,255," + this.alpha + ")");
-    gradient.addColorStop(0.8, "hsla(" + this.color + ", 100%, 50%, " + this.alpha + ")");
-    gradient.addColorStop(1, "hsla(" + this.color + ", 100%, 50%, 0.1)");
-
-    c.fillStyle = gradient;
-
-    c.beginPath();
-    c.arc(this.pos.x, this.pos.y, this.flick ? Math.random() * this.size : this.size, 0, Math.PI * 2, true);
-
-    c.closePath();
-    c.fill();
-
-    c.restore();
-};
-
-Particle.prototype.exists = function () {
-    return this.alpha >= 0.1 && this.size >= 1;
-};
-
-function Rocket(x) {
-    Particle.apply(this, [{
-        x: x,
-        y: SCREEN_HEIGHT
-    }]);
-
-    this.explosionColor = 0;
-}
-
-Rocket.prototype = new Particle();
-Rocket.prototype.constructor = Rocket;
-
-Rocket.prototype.explode = function () {
-    var count = Math.random() * 10 + 80;
-
-    for (var i = 0; i < count; i++) {
-        var particle = new Particle(this.pos);
-        var angle = Math.random() * Math.PI * 2;
-
-        // emulate 3D effect by using cosine and put more particles in the middle
-        var speed = Math.cos(Math.random() * Math.PI / 2) * 15;
-
-        particle.vel.x = Math.cos(angle) * speed;
-        particle.vel.y = Math.sin(angle) * speed;
-
-        particle.size = 10;
-
-        particle.gravity = 0.2;
-        particle.resistance = 0.92;
-        particle.shrink = Math.random() * 0.05 + 0.93;
-
-        particle.flick = true;
-        particle.color = this.explosionColor;
-
-        particles.push(particle);
-    }
-
-    //play sound
-    __explosion.pause();
-    __explosion.currentTime = 0;
-    __explosion.play();
-};
-
-Rocket.prototype.render = function (c) {
-    if (!this.exists()) {
-        return;
-    }
-
-    c.save();
-
-    c.globalCompositeOperation = 'lighter';
-
-    var x = this.pos.x,
-        y = this.pos.y,
-        r = this.size / 2;
-
-    var gradient = c.createRadialGradient(x, y, 0.1, x, y, r);
-    gradient.addColorStop(0.1, "rgba(255, 255, 255 ," + this.alpha + ")");
-    gradient.addColorStop(1, "rgba(0, 0, 0, " + this.alpha + ")");
-
-    c.fillStyle = gradient;
-
-    c.beginPath();
-    c.arc(this.pos.x, this.pos.y, this.flick ? Math.random() * this.size / 2 + this.size / 2 : this.size, 0, Math.PI * 2, true);
-    c.closePath();
-    c.fill();
-
-    c.restore();
-};

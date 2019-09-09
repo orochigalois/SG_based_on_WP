@@ -40,15 +40,16 @@ function lp_enqueue_admin()
 	wp_enqueue_script('main-script', get_template_directory_uri() . '/dist/js/main.min.js', '', '', true);
 
 	global $plugin_page;
-	if($plugin_page=='sg_dictation_page'){
+	if ($plugin_page == 'sg_dictation_page') {
+		wp_enqueue_script('_fireworks', get_template_directory_uri() . '/dist/js/_fireworks.min.js', '', '', true);
 		wp_enqueue_script('_game_dictation-script', get_template_directory_uri() . '/dist/js/_game_dictation.min.js', '', '', true);
 	}
-	if($plugin_page=='sg_sentence_page'){
+	if ($plugin_page == 'sg_sentence_page') {
+		wp_enqueue_script('_fireworks', get_template_directory_uri() . '/dist/js/_fireworks.min.js', '', '', true);
 		wp_enqueue_script('_game_sentence-script', get_template_directory_uri() . '/dist/js/_game_sentence.min.js', '', '', true);
 	}
-	if($plugin_page=='sg_library_page'){
+	if ($plugin_page == 'sg_library_page') {
 		wp_enqueue_script('_library-script', get_template_directory_uri() . '/dist/js/_library.min.js', '', '', true);
 	}
-	
 }
 add_action('admin_init', 'lp_enqueue_admin');

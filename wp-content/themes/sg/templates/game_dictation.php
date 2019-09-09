@@ -23,7 +23,8 @@
         ?>
     </div>
 </div>
-<link href='https://fonts.googleapis.com/css?family=Audiowide' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Audiowide|Nixie+One' rel='stylesheet' type='text/css'>
+
 <div class="alert">
     <h2></h2>
 </div>
@@ -59,24 +60,33 @@
     </div>
 </div>
 <div class="game_dictation">
-    <button class="startBtn">START</button>
-    <button class="replayBtn">REPLAY</button>
-    <div class="outerWrap">
-        <div class="scoreWrap">
-            <p>Score</p>
-            <span class="score"></span>
-        </div>
-        <div class="errorWrap">
-            <p>Error</p>
-            <span class="error"></span>
-        </div>
+
+
+    <div class="btn_board">
+        <p class="restart-btn">RESTART</p>
+        <p class="pronounce-btn">PRONOUNCE</p>
+        <p class="tips-btn">TIPS</p>
+        <p class="exit-btn">EXIT</p>
     </div>
-    <div class="wordsWrap">
-        <img src="">
+
+    <div class="score_board">
+
+        <p>Score</p>
+        <span class="score"></span>
+
+        <p>Error</p>
+        <span class="error"></span>
+
+        <p>Tips</p>
+        <span class="tips"></span>
+
+    </div>
+    <input class="for_mobile_keyboard" type="text">
+    <div class="words_board">
         <p class="words"></p>
     </div>
 
-    <h1 class="sentenceWrap">
+    <h1 class="sentence_board">
     </h1>
 
 </div>
