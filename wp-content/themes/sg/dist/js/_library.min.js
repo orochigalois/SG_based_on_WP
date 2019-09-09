@@ -41,15 +41,15 @@ function initOpenModal() {
 	});
 
 	if (isSentenceGame == 'yes') {
-		jQuery("#game-id").change(function () {
-			window.location.href = 'admin.php?page=sg_sentence_page&game=' + jQuery(this).val();
+		jQuery(".game-dictation").on("click", document, function () {
+			window.location.href = 'admin.php?page=sg_sentence_page';
 			jQuery("body").removeClass('book-open');
 		});
 
 
 	} else {
-		jQuery("#game-id").change(function () {
-			window.location.href = 'admin.php?page=sg_dictation_page&game=' + jQuery(this).val();
+		jQuery(".game-dictation").on("click", document, function () {
+			window.location.href = 'admin.php?page=sg_dictation_page';
 			jQuery("body").removeClass('book-open');
 		});
 
