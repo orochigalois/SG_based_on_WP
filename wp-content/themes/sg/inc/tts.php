@@ -1,12 +1,5 @@
 <?php
 
-// getcwd() will return /Users/xinyin/Project/SG_based_on_WP/wp-admin/ , so we need going to parent folder
-putenv('GOOGLE_APPLICATION_CREDENTIALS=' . getcwd() . '/../wp-content/themes/sg/ShootingGame-98707e444ec6.json');
-
-// [START tts_quickstart]
-// includes the autoloader for libraries installed with composer
-require __DIR__ . '/../vendor/autoload.php';
-
 // Imports the Cloud Client Library
 use Google\Cloud\TextToSpeech\V1\AudioConfig;
 use Google\Cloud\TextToSpeech\V1\AudioEncoding;
@@ -14,8 +7,6 @@ use Google\Cloud\TextToSpeech\V1\SsmlVoiceGender;
 use Google\Cloud\TextToSpeech\V1\SynthesisInput;
 use Google\Cloud\TextToSpeech\V1\TextToSpeechClient;
 use Google\Cloud\TextToSpeech\V1\VoiceSelectionParams;
-
-
 
 /**
  * if $line_index=NULL, then reload all

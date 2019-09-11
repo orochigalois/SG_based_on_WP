@@ -8,6 +8,8 @@ In wp_usermeta:
 sg_word_or_sentence   (value: sentence / word)    single
 sg_current_sentence_post_id_for_REST_API  (value: post_id)    single
 sg_current_word_post_id_for_REST_API    (value: post_id)    single
+sg_your_native_language (value: zh / en / ... etc.)    single
+sg_tts (value: google / voicerss)    single
 
 In wp_postmeta:
 
@@ -33,3 +35,11 @@ g.register a new user and it's good to go
 
 h.update admin password,deactive all plugins
 
+
+
+3.ShootingGame-98707e444ec6.json is a universal key for all google cloud API(tts,translate, etc.)
+
+
+4.compposer.json is the only file you need to generate the google API vendor folder. 
+run
+composer install

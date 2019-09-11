@@ -3,12 +3,16 @@ jQuery(document).ready(function ($) {
     //1.get hidden_data & init
     var wordList = [];
     var sentenceList = [];
+    var translationList = [];
 
     jQuery(".hidden_data .hidden_data__wordlist .word").each(function () {
         wordList.push($(this).text());
     });
     jQuery(".hidden_data .hidden_data__wordlist .sentence").each(function () {
         sentenceList.push($(this).text());
+    });
+    jQuery(".hidden_data .hidden_data__wordlist .translation").each(function () {
+        translationList.push($(this).text());
     });
 
     var user_id = jQuery(".hidden_data .hidden_data__userID").text().trim();
@@ -23,13 +27,13 @@ jQuery(document).ready(function ($) {
     var $words = document.querySelector(".words");
     var $score = document.querySelector(".score");
     var $error = document.querySelector(".error");
-    var $tips = document.querySelector(".tips");
+    var $hint = document.querySelector(".hint");
     var $spans;
 
     //numbers & index
     var points;
     var errors;
-    var tips;
+    var hint;
     var wordIndex = 0;
 
 
@@ -37,6 +41,7 @@ jQuery(document).ready(function ($) {
     var is_checked_sound = false;
     var is_checked_picture = false;
     var is_checked_sentence = false;
+    var is_checked_translation = false;
 
 
 
@@ -46,6 +51,7 @@ jQuery(document).ready(function ($) {
         is_checked_sound = $('#game_staging_area input[name="sound"]').is(':checked');
         is_checked_picture = $('#game_staging_area input[name="picture"]').is(':checked');
         is_checked_sentence = $('#game_staging_area input[name="sentence"]').is(':checked');
+        is_checked_translation = $('#game_staging_area input[name="translation"]').is(':checked');
 
         var atLeastOneIsChecked = $('#game_staging_area input[type="checkbox"]:checked').length > 0;
         if (atLeastOneIsChecked) {
@@ -65,11 +71,11 @@ jQuery(document).ready(function ($) {
     function init() {
         points = 0;
         errors = 0;
-        tips = 3;
+        hint = 3;
         wordIndex = 0;
         $score.innerHTML = points.toString() + '/' + wordList.length.toString();
         $error.innerHTML = errors;
-        $tips.innerHTML = tips.toString();
+        $hint.innerHTML = hint.toString();
         document.addEventListener("keydown", typing_handler, false);
     }
 
@@ -156,6 +162,16 @@ jQuery(document).ready(function ($) {
         jQuery(".sentence_board").hide();
     }
 
+    function show_translation() {
+
+        jQuery(".translation_board").text(translationList[wordIndex]);
+        jQuery(".translation_board").show();
+    }
+
+    function hide_translation() {
+        jQuery(".translation_board").hide();
+    }
+
 
     function ask_me_one_word() {
         build_word_spans();
@@ -171,6 +187,12 @@ jQuery(document).ready(function ($) {
             show_sentence();
         else
             hide_sentence();
+        if (is_checked_translation)
+            show_translation();
+        else
+            hide_translation();
+
+
 
 
 
@@ -201,16 +223,16 @@ jQuery(document).ready(function ($) {
         __word.currentTime = 0;
         __word.play();
     });
-    $(".tips-btn").on("click", document, function () {
-        if (tips == 0) {
+    $(".hint-btn").on("click", document, function () {
+        if (hint == 0) {
             play_error_sound();
             return;
         }
 
         if (I_did_helped()) {
             play_typewriter_sound();
-            tips--;
-            $tips.innerHTML = tips.toString();
+            hint--;
+            $hint.innerHTML = hint.toString();
         }
 
     });

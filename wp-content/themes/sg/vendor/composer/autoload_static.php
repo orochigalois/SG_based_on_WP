@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
+class ComposerStaticInit0d61ce212eb022d0bbdc33e5987dd3ed
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -46,6 +46,11 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Cache\\' => 10,
+            'Prophecy\\' => 9,
+        ),
+        'M' => 
+        array (
+            'Monolog\\' => 8,
         ),
         'G' => 
         array (
@@ -56,8 +61,10 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
             'Grpc\\' => 5,
             'Google\\Protobuf\\' => 16,
             'Google\\Cloud\\Utils\\' => 19,
+            'Google\\Cloud\\Translate\\' => 23,
             'Google\\Cloud\\TextToSpeech\\' => 26,
             'Google\\Cloud\\TestUtils\\' => 23,
+            'Google\\Cloud\\Core\\' => 18,
             'Google\\Auth\\' => 12,
             'Google\\ApiCore\\' => 15,
             'Google\\' => 7,
@@ -139,6 +146,14 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
         array (
             0 => __DIR__ . '/..' . '/psr/cache/src',
         ),
+        'Prophecy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
+        ),
+        'Monolog\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
@@ -167,6 +182,10 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
         array (
             0 => __DIR__ . '/..' . '/google/cloud-tools/src/Utils',
         ),
+        'Google\\Cloud\\Translate\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/cloud-translate/src',
+        ),
         'Google\\Cloud\\TextToSpeech\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/cloud-text-to-speech/src',
@@ -174,6 +193,10 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
         'Google\\Cloud\\TestUtils\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/cloud-tools/src/TestUtils',
+        ),
+        'Google\\Cloud\\Core\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/cloud-core/src',
         ),
         'Google\\Auth\\' => 
         array (
@@ -226,11 +249,11 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
                 0 => __DIR__ . '/..' . '/twig/twig/lib',
             ),
         ),
-        'P' => 
+        'R' => 
         array (
-            'Prophecy\\' => 
+            'Rize\\UriTemplate' => 
             array (
-                0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
+                0 => __DIR__ . '/..' . '/rize/uri-template/src',
             ),
         ),
     );
@@ -706,11 +729,11 @@ class ComposerStaticInitd802b3bf8502e181cd9212f6a773f960
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitd802b3bf8502e181cd9212f6a773f960::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitd802b3bf8502e181cd9212f6a773f960::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInitd802b3bf8502e181cd9212f6a773f960::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitd802b3bf8502e181cd9212f6a773f960::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitd802b3bf8502e181cd9212f6a773f960::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0d61ce212eb022d0bbdc33e5987dd3ed::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0d61ce212eb022d0bbdc33e5987dd3ed::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit0d61ce212eb022d0bbdc33e5987dd3ed::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit0d61ce212eb022d0bbdc33e5987dd3ed::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit0d61ce212eb022d0bbdc33e5987dd3ed::$classMap;
 
         }, null, ClassLoader::class);
     }

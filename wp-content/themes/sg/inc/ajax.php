@@ -27,8 +27,8 @@ function ajax_getWords()
 		$user = wp_get_current_user();
 		$user_info = get_user_meta($user->ID);
 
-		if (isset($user_info['tts'])) {
-			if ($user_info['tts'][0] == 'voicerss') {
+		if (isset($user_info['sg_tts'])) {
+			if ($user_info['sg_tts'][0] == 'voicerss') {
 				get_wordSound_by_voicerss_tts($wordMatrix, $isSentenceGame);
 			} else {
 				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id, NULL);
@@ -36,6 +36,8 @@ function ajax_getWords()
 		} else {
 			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id, NULL);
 		}
+
+		get_word_translation($wordMatrix, $isSentenceGame, $post_id, NULL);
 
 		get_wordImage($wordMatrix, $isSentenceGame, $post_id);
 

@@ -15,10 +15,12 @@
         <?php
         $wordMatrix = $_SESSION['wordMatrix'];
         foreach ($wordMatrix as $wordline) {
-            $word = strtolower($wordline['word']);
+            $word = $wordline['word'];
             echo '<div class="word">' . $word . '</div>';
-            $sentence = strtolower($wordline['sentence']);
+            $sentence = $wordline['sentence'];
             echo '<div class="sentence">' . $sentence . '</div>';
+            $translate = strtolower($wordline['translate']);
+            echo '<div class="translation">' . $translate . '</div>';
         }
         ?>
     </div>
@@ -55,6 +57,15 @@
                     <div class="inside"></div>
                 </div>
             </li>
+
+            <li>
+                <input type="checkbox" id="translation-option" name="translation">
+                <label for="translation-option">Translation</label>
+
+                <div class="check">
+                    <div class="inside"></div>
+                </div>
+            </li>
         </ul>
         <p id="game_staging_area_start_btn">START</p>
     </div>
@@ -65,7 +76,7 @@
     <div class="btn_board">
         <p class="restart-btn">RESTART</p>
         <p class="pronounce-btn">PRONOUNCE</p>
-        <p class="tips-btn">TIPS</p>
+        <p class="hint-btn">HINT</p>
         <p class="exit-btn">EXIT</p>
     </div>
 
@@ -77,8 +88,8 @@
         <p>Error</p>
         <span class="error"></span>
 
-        <p>Tips</p>
-        <span class="tips"></span>
+        <p>Hint</p>
+        <span class="hint"></span>
 
     </div>
     <input class="for_mobile_keyboard" type="text">
@@ -87,6 +98,8 @@
     </div>
 
     <h1 class="sentence_board">
+    </h1>
+    <h1 class="translation_board">
     </h1>
 
 </div>

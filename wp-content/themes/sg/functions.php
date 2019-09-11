@@ -3,6 +3,14 @@ session_start();
 set_time_limit(0);
 date_default_timezone_set('Australia/Melbourne');
 
+// getcwd() will return /Users/xinyin/Project/SG_based_on_WP/wp-admin/ , so we need going to parent folder
+putenv('GOOGLE_APPLICATION_CREDENTIALS=' . getcwd() . '/../wp-content/themes/sg/ShootingGame-98707e444ec6.json');
+
+// [START tts_quickstart]
+// includes the autoloader for libraries installed with composer
+require __DIR__ . '/vendor/autoload.php';
+
+
 
 require 'inc/misc.php';
 require 'inc/constants.php';
@@ -21,6 +29,7 @@ require 'inc/curl.php';
 require 'inc/googleimage.php';
 require 'inc/score.php';
 require 'inc/tts.php';
+require 'inc/translate.php';
 
 
 function is_blog()
