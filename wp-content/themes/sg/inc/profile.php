@@ -1,5 +1,8 @@
 <?php
 
+use Google\Cloud\Translate\TranslateClient;
+
+
 add_action('show_user_profile', 'extra_user_profile_fields');
 add_action('edit_user_profile', 'extra_user_profile_fields');
 
@@ -13,17 +16,17 @@ function extra_user_profile_fields($user)
         <tbody>
             <tr class="user-tts-wrap">
                 <th scope="row">
-                    <label for="tts">TTS</label>
+                    <label for="sg_tts">TTS</label>
                 </th>
                 <td>
-                    <select name="tts" id="tts">
+                    <select name="sg_tts" id="sg_tts">
 
                         <?php
                             $user = wp_get_current_user();
                             $user_info = get_user_meta($user->ID);
 
-                            if (isset($user_info['tts'])) {
-                                if ($user_info['tts'][0] == 'voicerss') {
+                            if (isset($user_info['sg_tts'])) {
+                                if ($user_info['sg_tts'][0] == 'voicerss') {
                                     echo '<option value="google">Google</option>';
                                     echo '<option value="voicerss" selected="selected">Voicerss</option>';
                                 } else {
@@ -34,6 +37,44 @@ function extra_user_profile_fields($user)
                                 echo '<option value="google" selected="selected">Google</option>';
                                 echo '<option value="voicerss">Voicerss</option>';
                             }
+                            ?>
+                    </select> </td>
+            </tr>
+
+            <tr class="user-native-wrap">
+                <th scope="row">
+                    <label for="sg_your_native_language">Your Native Language</label>
+                </th>
+                <td>
+                    <select name="sg_your_native_language" id="sg_your_native_language">
+
+                        <?php
+                            $user = wp_get_current_user();
+                            $user_info = get_user_meta($user->ID);
+
+                            $translate = new TranslateClient();
+                            $result = $translate->localizedLanguages([
+                                'target' => 'en',
+                            ]);
+
+                            if (isset($user_info['sg_your_native_language'])) {
+                                foreach ($result as $lang) {
+                                    echo "<option value='{$lang['code']}' ";
+                                    if ($user_info['sg_your_native_language'][0] == $lang['code']) {
+                                        echo 'selected="selected"';
+                                    }
+                                    echo ">{$lang['name']}</option>";
+                                }
+                            } else {
+                                foreach ($result as $lang) {
+                                    echo "<option value='{$lang['code']}' ";
+                                    if ("zh" == $lang['code']) {
+                                        echo 'selected="selected"';
+                                    }
+                                    echo ">{$lang['name']}</option>";
+                                }
+                            }
+
                             ?>
                     </select> </td>
             </tr>
@@ -58,7 +99,8 @@ function save_extra_user_profile_fields($user_id)
     if (!current_user_can('edit_user', $user_id)) {
         return false;
     }
-    update_user_meta($user_id, 'tts', $_POST['tts']);
+    update_user_meta($user_id, 'sg_tts', $_POST['sg_tts']);
+    update_user_meta($user_id, 'sg_your_native_language', $_POST['sg_your_native_language']);
 }
 
 
@@ -79,18 +121,18 @@ function show_token($user)
 
     <table class="form-table">
         <tbody>
-            <tr class="user-tts-wrap">
+            <tr class="user-token-wrap">
                 <th scope="row">
-                    <label for="tts">Your token:</label>
+                    <label>Your Token:</label>
                 </th>
                 <td>
                     <?= $sg_user_token; ?>
                 </td>
             </tr>
 
-            <tr class="user-tts-wrap">
+            <tr class="user-token-wrap">
                 <th scope="row">
-                    <label for="tts">How to use it on a Mac?</label>
+                    <label>How to use it on a Mac?</label>
                 </th>
                 <td>
                     <p>Step1.Download & Install <a href="http://www.hammerspoon.org/">hammerspoon</a></p>

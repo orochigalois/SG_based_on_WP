@@ -160,7 +160,7 @@ trait GapicClientTrait
             'libVersion' => null,
         ];
         $defaultOptions['transportConfig'] += [
-            'grpc' => [],
+            'grpc' => ['stubOpts' => ['grpc.service_config_disable_resolution' => 1]],
             'rest' => [],
             'grpc-fallback' => [],
         ];
@@ -172,17 +172,23 @@ trait GapicClientTrait
         $options['credentialsConfig'] += $defaultOptions['credentialsConfig'];
         $options['transportConfig'] += $defaultOptions['transportConfig'];
         $options['transportConfig']['grpc'] += $defaultOptions['transportConfig']['grpc'];
+        $options['transportConfig']['grpc']['stubOpts'] += $defaultOptions['transportConfig']['grpc']['stubOpts'];
         $options['transportConfig']['rest'] += $defaultOptions['transportConfig']['rest'];
         $options['transportConfig']['grpc-fallback'] += $defaultOptions['transportConfig']['grpc-fallback'];
 
         $this->modifyClientOptions($options);
 
+        // serviceAddress is now deprecated and acts as an alias for apiEndpoint
+        if (isset($options['serviceAddress'])) {
+            $options['apiEndpoint'] = $this->pluck('serviceAddress', $options, false);
+        }
+
         if (extension_loaded('sysvshm')
                 && isset($options['gcpApiConfigPath'])
                 && file_exists($options['gcpApiConfigPath'])
-                && isset($options['serviceAddress'])) {
+                && isset($options['apiEndpoint'])) {
             $grpcGcpConfig = self::initGrpcGcpConfig(
-                $options['serviceAddress'],
+                $options['apiEndpoint'],
                 $options['gcpApiConfigPath']
             );
 
@@ -208,9 +214,12 @@ trait GapicClientTrait
      * @param array $options {
      *     An array of required and optional arguments.
      *
-     *     @type string $serviceAddress
+     *     @type string $apiEndpoint
      *           The address of the API remote host, for example "example.googleapis.com. May also
      *           include the port, for example "example.googleapis.com:443"
+     *     @type string $serviceAddress
+     *           **Deprecated**. This option will be removed in the next major release. Please
+     *           utilize the `$apiEndpoint` option instead.
      *     @type bool $disableRetries
      *           Determines whether or not retries defined by the client configuration should be
      *           disabled. Defaults to `false`.
@@ -236,7 +245,7 @@ trait GapicClientTrait
      *           `grpc`, or 'grpc-fallback'. Defaults to `grpc` if gRPC support is detected on the system.
      *           *Advanced usage*: Additionally, it is possible to pass in an already instantiated
      *           TransportInterface object. Note that when this objects is provided, any settings in
-     *           $transportConfig, and any $serviceAddress setting, will be ignored.
+     *           $transportConfig, and any `$apiEndpoint` setting, will be ignored.
      *     @type array $transportConfig
      *           Configuration options that will be used to construct the transport. Options for
      *           each supported transport type should be passed in a key for that transport. For
@@ -265,8 +274,12 @@ trait GapicClientTrait
      */
     private function setClientOptions(array $options)
     {
+        // serviceAddress is now deprecated and acts as an alias for apiEndpoint
+        if (isset($options['serviceAddress'])) {
+            $options['apiEndpoint'] = $this->pluck('serviceAddress', $options, false);
+        }
         $this->validateNotNull($options, [
-            'serviceAddress',
+            'apiEndpoint',
             'serviceName',
             'descriptorsConfigPath',
             'clientConfig',
@@ -311,7 +324,7 @@ trait GapicClientTrait
         $transport = $options['transport'] ?: self::defaultTransport();
         $this->transport = $transport instanceof TransportInterface
             ? $transport
-            : $this->createTransport($options['serviceAddress'], $transport, $options['transportConfig']);
+            : $this->createTransport($options['apiEndpoint'], $transport, $options['transportConfig']);
     }
 
     /**
@@ -342,13 +355,13 @@ trait GapicClientTrait
     }
 
     /**
-     * @param string $serviceAddress
+     * @param string $apiEndpoint
      * @param string $transport
      * @param array $transportConfig
      * @return TransportInterface
      * @throws ValidationException
      */
-    private function createTransport($serviceAddress, $transport, array $transportConfig)
+    private function createTransport($apiEndpoint, $transport, array $transportConfig)
     {
         if (!is_string($transport)) {
             throw new ValidationException(
@@ -361,9 +374,9 @@ trait GapicClientTrait
             : [];
         switch ($transport) {
             case 'grpc':
-                return GrpcTransport::build($serviceAddress, $configForSpecifiedTransport);
+                return GrpcTransport::build($apiEndpoint, $configForSpecifiedTransport);
             case 'grpc-fallback':
-                return GrpcFallbackTransport::build($serviceAddress, $configForSpecifiedTransport);
+                return GrpcFallbackTransport::build($apiEndpoint, $configForSpecifiedTransport);
             case 'rest':
                 if (!isset($configForSpecifiedTransport['restClientConfigPath'])) {
                     throw new ValidationException(
@@ -371,7 +384,7 @@ trait GapicClientTrait
                     );
                 }
                 $restConfigPath = $configForSpecifiedTransport['restClientConfigPath'];
-                return RestTransport::build($serviceAddress, $restConfigPath, $configForSpecifiedTransport);
+                return RestTransport::build($apiEndpoint, $restConfigPath, $configForSpecifiedTransport);
             default:
                 throw new ValidationException(
                     "Unexpected 'transport' option: $transport. " .

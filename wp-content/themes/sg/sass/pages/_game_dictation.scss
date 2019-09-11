@@ -314,6 +314,10 @@
         }
     }
 
+    .translation_board {
+        @extend .sentence_board;
+    }
+
 }
 
 
