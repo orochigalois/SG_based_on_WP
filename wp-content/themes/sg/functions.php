@@ -94,6 +94,15 @@ add_action('template_redirect', 'redirect_to_url');
 
 
 //_______________________________________________________________________________________SG logic begins
+
+function change_user_settings()
+{
+	set_user_setting('mfold', 'f');
+}
+
+add_action('admin_init', 'change_user_settings');
+
+
 function wpse239290_user_welcome_notice()
 {
 	// Make sure that the user is assigned to the subscriber role, specifically.
@@ -132,8 +141,8 @@ function sg_admin_menu()
 	if (!in_array('subscriber', $user->roles)) {
 		return;
 	}
-	add_menu_page('Upload Vocabulary Lists', 'Upload', 'read', 'sg_upload_page', 'sg_upload', 'dashicons-translation', 110);
-	add_menu_page('Library', 'Library', 'read', 'sg_library_page', 'sg_library', 'dashicons-admin-page', 111);
+	add_menu_page('Upload Vocabulary Lists', 'Upload', 'read', 'sg_upload_page', 'sg_upload', 'dashicons-upload', 110);
+	add_menu_page('Library', 'Library', 'read', 'sg_library_page', 'sg_library', 'dashicons-welcome-learn-more', 111);
 	add_menu_page('Dictation Game', 'Dictation', 'read', 'sg_dictation_page', 'sg_dictation', 'dashicons-editor-spellcheck', 112);
 	add_menu_page('Sentence Game', 'Sentence', 'read', 'sg_sentence_page', 'sg_sentence', 'dashicons-editor-spellcheck', 113);
 	//add_menu_page('Test', 'Test', 'read', 'sg_test_page', 'sg_test', 'dashicons-editor-spellcheck', 200);
