@@ -19,7 +19,7 @@
             echo '<div class="word">' . $word . '</div>';
             $sentence = $wordline['sentence'];
             echo '<div class="sentence">' . $sentence . '</div>';
-            $translate = strtolower($wordline['translate']);
+            $translate = $wordline['translate'];
             echo '<div class="translation">' . $translate . '</div>';
         }
         ?>

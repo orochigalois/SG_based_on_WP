@@ -44,7 +44,7 @@ function ajax_getWords()
 		update_post_meta($post_id, 'sg_already_loaded', 'yes');
 	}
 
-
+	$wordMatrix = prepare_wordMatrix($post_id, $isSentenceGame);
 	$result['status'] = "success";
 	$result['wordMatrix'] = $wordMatrix;;
 
