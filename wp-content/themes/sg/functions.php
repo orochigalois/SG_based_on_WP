@@ -1,6 +1,7 @@
 <?php
-session_start();
 set_time_limit(0);
+
+//This is used by Google Cloud API
 date_default_timezone_set('Australia/Melbourne');
 
 // getcwd() will return /Users/xinyin/Project/SG_based_on_WP/wp-admin/ , so we need going to parent folder
@@ -206,9 +207,7 @@ function sg_initialize_user($user_id)
 	//step1. create folders
 	$upload_dir = wp_upload_dir();
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id, 0777);
-	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/paragraph', 0777);
-	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/sentence', 0777);
-	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/word', 0777);
+	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/sound', 0777);
 	mkdir($upload_dir['basedir'] . '/userdata' . $user_id . '/picture', 0777);
 
 	//step2. create 'sg_word_or_sentence' meta
