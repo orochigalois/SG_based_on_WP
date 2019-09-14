@@ -1,18 +1,5 @@
 <?php
 
-function prepare_wordMatrix($post_id, $isSentenceGame)
-{
-	$lines = get_content_in_the($post_id);
-	if ($isSentenceGame == "yes") {
-		foreach ($lines as $i => $line) {
-			$wordmatrix[$i]['sentence'] = $line;
-		}
-	} else {
-		$wordmatrix = $lines;
-	}
-	return $wordmatrix;
-}
-
 
 function ajax_getWords()
 {
@@ -20,7 +7,7 @@ function ajax_getWords()
 	$isSentenceGame = $_GET['isSentenceGame'];
 	$already_loaded = (!empty($_GET['already_loaded']) ? (string) $_GET['already_loaded'] : 'no');
 
-	$wordMatrix = prepare_wordMatrix($post_id, $isSentenceGame);
+	$word_matrix = new WordMatrix($post_id);
 
 	if ($already_loaded != 'yes') {
 
@@ -29,31 +16,26 @@ function ajax_getWords()
 
 		if (isset($user_info['sg_tts'])) {
 			if ($user_info['sg_tts'][0] == 'voicerss') {
-				get_wordSound_by_voicerss_tts($wordMatrix, $isSentenceGame);
+				get_wordSound_by_voicerss_tts($word_matrix->data, $isSentenceGame, $post_id, NULL);
 			} else {
-				get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id, NULL);
+				get_wordSound_by_google_tts($word_matrix->data, $isSentenceGame, $post_id, NULL);
 			}
 		} else {
-			get_wordSound_by_google_tts($wordMatrix, $isSentenceGame, $post_id, NULL);
+			get_wordSound_by_google_tts($word_matrix->data, $isSentenceGame, $post_id, NULL);
 		}
 
-		get_word_translation($wordMatrix, $isSentenceGame, $post_id, NULL);
+		get_wordImage($word_matrix->data, $isSentenceGame, $post_id);
 
-		get_wordImage($wordMatrix, $isSentenceGame, $post_id);
+		get_word_translation($word_matrix, $isSentenceGame, $post_id, NULL);
 
 		update_post_meta($post_id, 'sg_already_loaded', 'yes');
 	}
 
-	$wordMatrix = prepare_wordMatrix($post_id, $isSentenceGame);
 	$result['status'] = "success";
-	$result['wordMatrix'] = $wordMatrix;;
-
-
-	//store $wordmatrix
-	$_SESSION['wordMatrix'] = $wordMatrix;
+	$result['wordMatrix'] = $word_matrix->data;;
 
 	//store $post_id
-	$_SESSION['post_id'] = $post_id;
+	update_user_meta($user->ID, "sg_current_post", $post_id);
 	print json_encode($result);
 	wp_die();
 }

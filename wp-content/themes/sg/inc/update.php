@@ -49,32 +49,33 @@ function ajax_update_word()
     $lines[$index] = $word . ',' . $sentence;
     file_put_contents($file, implode("\n", $lines));
 
-    //Step2. update sentence in db
-    $lines = get_content_in_the($post_id);
+    //Step2. update $word_matrix
 
-    $lines[$index]['word'] = $word;
-    $lines[$index]['sentence'] = $sentence;
+    $word_matrix = new WordMatrix($post_id);
 
-    $serialized_data = maybe_serialize($lines);
+    $word_matrix->data[$index]['word'] = $word;
+    $word_matrix->data[$index]['sentence'] = $sentence;
 
-    $my_post = array(
-        'ID' => $post_id,
-        'post_content' => $serialized_data,
-    );
-    wp_update_post($my_post);
-
-    //Step3. refresh the wordMatrix
-
-    $wordMatrix = $_SESSION['wordMatrix'];
-    $wordMatrix[$index]['word'] = $word;
-    $wordMatrix[$index]['sentence'] = $sentence;
-    $_SESSION['wordMatrix'] = $wordMatrix;
-
-    //Step4. reload the voice
-    get_wordSound_by_google_tts($_SESSION['wordMatrix'], "no", $post_id, $index);
+    $word_matrix->write_to_db();
 
 
-    //Step5. return
+    //Step3. reload the voice
+
+    $user = wp_get_current_user();
+    $user_info = get_user_meta($user->ID);
+
+    if (isset($user_info['sg_tts'])) {
+        if ($user_info['sg_tts'][0] == 'voicerss') {
+            get_wordSound_by_voicerss_tts($word_matrix->data, "no", $post_id, $index);
+        } else {
+            get_wordSound_by_google_tts($word_matrix->data, "no", $post_id, $index);
+        }
+    } else {
+        get_wordSound_by_google_tts($word_matrix->data, "no", $post_id, $index);
+    }
+
+
+    //Step4. return
     $result['status'] = "success";
     print json_encode($result);
     wp_die();
@@ -89,7 +90,6 @@ function ajax_update_sentence()
     $index = $_GET['index'];
 
     $sentence = stripslashes($_GET['sentence']);
-
 
     //Step1. update sentence in file
     $filepath = get_attached_file($post_id);
@@ -125,30 +125,27 @@ function ajax_update_sentence()
 
 
     //Step2. update sentence in db
-    $lines = get_content_in_the($post_id);
+    $word_matrix = new WordMatrix($post_id);
+    $word_matrix->data[$index] = $sentence;
 
-    $lines[$index] = $sentence;
-
-    $serialized_data = maybe_serialize($lines);
-
-    $my_post = array(
-        'ID' => $post_id,
-        'post_content' => $serialized_data,
-    );
-    wp_update_post($my_post);
+    $word_matrix->write_to_db();
 
 
+    //Step3. reload the voice
+    $user = wp_get_current_user();
+    $user_info = get_user_meta($user->ID);
 
-    //Step3. refresh the wordMatrix
+    if (isset($user_info['sg_tts'])) {
+        if ($user_info['sg_tts'][0] == 'voicerss') {
+            get_wordSound_by_voicerss_tts($word_matrix->data, "yes", $post_id, $index);
+        } else {
+            get_wordSound_by_google_tts($word_matrix->data, "yes", $post_id, $index);
+        }
+    } else {
+        get_wordSound_by_google_tts($word_matrix->data, "yes", $post_id, $index);
+    }
 
-    $wordMatrix = $_SESSION['wordMatrix'];
-    $wordMatrix[$index] = $sentence;
-    $_SESSION['wordMatrix'] = $wordMatrix;
-
-    //Step4. reload the voice
-    get_wordSound_by_google_tts($_SESSION['wordMatrix'], "yes", $post_id, $index);
-
-    //Step5. return
+    //Step4. return
     $result['status'] = "success";
     print json_encode($result);
     wp_die();

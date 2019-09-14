@@ -7,40 +7,28 @@ function get_wordImage($wordmatrix, $isSentenceGame, $post_id)
     global $current_user;
 
     $upload_dir = wp_upload_dir();
-    foreach ($wordmatrix as $i => $wordline) {
+    foreach ($wordmatrix as $i => $row) {
 
         if ($isSentenceGame == 'yes') {
-            $word = strtolower($wordline['sentence']);
+            $keyword = $row['sentence'];
         } else {
-            $word = strtolower($wordline['word']);
+            $keyword = $row['word'];
         }
-        $wordcode = rawurlencode($word);
+        $wordcode = rawurlencode($keyword);
         //parameters refer to https://developers.google.com/custom-search/v1/cse/list
         $word_url =  'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode;
 
 
         $result = curl_request($word_url);
-        // write_log($result);
         $jsonobj = json_decode($result);
 
-        // write_log($jsonobj);
         $image_link = "";
 
         foreach ($jsonobj->items as $value) {
             $image_link = $value->link;
         }
-        // write_log($image_link);
 
-        if ($isSentenceGame == 'yes') {
-
-
-
-            $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $post_id . '_' . $i;
-        } else {
-            $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $word;
-        }
-
-
+        $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $post_id . '_' . $i;
 
         curl_save_file($image_link, $image_saveTo);
     }
@@ -81,13 +69,10 @@ function ajax_save_images()
     global $current_user;
 
     $upload_dir = wp_upload_dir();
-    $isSentenceGame = $_GET['isSentenceGame'];
 
-    if ($isSentenceGame == 'yes') {
-        $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["sentence"];
-    } else {
-        $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET["word"];
-    }
+
+    $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $_GET['picture_name'];
+
     curl_save_file($_GET["imageUrl"], $image_saveTo);
     $result['status'] = "success";
     print json_encode($result);

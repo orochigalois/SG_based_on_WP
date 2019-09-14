@@ -36,54 +36,31 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id, $li
         ->setEffectsProfileId(array($effectsProfileId));
 
     if (is_null($line_index)) {
-        foreach ($wordmatrix as $i => $wordline) {
-
-
+        foreach ($wordmatrix as $i => $row) {
             if ($isSentenceGame == 'yes') {
-                $sentence = str_replace("\r", "", $wordline['sentence']);
+                $sentence = $row['sentence'];
+                $synthesisInputText = (new SynthesisInput())
+                    ->setText($sentence);
 
+                $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+                $audioContent = $response->getAudioContent();
+                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '_s.mp3';
 
-
-                if ($sentence != '') {
-                    $synthesisInputText = (new SynthesisInput())
-                        ->setText($sentence);
-
-                    $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-                    $audioContent = $response->getAudioContent();
-                    $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $post_id . '_' . $i . '.mp3';
-
-                    file_put_contents($sentence_saveTo, $audioContent);
-                }
+                file_put_contents($sentence_saveTo, $audioContent);
             } else {
-                $word = strtolower($wordline['word']);
-                //If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
-                $sentence = str_replace("\r", "", $wordline['sentence']);
+                $word = $row['word'];
+                $sentence = $row['sentence'];
 
-
-
-
-                // sets text to be synthesised
                 $synthesisInputText = (new SynthesisInput())
                     ->setText($word);
 
-
-
-                // perform text-to-speech request on the text input with selected voice
-                // parameters and audio file type
                 $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
                 $audioContent = $response->getAudioContent();
 
-
-
-
-
-                $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/word' . '/' . $word . '.mp3';
-
+                $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '.mp3';
 
                 // the response's audioContent is binary
                 file_put_contents($word_saveTo, $audioContent);
-
-
 
                 if ($sentence != '') {
 
@@ -91,61 +68,39 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id, $li
 
                     $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
                     $audioContent = $response->getAudioContent();
-                    $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
-
+                    $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '_s.mp3';
                     file_put_contents($sentence_saveTo, $audioContent);
                 }
             }
         }
     } else {
 
-
-
-
         if ($isSentenceGame == 'yes') {
-            $sentence = str_replace("\r", "", $wordmatrix[$line_index]['sentence']);
+            $sentence = $wordmatrix[$line_index]['sentence'];
 
 
-
-            if ($sentence != '') {
-                $synthesisInputText = (new SynthesisInput())
-                    ->setText($sentence);
-
-                $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-                $audioContent = $response->getAudioContent();
-                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/paragraph' . '/' . $post_id . '_' . $line_index . '.mp3';
-
-                file_put_contents($sentence_saveTo, $audioContent);
-            }
-        } else {
-            $word = strtolower($wordmatrix[$line_index]['word']);
-            //If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
-            $sentence = str_replace("\r", "", $wordmatrix[$line_index]['sentence']);
-
-
-
-
-            // sets text to be synthesised
             $synthesisInputText = (new SynthesisInput())
-                ->setText($word);
+                ->setText($sentence);
 
-
-
-            // perform text-to-speech request on the text input with selected voice
-            // parameters and audio file type
             $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
             $audioContent = $response->getAudioContent();
 
+            $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '_s.mp3';
 
+            file_put_contents($sentence_saveTo, $audioContent);
+        } else {
+            $word = $wordmatrix[$line_index]['word'];
+            $sentence = $wordmatrix[$line_index]['sentence'];
 
+            $synthesisInputText = (new SynthesisInput())
+                ->setText($word);
 
+            $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+            $audioContent = $response->getAudioContent();
 
-            $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/word' . '/' . $word . '.mp3';
+            $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '.mp3';
 
-
-            // the response's audioContent is binary
             file_put_contents($word_saveTo, $audioContent);
-
 
 
             if ($sentence != '') {
@@ -154,42 +109,43 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id, $li
 
                 $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
                 $audioContent = $response->getAudioContent();
-                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
+
+                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '_s.mp3';
 
                 file_put_contents($sentence_saveTo, $audioContent);
             }
         }
     }
 }
-function get_wordSound_by_voicerss_tts($wordmatrix, $isSentenceGame)
+
+/**
+ * if $line_index=NULL, then reload all
+ */
+function get_wordSound_by_voicerss_tts($wordmatrix, $isSentenceGame, $post_id, $line_index)
 {
     global $current_user;
 
     $upload_dir = wp_upload_dir();
-    foreach ($wordmatrix as $wordline) {
+
+    if (is_null($line_index)) {
+        foreach ($wordmatrix as $i => $row) {
+            if ($isSentenceGame == 'yes') {
+                //do nothing, voicerss_tts can not handle sentence
+            } else {
+                $word = $row['word'];
+                $url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
+                $saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '.mp3';
+                curl_save_file($url, $saveTo);
+            }
+        }
+    } else {
         if ($isSentenceGame == 'yes') {
             //do nothing, voicerss_tts can not handle sentence
         } else {
-            $word = strtolower($wordline['word']);
-            //If has "\r",then the final JSON is wrong,and the AJAX will never return!!!!!!
-            $sentence = str_replace("\r", "", $wordline['sentence']);
-
-            $word_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
-
-
-
-            $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/word' . '/' . $word . '.mp3';
-
-            curl_save_file($word_url, $word_saveTo);
-
-
-            if ($sentence != '') {
-                $sentence_url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $sentence;
-                $sentence_url = str_replace(" ", "%20", $sentence_url);
-                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sentence' . '/' . $word . '.mp3';
-
-                curl_save_file($sentence_url, $sentence_saveTo);
-            }
+            $word = $wordmatrix[$line_index]['word'];
+            $url = "http://api.voicerss.org/?key=67f9eca9271045e38b2cfa24fe9c887a&hl=en-us&src=" . $word;
+            $saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '.mp3';
+            curl_save_file($url, $saveTo);
         }
     }
 }

@@ -1,25 +1,26 @@
 <div class="hidden_data" style="display:none;">
     <div class="hidden_data__userID">
         <?php global $current_user;
-        wp_get_current_user();
         echo $current_user->ID;
         ?>
     </div>
     <div class="hidden_data__post_id">
         <?php
-        echo $_SESSION['post_id'];
+        $post_id = get_user_meta($current_user->ID, 'sg_current_post', true);
+        echo $post_id;
         ?>
     </div>
 
     <div class="hidden_data__wordlist">
         <?php
-        $wordMatrix = $_SESSION['wordMatrix'];
-        foreach ($wordMatrix as $wordline) {
-            $word = $wordline['word'];
+        $word_matrix = new WordMatrix($post_id);
+
+        foreach ($word_matrix->data as $row) {
+            $word = $row['word'];
             echo '<div class="word">' . $word . '</div>';
-            $sentence = $wordline['sentence'];
+            $sentence = $row['sentence'];
             echo '<div class="sentence">' . $sentence . '</div>';
-            $translate = $wordline['translate'];
+            $translate = $row['translation'];
             echo '<div class="translation">' . $translate . '</div>';
         }
         ?>

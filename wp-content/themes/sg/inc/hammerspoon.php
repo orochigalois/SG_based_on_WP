@@ -69,16 +69,14 @@ function ajax_collect_sentence()
     } else {
         $sg_current_sentence_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_sentence_post_id_for_REST_API', true);
 
-        $serialized_data = get_content_in_the($sg_current_sentence_post_id_for_REST_API);
-        $serialized_data[] = trim($sentence);
-        $serialized_data = maybe_serialize($serialized_data);
+        $word_matrix = new WordMatrix($sg_current_sentence_post_id_for_REST_API);
 
-        $my_post = array(
-            'ID' => $sg_current_sentence_post_id_for_REST_API,
-            'post_content' => $serialized_data,
-        );
-        // Update the post into the database
-        wp_update_post($my_post);
+        $line = array();
+        $line['sentence'] = trim($sentence);
+        $line['translation'] = '';
+        $word_matrix->data[] = $line;
+
+        $word_matrix->write_to_db();
     }
 
 
@@ -163,20 +161,15 @@ function ajax_collect_word()
     } else {
         $sg_current_word_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_word_post_id_for_REST_API', true);
 
-        $serialized_data = get_content_in_the($sg_current_word_post_id_for_REST_API);
+        $word_matrix = new WordMatrix($sg_current_word_post_id_for_REST_API);
+
         $line = array();
         $line['word'] = trim($word);
         $line['sentence'] = '';
-        $serialized_data[] = $line;
+        $line['translation'] = '';
+        $word_matrix->data[] = $line;
 
-        $serialized_data = maybe_serialize($serialized_data);
-
-        $my_post = array(
-            'ID' => $sg_current_word_post_id_for_REST_API,
-            'post_content' => $serialized_data,
-        );
-        // Update the post into the database
-        wp_update_post($my_post);
+        $word_matrix->write_to_db();
     }
 
 
@@ -224,19 +217,14 @@ function ajax_collect_sentence_for_word()
         fclose($fp);
 
         $sg_current_word_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_word_post_id_for_REST_API', true);
-        $serialized_data = get_content_in_the($sg_current_word_post_id_for_REST_API);
 
-        $last_index = count($serialized_data) - 1;
-        $serialized_data[$last_index]['sentence'] = trim($sentence);
+        $word_matrix = new WordMatrix($sg_current_word_post_id_for_REST_API);
 
-        $serialized_data = maybe_serialize($serialized_data);
+        $last_index = $word_matrix->count() - 1;
 
-        $my_post = array(
-            'ID' => $sg_current_word_post_id_for_REST_API,
-            'post_content' => $serialized_data,
-        );
-        // Update the post into the database
-        wp_update_post($my_post);
+        $word_matrix->data[$last_index]['sentence'] = trim($sentence);
+
+        $word_matrix->write_to_db();
     } else {
         $result['status'] = "You need to collect a word first";
         print json_encode($result);

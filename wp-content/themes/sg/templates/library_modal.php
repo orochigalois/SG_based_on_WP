@@ -38,9 +38,18 @@
 <div class="md-overlay">
 
 </div>
-<div id="image-overlay">
-    <img class="prev greyout" src="<?php lp_image_dir(); ?>/prev-arrow.png" alt="prev" />
-    <img class="next" src="<?php lp_image_dir(); ?>/next-arrow.png" alt="next" />
+<div class="image-overlay" id="image-overlay">
+    <div class="image-overlay__content">
+        <div class="image-overlay__content__close">
+        </div>
+        <div class="image-overlay__content__body">
+
+
+            <a class="prev greyout" href="#"><span>❮</span></a>
+            <a class="next" href="#"><span>❯</span></a>
+
+        </div>
+    </div>
 </div>
 
 <div id="loadIcon">

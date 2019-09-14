@@ -26,4 +26,5 @@ function curl_save_file($url, $saveTo)
     $result = curl_exec($ch);
     curl_close($ch);
     fclose($fp);
+    return $result;
 }

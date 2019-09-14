@@ -21,7 +21,8 @@ if ($sg_word_or_sentence == "sentence") {
     );
 
     foreach ($all_posts as $sentence_post) {
-        $lines = get_content_in_the($sentence_post->ID);
+        $word_matrix = new WordMatrix($sentence_post->ID);
+        $lines = $word_matrix->data;
         foreach ($lines as $i => $line) {
             echo "<tr>";
             echo "<td>" . $line . "</td>";
@@ -46,7 +47,8 @@ if ($sg_word_or_sentence == "sentence") {
 
     foreach ($all_posts as $word_post) {
 
-        $lines = get_content_in_the($word_post->ID);
+        $word_matrix = new WordMatrix($word_post->ID);
+        $lines = $word_matrix->data;
 
         foreach ($lines as $i => $line) {
             echo "<tr>";

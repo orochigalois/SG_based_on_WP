@@ -11,6 +11,8 @@ sg_current_word_post_id_for_REST_API    (value: post_id)    single
 sg_your_native_language (value: zh / en / ... etc.)    single
 sg_tts (value: google / voicerss)    single
 
+sg_current_post  (value: post_id)   single
+
 In wp_postmeta:
 
 sg_word_or_sentence   (value: sentence / word)    single
@@ -43,3 +45,20 @@ h.update admin password,deactive all plugins
 4.compposer.json is the only file you need to generate the google API vendor folder. 
 run
 composer install
+
+
+5. File Sample
+Word Game:
+userdata3/sound/3_1.mp3  (word)
+userdata3/sound/3_1s.mp3  (sentence)
+userdata3/picture/3_1
+
+Sentence Game:
+userdata3/sound/4_1s.mp3  (sentence)
+userdata3/picture/4_1
+
+
+6. DB Sample
+
+Word Game:
+a:3:{i:0;a:3:{s:4:"word";s:4:"what";s:8:"sentence";s:14:"what is a test";s:9:"translate";s:6:"什么";}i:1;a:3:{s:4:"word";s:4:"girl";s:8:"sentence";s:9:"good girl";s:9:"translate";s:6:"女孩";}i:2;a:3:{s:4:"word";s:4:"haha";s:8:"sentence";s:9:"hahahahah";s:9:"translate";s:6:"哈哈";}}

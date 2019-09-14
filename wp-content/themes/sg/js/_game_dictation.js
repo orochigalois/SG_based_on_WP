@@ -93,7 +93,7 @@ jQuery(document).ready(function ($) {
     }
 
     function init_sound() {
-        __word = new Audio("../wp-content/uploads/userdata" + user_id + "/word/" + wordList[wordIndex] + ".mp3");
+        __word = new Audio("../wp-content/uploads/userdata" + user_id + "/sound/" + post_id + '_' + wordIndex + ".mp3");
     }
 
     function play_sound() {
@@ -142,7 +142,7 @@ jQuery(document).ready(function ($) {
     }
 
     function show_picture() {
-        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + wordList[wordIndex] + ")");
+        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + post_id + '_' + wordIndex + ")");
     }
 
     function hide_picture() {

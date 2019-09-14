@@ -1,21 +1,21 @@
 <div class="hidden_data" style="display:none;">
     <div class="hidden_data__userID">
         <?php global $current_user;
-        wp_get_current_user();
         echo $current_user->ID;
         ?>
     </div>
     <div class="hidden_data__post_id">
         <?php
-        echo $_SESSION['post_id'];
+        $post_id = get_user_meta($current_user->ID, 'sg_current_post', true);
+        echo $post_id;
         ?>
     </div>
 
     <div class="hidden_data__wordlist">
         <?php
-        $wordMatrix = $_SESSION['wordMatrix'];
-        foreach ($wordMatrix as $wordline) {
-            $sentence = strtolower($wordline['sentence']);
+        $word_matrix = new WordMatrix($post_id);
+        foreach ($word_matrix->data as $row) {
+            $sentence = strtolower($row['sentence']);
             echo '<div class="sentence">' . $sentence . '</div>';
         }
         ?>
@@ -24,26 +24,26 @@
 
 <div class="game_sentence">
     <div class="grey_background">
-    <button class="startBtn">START</button>
-    <button class="replayBtn">REPLAY</button>
-    <div class="outerWrap">
-        <div class="scoreWrap">
-            <p>Score</p>
-            <span class="score"></span>
+        <button class="startBtn">START</button>
+        <button class="replayBtn">REPLAY</button>
+        <div class="outerWrap">
+            <div class="scoreWrap">
+                <p>Score</p>
+                <span class="score"></span>
+            </div>
+            <div class="errorWrap">
+                <p>Error</p>
+                <span class="error"></span>
+            </div>
         </div>
-        <div class="errorWrap">
-            <p>Error</p>
-            <span class="error"></span>
+        <progress value="0" max="20" id="progressBar"></progress>
+        <div class="flashcard">
         </div>
-    </div>
-    <progress value="0" max="20" id="progressBar"></progress>
-    <div class="flashcard">
+
+        <div class="wordsWrap">
+            <p class="words"></p>
+        </div>
     </div>
 
-    <div class="wordsWrap">
-        <p class="words"></p>
-    </div>
-    </div>
-    
 
 </div>

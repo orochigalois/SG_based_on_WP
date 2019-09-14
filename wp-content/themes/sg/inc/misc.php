@@ -277,28 +277,14 @@ function get_all_delimiters($string, &$delimiters)
 }
 
 
-function randomPassword() {
-    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-    $pass = array(); //remember to declare $pass as an array
-    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-    for ($i = 0; $i < 8; $i++) {
-        $n = rand(0, $alphaLength);
-        $pass[] = $alphabet[$n];
-    }
-    return implode($pass); //turn the array into a string
-}
-
-
-
-
-function get_content_in_the($post_id){
-	$my_post = get_post($post_id);
-	$content = $my_post->post_content;
-	$lines = maybe_unserialize( $content );
-	return $lines;
-}
-
-function get_how_many_items_in_the($post_id){
-	$lines = get_content_in_the($post_id);
-	return count($lines);
+function randomPassword()
+{
+	$alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+	$pass = array(); //remember to declare $pass as an array
+	$alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+	for ($i = 0; $i < 8; $i++) {
+		$n = rand(0, $alphaLength);
+		$pass[] = $alphabet[$n];
+	}
+	return implode($pass); //turn the array into a string
 }

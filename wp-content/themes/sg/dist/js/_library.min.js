@@ -3,7 +3,7 @@ var isSentenceGame;
 
 var currentPage = 1;
 var currentWord;
-var currentSentence;
+var picture_name;
 var currentImg;
 
 var currentPostID;
@@ -150,20 +150,23 @@ function generateVocabularyHTML(wordMatrix) {
 		}
 
 		sentenceHTML = "<dd><span data-toggle='modal' data-target='#updateModal'>" + wordMatrix[i].sentence + "</span><span></span></dd>";
-		if (isSentenceGame == 'yes') {
-			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID + "_" + i + "'/>";
-		} else {
-			imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + wordMatrix[i].word + "'/>";
-		}
+
+		imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID + "_" + i + "'/>";
+
 
 		jQuery(".md-modal .vocabulary>dl").append(imageHTML + wordHTML + sentenceHTML);
 	});
 }
 
+
+
+
+
 function wordSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dt>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
-			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/word/" + jQuery(this).prev().text().toLowerCase() + ".mp3");
+
+			wordSound = new Audio("../wp-content/uploads/userdata" + userID + "/sound/" + currentPostID + "_" + index + ".mp3");
 			wordSound.pause();
 			wordSound.currentTime = 0;
 			wordSound.play();
@@ -174,12 +177,7 @@ function wordSoundHandler() {
 function sentenceSoundHandler() {
 	jQuery(".md-modal .vocabulary>dl>dd>span:last-child").each(function (index) {
 		jQuery(this).on("click", function () {
-			if (isSentenceGame == 'yes') {
-				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + +currentPostID + "_" + index + ".mp3");
-			} else {
-				sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sentence/" + jQuery(this).parent().prev().children().first().text().toLowerCase() + ".mp3");
-			}
-
+			sentenceSound = new Audio("../wp-content/uploads/userdata" + userID + "/sound/" + currentPostID + "_" + index + "_s.mp3");
 			sentenceSound.pause();
 			sentenceSound.currentTime = 0;
 			sentenceSound.play();
@@ -346,7 +344,7 @@ function imageHandler() {
 
 			currentWord = jQuery(this).next().children().eq(0).text();
 
-			currentSentence = currentPostID + "_" + index;
+			picture_name = currentPostID + "_" + index;
 			currentImg = jQuery(this);
 			currentPage = 1;
 
@@ -361,9 +359,9 @@ function imageHandler() {
 				},
 				dataType: 'html',
 				success: function (response) {
-					jQuery("#image-overlay>ul").remove();
-					jQuery("#image-overlay").append(response);
-					jQuery("#image-overlay").css('display', 'flex');
+					jQuery(".image-overlay__content__body>ul").remove();
+					jQuery(".image-overlay__content__body").append(response);
+					jQuery(".image-overlay").show();
 					jQuery("body").css("cursor", "default");
 
 
@@ -380,8 +378,19 @@ function imageHandler() {
 		});
 	});
 
+	jQuery(document).on("click", ".image-overlay__content__close", function () {
+		jQuery(".image-overlay").hide();
+	});
+
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function (event) {
+		if (event.target == document.getElementById('image-overlay')) {
+			jQuery(".image-overlay").hide();
+		}
+	}
+
 	//prev page
-	jQuery("#image-overlay .prev").on("click", document, function () {
+	jQuery(".image-overlay__content__body .prev").on("click", document, function () {
 		jQuery("#loadIcon").fadeIn();
 		if (currentPage > 1) {
 			currentPage--;
@@ -395,11 +404,11 @@ function imageHandler() {
 				},
 				dataType: 'html',
 				success: function (response) {
-					jQuery("#image-overlay>ul").remove();
-					jQuery("#image-overlay").append(response);
+					jQuery(".image-overlay__content__body>ul").remove();
+					jQuery(".image-overlay__content__body").append(response);
 					jQuery("#loadIcon").fadeOut();
 					if (currentPage == 1) {
-						jQuery("#image-overlay .prev").addClass("greyout");
+						jQuery(".image-overlay__content__body .prev").addClass("greyout");
 					}
 
 					ajax_save_images();
@@ -410,7 +419,7 @@ function imageHandler() {
 		}
 	});
 	//next page
-	jQuery("#image-overlay .next").on("click", document, function () {
+	jQuery(".image-overlay__content__body .next").on("click", document, function () {
 		jQuery("#loadIcon").fadeIn();
 		currentPage++;
 		jQuery.ajax({
@@ -423,10 +432,10 @@ function imageHandler() {
 			},
 			dataType: 'html',
 			success: function (response) {
-				jQuery("#image-overlay>ul").remove();
-				jQuery("#image-overlay").append(response);
+				jQuery(".image-overlay__content__body>ul").remove();
+				jQuery(".image-overlay__content__body").append(response);
 				jQuery("#loadIcon").fadeOut();
-				jQuery("#image-overlay .prev").removeClass("greyout");
+				jQuery(".image-overlay__content__body .prev").removeClass("greyout");
 				ajax_save_images();
 			},
 		});
@@ -493,20 +502,18 @@ function updateTitle(post_id) {
 
 
 function ajax_save_images() {
-	jQuery("#image-overlay>ul>li>img").each(function (index) {
+	jQuery(".image-overlay__content__body>ul>li>img").each(function (index) {
 		jQuery(this).on("click", function () {
 			var src = jQuery(this).attr("src");
 			currentImg.attr("src", src);
-			jQuery("#image-overlay").hide();
+			jQuery(".image-overlay").hide();
 			jQuery.ajax({
 				url: _ajaxurl,
 				method: 'GET',
 				data: {
 					action: 'save_images',
 					imageUrl: src,
-					word: currentWord,
-					sentence: currentSentence,
-					isSentenceGame: isSentenceGame,
+					picture_name: picture_name,
 				},
 				dataType: 'json',
 				success: function (response) {
