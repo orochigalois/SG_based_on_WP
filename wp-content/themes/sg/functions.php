@@ -155,7 +155,7 @@ function sg_admin_menu()
 	add_menu_page('Library', 'Library', 'read', 'sg_library_page', 'sg_library', 'dashicons-welcome-learn-more', 111);
 	add_menu_page('Dictation Game', 'Dictation', 'read', 'sg_dictation_page', 'sg_dictation', 'dashicons-editor-spellcheck', 112);
 	add_menu_page('Sentence Game', 'Sentence', 'read', 'sg_sentence_page', 'sg_sentence', 'dashicons-editor-spellcheck', 113);
-	add_menu_page('Test', 'Test', 'read', 'sg_test_page', 'sg_test', 'dashicons-editor-spellcheck', 200);
+	// add_menu_page('Test', 'Test', 'read', 'sg_test_page', 'sg_test', 'dashicons-editor-spellcheck', 200);
 }
 
 function sg_upload()

@@ -1,24 +1,51 @@
 .md-modal {
     margin: auto;
+    padding: 20px;
     position: fixed;
     top: 100px;
     left: 0;
     right: 0;
-    width: 50%;
+    width: 100%;
     max-width: 630px;
-    min-width: 320px;
-    height: calc(100% - 200px);
+    height: calc(100% - 150px);
     overflow: auto;
     z-index: 100001;
     visibility: hidden;
 
     backface-visibility: hidden;
 
+    &::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #666;
+        border-radius: 20px;
+    }
+
+    @media screen and (max-width:$screen-sm-max) {
+        top: 220px;
+        height: calc(100% - 200px);
+    }
+
 
     .toolbar {
         margin-bottom: 50px;
         display: flex;
+
         justify-content: space-between;
+        position: fixed;
+        top: 30px;
+        width: 500px;
+
+        @media screen and (max-width:$screen-sm-max) {
+            flex-direction: column;
+            top: 20px;
+            width: calc(100% - 40px);
+            left: 20px;
+            height: 180px;
+        }
+
 
         button {
             background: transparent;
@@ -35,6 +62,10 @@
             width: 100px;
             overflow: hidden;
             background: transparent;
+
+            @media screen and (max-width:$screen-sm-max) {
+                width: 100%;
+            }
 
 
         }
@@ -75,7 +106,7 @@
     background: rgba(#e4f0e3, 0.8);
 
     transition: all 0.3s;
-    background-image: url("../../images/paper.png");
+    background-image: url("../../images/maple.jpg");
 }
 
 .md-show~.md-overlay {
