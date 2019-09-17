@@ -126,7 +126,7 @@ function ajax_update_sentence()
 
     //Step2. update sentence in db
     $word_matrix = new WordMatrix($post_id);
-    $word_matrix->data[$index] = $sentence;
+    $word_matrix->data[$index]['sentence'] = $sentence;
 
     $word_matrix->write_to_db();
 
