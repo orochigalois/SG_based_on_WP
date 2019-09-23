@@ -13,8 +13,10 @@
 
     <div class="hidden_data__wordlist">
         <?php
-        $word_matrix = new WordMatrix($post_id);
-        foreach ($word_matrix->data as $row) {
+        $book = new Book($sentence_post->ID);
+        $word_matrix = $book->get_matrix();
+
+        foreach ($word_matrix as $row) {
             $sentence = strtolower($row['sentence']);
             echo '<div class="sentence">' . $sentence . '</div>';
         }

@@ -57,7 +57,7 @@ function initOpenModal() {
 	}
 	jQuery('.reload-all').on('click', function () {
 		prepare_loading();
-		ajax_get_words(currentPostID, 'no', currentTitle);
+		ajax_get_words(currentPostID, 'yes', currentTitle);
 	});
 
 	jQuery(".shelf .book").on("click", document, function (event) {
@@ -74,8 +74,8 @@ function initOpenModal() {
 			$currentBook = jQuery(this);
 			currentPostID = jQuery(this).data("post_id");
 			currentTitle = jQuery(this).text();
-			var already_loaded = jQuery(this).data("already_loaded")
-			ajax_get_words(currentPostID, already_loaded, currentTitle);
+
+			ajax_get_words(currentPostID, 'no', currentTitle);
 		}
 
 
@@ -95,14 +95,14 @@ function prepare_loading() {
 	jQuery('.md-modal select').attr("disabled", true);
 }
 
-function ajax_get_words(post_id, already_loaded, title) {
+function ajax_get_words(post_id, reload_all, title) {
 	jQuery.ajax({
 		url: _ajaxurl,
 		method: 'GET',
 		data: {
 			action: 'getWords',
 			post_id: post_id,
-			already_loaded: already_loaded,
+			reload_all: reload_all,
 			isSentenceGame: isSentenceGame,
 		},
 		dataType: 'json',

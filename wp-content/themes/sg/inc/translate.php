@@ -5,13 +5,15 @@ use Google\Cloud\Translate\TranslateClient;
 /**
  * if $line_index=NULL, then reload all
  */
-function get_word_translation(&$word_matrix, $isSentenceGame, $post_id, $line_index)
+function get_word_translation($isSentenceGame, $post_id, $line_index)
 {
     $user = wp_get_current_user();
     $user_info = get_user_meta($user->ID);
 
     $translate = new TranslateClient();
 
+    $book = new Book($post_id);
+    $word_matrix = $book->get_matrix();
 
     $target_language_code = 'zh';
 
@@ -20,32 +22,29 @@ function get_word_translation(&$word_matrix, $isSentenceGame, $post_id, $line_in
     }
 
     if (is_null($line_index)) {
-        foreach ($word_matrix->data as $i => $row) {
-            if ($isSentenceGame == 'yes') {
-                $result = $translate->translate($row['sentence'], [
-                    'target' => $target_language_code,
-                ]);
-                $word_matrix->data[$i]['translation'] = $result['text'];
-            } else {
-                $result = $translate->translate($row['word'], [
-                    'target' => $target_language_code,
-                ]);
-                $word_matrix->data[$i]['translation'] = $result['text'];
-            }
+        foreach ($word_matrix as $i => $row) {
+
+            $result = $translate->translate($row['word'], [
+                'target' => $target_language_code,
+            ]);
+            $word_matrix[$i]['word_in_native_language'] = $result['text'];
+
+            $result = $translate->translate($row['sentence'], [
+                'target' => $target_language_code,
+            ]);
+            $word_matrix[$i]['sentence_in_native_language'] = $result['text'];
         }
     } else {
-        if ($isSentenceGame == 'yes') {
-            $result = $translate->translate($word_matrix->data[$line_index]['sentence'], [
-                'target' => $target_language_code,
-            ]);
-            $word_matrix->data[$line_index]['translation'] = $result['text'];
-        } else {
-            $result = $translate->translate($word_matrix->data[$line_index]['word'], [
-                'target' => $target_language_code,
-            ]);
-            $word_matrix->data[$line_index]['translation'] = $result['text'];
-        }
+        $result = $translate->translate($word_matrix[$line_index]['word'], [
+            'target' => $target_language_code,
+        ]);
+        $word_matrix[$line_index]['word_in_native_language'] = $result['text'];
+
+        $result = $translate->translate($word_matrix[$line_index]['sentence'], [
+            'target' => $target_language_code,
+        ]);
+        $word_matrix[$line_index]['sentence_in_native_language'] = $result['text'];
     }
 
-    $word_matrix->write_to_db();
+    $book->write_to_db($word_matrix);
 }

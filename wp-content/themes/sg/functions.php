@@ -11,8 +11,7 @@ putenv('GOOGLE_APPLICATION_CREDENTIALS=' . getcwd() . '/../wp-content/themes/sg/
 // includes the autoloader for libraries installed with composer
 require __DIR__ . '/vendor/autoload.php';
 
-
-require 'inc/class/WordMatrix.php';
+require 'inc/class/Book.php';
 require 'inc/misc.php';
 require 'inc/constants.php';
 require 'inc/acf.php';

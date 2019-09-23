@@ -34,17 +34,21 @@ echo "<table>
     <th>complete times</th>
     </tr>";
 foreach ($all_scored_posts as $score) {
-    $word_matrix = new WordMatrix($score->post_id);
 
-    $items_count += $word_matrix->count();
+
+    $book = new Book($score->post_id);
+    $word_matrix = $book->get_matrix();
+
+    $items_count += count($word_matrix);
     $complete_times += $score->times;
-    echo "<tr><td>" . $score->post_title . "</td><td>" . $word_matrix->count() . "</td><td>" . $score->times . "</td></tr>";
+    echo "<tr><td>" . $score->post_title . "</td><td>" . count($word_matrix) . "</td><td>" . $score->times . "</td></tr>";
 }
 foreach ($all_posts as $sentence_post) {
     if (!has_been_ever_practised($sentence_post->ID, $all_scored_posts)) {
-        $word_matrix = new WordMatrix($sentence_post->ID);
-        $items_count += $word_matrix->count();
-        echo "<tr><td>" . $sentence_post->post_title . "</td><td>" . $word_matrix->count() . "</td><td class='red'>0</td></tr>";
+        $book = new Book($sentence_post->ID);
+        $word_matrix = $book->get_matrix();
+        $items_count += count($word_matrix);
+        echo "<tr><td>" . $sentence_post->post_title . "</td><td>" . count($word_matrix) . "</td><td class='red'>0</td></tr>";
     }
 }
 echo "<tr>

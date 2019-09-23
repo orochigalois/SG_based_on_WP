@@ -13,14 +13,18 @@
 
     <div class="hidden_data__wordlist">
         <?php
-        $word_matrix = new WordMatrix($post_id);
 
-        foreach ($word_matrix->data as $row) {
+        $book = new Book($post_id);
+        $word_matrix = $book->get_matrix();
+
+
+
+        foreach ($word_matrix as $row) {
             $word = $row['word'];
             echo '<div class="word">' . $word . '</div>';
             $sentence = $row['sentence'];
             echo '<div class="sentence">' . $sentence . '</div>';
-            $translate = $row['translation'];
+            $translate = $row['word_in_native_language'];
             echo '<div class="translation">' . $translate . '</div>';
         }
         ?>

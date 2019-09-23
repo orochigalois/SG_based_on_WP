@@ -59,5 +59,29 @@ userdata3/picture/4_1
 
 ###6. DB Sample
 
-Word Game:
-a:3:{i:0;a:3:{s:4:"word";s:4:"what";s:8:"sentence";s:14:"what is a test";s:9:"translate";s:6:"什么";}i:1;a:3:{s:4:"word";s:4:"girl";s:8:"sentence";s:9:"good girl";s:9:"translate";s:6:"女孩";}i:2;a:3:{s:4:"word";s:4:"haha";s:8:"sentence";s:9:"hahahahah";s:9:"translate";s:6:"哈哈";}}
+Array
+(
+    [0] => Array
+        (
+            [word] => what
+            [word_in_native_language] => 什么
+            [sentence] => what is a test
+            [sentence_in_native_language] => 什么是测试
+        )
+
+    [1] => Array
+        (
+            [word] => girl
+            [word_in_native_language] => 女孩
+            [sentence] => good girl
+            [sentence_in_native_language] => 好女孩
+        )
+
+)
+
+
+###7. How to set up a brand new app for test
+
+a.delete db and import sg_2019-09-17_clean_version_with_mailgun_setup_ready_to_go.sql, there is only one account named 'test' in it
+b.remove 'wp-content/uploads' folder
+c.duplicate folder 'uploads_for_test', rename it to 'uploads'

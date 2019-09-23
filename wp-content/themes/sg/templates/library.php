@@ -53,12 +53,8 @@
 			}
 
 
-			$already_loaded = get_post_meta(get_the_ID(), 'sg_already_loaded', true);
-			if (empty($already_loaded))
-				$already_loaded = 'no';
-
 			echo '<div class="book_container">';
-			echo '<div class="book" data-already_loaded="' . $already_loaded . '" data-post_id="' . get_the_ID() . '">' . get_the_title() . '</div>';
+			echo '<div class="book" data-post_id="' . get_the_ID() . '">' . get_the_title() . '</div>';
 			echo '</div>';
 
 

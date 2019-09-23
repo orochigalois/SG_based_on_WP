@@ -69,14 +69,18 @@ function ajax_collect_sentence()
     } else {
         $sg_current_sentence_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_sentence_post_id_for_REST_API', true);
 
-        $word_matrix = new WordMatrix($sg_current_sentence_post_id_for_REST_API);
+
+        $book = new Book($sg_current_sentence_post_id_for_REST_API);
+        $word_matrix = $book->get_matrix();
 
         $line = array();
         $line['sentence'] = trim($sentence);
-        $line['translation'] = '';
-        $word_matrix->data[] = $line;
+        $line['word'] = '';
+        $line['word_in_native_language'] = '';
+        $line['sentence_in_native_language'] = '';
+        $word_matrix[] = $line;
 
-        $word_matrix->write_to_db();
+        $book->write_to_db($word_matrix);
     }
 
 
@@ -161,15 +165,17 @@ function ajax_collect_word()
     } else {
         $sg_current_word_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_word_post_id_for_REST_API', true);
 
-        $word_matrix = new WordMatrix($sg_current_word_post_id_for_REST_API);
+        $book = new Book($sg_current_word_post_id_for_REST_API);
+        $word_matrix = $book->get_matrix();
 
         $line = array();
-        $line['word'] = trim($word);
         $line['sentence'] = '';
-        $line['translation'] = '';
-        $word_matrix->data[] = $line;
+        $line['word'] = trim($word);
+        $line['word_in_native_language'] = '';
+        $line['sentence_in_native_language'] = '';
+        $word_matrix[] = $line;
 
-        $word_matrix->write_to_db();
+        $book->write_to_db($word_matrix);
     }
 
 
@@ -218,13 +224,15 @@ function ajax_collect_sentence_for_word()
 
         $sg_current_word_post_id_for_REST_API = get_user_meta($user_id, 'sg_current_word_post_id_for_REST_API', true);
 
-        $word_matrix = new WordMatrix($sg_current_word_post_id_for_REST_API);
 
-        $last_index = $word_matrix->count() - 1;
+        $book = new Book($sg_current_word_post_id_for_REST_API);
+        $word_matrix = $book->get_matrix();
 
-        $word_matrix->data[$last_index]['sentence'] = trim($sentence);
+        $last_index = count($word_matrix) - 1;
 
-        $word_matrix->write_to_db();
+        $word_matrix[$last_index]['sentence'] = trim($sentence);
+
+        $book->write_to_db($word_matrix);
     } else {
         $result['status'] = "You need to collect a word first";
         print json_encode($result);

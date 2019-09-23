@@ -51,12 +51,15 @@ function ajax_update_word()
 
     //Step2. update $word_matrix
 
-    $word_matrix = new WordMatrix($post_id);
 
-    $word_matrix->data[$index]['word'] = $word;
-    $word_matrix->data[$index]['sentence'] = $sentence;
 
-    $word_matrix->write_to_db();
+    $book = new Book($post_id);
+    $word_matrix = $book->get_matrix();
+
+    $word_matrix[$index]['word'] = $word;
+    $word_matrix[$index]['sentence'] = $sentence;
+
+    $book->write_to_db($word_matrix);
 
 
     //Step3. reload the voice
@@ -66,12 +69,12 @@ function ajax_update_word()
 
     if (isset($user_info['sg_tts'])) {
         if ($user_info['sg_tts'][0] == 'voicerss') {
-            get_wordSound_by_voicerss_tts($word_matrix->data, "no", $post_id, $index);
+            get_wordSound_by_voicerss_tts($word_matrix, "no", $post_id, $index);
         } else {
-            get_wordSound_by_google_tts($word_matrix->data, "no", $post_id, $index);
+            get_wordSound_by_google_tts($word_matrix, "no", $post_id, $index);
         }
     } else {
-        get_wordSound_by_google_tts($word_matrix->data, "no", $post_id, $index);
+        get_wordSound_by_google_tts($word_matrix, "no", $post_id, $index);
     }
 
 
@@ -125,10 +128,13 @@ function ajax_update_sentence()
 
 
     //Step2. update sentence in db
-    $word_matrix = new WordMatrix($post_id);
-    $word_matrix->data[$index]['sentence'] = $sentence;
 
-    $word_matrix->write_to_db();
+    $book = new Book($post_id);
+    $word_matrix = $book->get_matrix();
+
+    $word_matrix[$index]['sentence'] = $sentence;
+
+    $book->write_to_db($word_matrix);
 
 
     //Step3. reload the voice
@@ -137,12 +143,12 @@ function ajax_update_sentence()
 
     if (isset($user_info['sg_tts'])) {
         if ($user_info['sg_tts'][0] == 'voicerss') {
-            get_wordSound_by_voicerss_tts($word_matrix->data, "yes", $post_id, $index);
+            get_wordSound_by_voicerss_tts($word_matrix, "yes", $post_id, $index);
         } else {
-            get_wordSound_by_google_tts($word_matrix->data, "yes", $post_id, $index);
+            get_wordSound_by_google_tts($word_matrix, "yes", $post_id, $index);
         }
     } else {
-        get_wordSound_by_google_tts($word_matrix->data, "yes", $post_id, $index);
+        get_wordSound_by_google_tts($word_matrix, "yes", $post_id, $index);
     }
 
     //Step4. return

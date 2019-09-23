@@ -98,73 +98,8 @@ if (is_wp_error($id)) {
 		esc_html($id->get_error_message()) . '</div>';
 	exit;
 } else {
-	//Step1. update post meta 'sg_word_or_sentence'
-	$user = wp_get_current_user();
-	$sg_word_or_sentence = get_user_meta($user->ID, 'sg_word_or_sentence', true);
-
-	if ($sg_word_or_sentence == "sentence") {
-		update_post_meta($id, 'sg_word_or_sentence', 'sentence');
-	} else {
-		update_post_meta($id, 'sg_word_or_sentence', 'word');
-	}
-
-	//Step2. import&serialize file data to field 'post_content'
-	$filepath = get_attached_file($id);
-	$filedata = file_get_contents($filepath);
-
-	//tidy up the raw data
-	$filedata = trim($filedata);
-	$filedata = preg_replace("/[，]/u", ',', $filedata);
-	$filedata = preg_replace("/[。]/u", '.', $filedata);
-	$filedata = preg_replace("/[？]/u", '?', $filedata);
-	$filedata = preg_replace("/[！]/u", '!', $filedata);
-
-	$count = 0;
-	$serialized_data = array();
-
-	if ($sg_word_or_sentence == "sentence") {
-		//Multiple spaces and newlines are replaced with a single space.
-		$filedata = preg_replace('/\s+/', ' ', $filedata);
-
-		$lines = multiexplode(array("?", ".", "!", ":"), $filedata);
-
-
-		foreach ($lines as $i => $line) {
-
-			if (trim($line) != "") {
-				$count++;
-				$serialized_data[$i]['sentence'] = trim($line);
-				$serialized_data[$i]['translation'] = "";
-			}
-		}
-	} else {
-		$filedata = preg_replace("/[\r\n]+/", "\n", $filedata);
-
-		$lines = explode("\n", $filedata); // split data by new lines
-		foreach ($lines as $i => $line) {
-			$count++;
-			$values = explode(',', $line, 2); // split lines by commas
-			$serialized_data[$i]['word'] = trim($values[0]);
-			unset($values[0]);
-			if (isset($values[1])) {
-				$serialized_data[$i]['sentence'] = trim($values[1]);
-				unset($values[1]);
-			} else {
-				$serialized_data[$i]['sentence'] = "";
-			}
-			$serialized_data[$i]['translation'] = "";
-		}
-	}
-
-
-	$serialized_data = maybe_serialize($serialized_data);
-
-	$my_post = array(
-		'ID'           => $id,
-		'post_content' => $serialized_data,
-	);
-	// Update the post into the database
-	wp_update_post($my_post);
+	$book = new Book($id);
+	$book->upload_content();
 }
 
 if ($_REQUEST['short']) {

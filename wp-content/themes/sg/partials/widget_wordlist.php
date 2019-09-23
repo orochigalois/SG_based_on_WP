@@ -21,9 +21,12 @@ if ($sg_word_or_sentence == "sentence") {
     );
 
     foreach ($all_posts as $sentence_post) {
-        $word_matrix = new WordMatrix($sentence_post->ID);
-        $lines = $word_matrix->data;
-        foreach ($lines as $i => $line) {
+
+
+        $book = new Book($sentence_post->ID);
+        $word_matrix = $book->get_matrix();
+
+        foreach ($word_matrix as $i => $line) {
             echo "<tr>";
             echo "<td>" . $line . "</td>";
             echo "<td style='width:150px;'>" . $sentence_post->post_date . "</td>";
@@ -47,10 +50,12 @@ if ($sg_word_or_sentence == "sentence") {
 
     foreach ($all_posts as $word_post) {
 
-        $word_matrix = new WordMatrix($word_post->ID);
-        $lines = $word_matrix->data;
 
-        foreach ($lines as $i => $line) {
+        $book = new Book($word_post->ID);
+        $word_matrix = $book->get_matrix();
+
+
+        foreach ($word_matrix as $i => $line) {
             echo "<tr>";
             echo "<td>" . $line['word'] . "</td>";
             echo "<td>" . $line['sentence']  . "</td>";
