@@ -82,7 +82,7 @@ Array
 
 ###7. How to set up a brand new app for test
 
-a.delete db and import sg_2019-09-17_clean_version_with_mailgun_setup_ready_to_go.sql, there is only one account named 'test' in it
+a.delete db and import sg_2019-09-17_clean_version_with_mailgun_setup_and_test_user_created.sql, there is only one account named 'test' in it
 b.remove 'wp-content/uploads' folder
 c.duplicate folder 'uploads_for_test', rename it to 'uploads'
 
