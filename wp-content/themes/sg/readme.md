@@ -89,3 +89,22 @@ c.duplicate folder 'uploads_for_test', rename it to 'uploads'
 
 ###8. We have only designed one class : \sg\inc\class\Book.php
 Each Book instance will represent one book on the shelf on libray page, and be stored in one wp_post in database
+
+
+###9. How to go live
+
+a.upload all files under theme folder except 'vendor' and 'node_modules'
+
+b.upload wp-admin/async-upload.php
+
+c.remove the db,import sg_2019-09-04_clean_version_with_mailgun_setup.sql
+
+d.run srdb
+
+e.remove srdb
+
+f.remove all under wp-content\uploads\
+
+g.register a new user and upload all Books to server
+
+h.update admin password,deactive all plugins

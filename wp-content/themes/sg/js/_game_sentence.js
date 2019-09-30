@@ -43,6 +43,8 @@ jQuery(document).ready(function ($) {
     var letterIndex = 0;
     var timeleft_in_percentage;
 
+    var progressTimer;
+
 
 
     //2.staging logic
@@ -77,7 +79,7 @@ jQuery(document).ready(function ($) {
             $(".flashcard").show();
             $('.progress').css('width', '100%');
             $(".progress").show();
-
+            clearInterval(progressTimer);
 
         }
 
@@ -108,11 +110,11 @@ jQuery(document).ready(function ($) {
 
 
         play_sound();
-
+        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + post_id + "_" + sentenceIndex + ")");
         if (is_checked_sentence) {
             $(".flashcard").text(sentenceList[sentenceIndex]);
             timeleft_in_percentage = 100;
-            var progressTimer = setInterval(function () {
+            progressTimer = setInterval(function () {
                 $('.progress-bar').css('width', timeleft_in_percentage + '%');
                 $('.progress-bar').attr('data-time', timeleft_in_percentage / 5 + 's');
 
