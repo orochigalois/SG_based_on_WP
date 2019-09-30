@@ -1,50 +1,160 @@
-jQuery(document).ready(function (jQuery) {
+jQuery(document).ready(function ($) {
+
+    init_progressBar();
 
     //1.get hidden_data & init
-
     var sentenceList = [];
-    var sentenceIndex;
+    var translationList = [];
 
 
-    jQuery(".hidden_data .hidden_data__wordlist .sentence").each(function () {
-        sentenceList.push(jQuery(this).text());
+    jQuery(".hidden_data .hidden_data__sentenceList .sentence").each(function () {
+        sentenceList.push($(this).text());
+    });
+    jQuery(".hidden_data .hidden_data__sentenceList .translation").each(function () {
+        translationList.push($(this).text());
     });
 
-    var userID = jQuery(".hidden_data .hidden_data__userID").text().trim();
+    var user_id = jQuery(".hidden_data .hidden_data__userID").text().trim();
     var post_id = jQuery(".hidden_data .hidden_data__post_id").text().trim();
 
+    //all sound resource
     var __typewriter = new Audio("../wp-content/themes/sg/sound/__typewriter.mp3");
     var __error = new Audio("../wp-content/themes/sg/sound/__error.wav");
-
-
-    var startBtn = document.querySelector(".startBtn");
-    var words = document.querySelector(".words");
-    var scoreDiv = document.querySelector(".score");
-    var errorDiv = document.querySelector(".error");
-
-    var spans;
-    var typed;
-
-
-    var points;
-    var errors;
-
-
     var __word;
 
+    //all selectors
+
+    var $words = document.querySelector(".words");
+    var $score = document.querySelector(".score");
+    var $error = document.querySelector(".error");
+    var $hint = document.querySelector(".hint");
+    var $spans;
+
+    //numbers & index
+    var points;
+    var errors;
+    var hint;
+    var sentenceIndex = 0;
+
+    //all bool
+    var is_checked_sentence = false;
+    var is_checked_translation = false;
 
     var letterIndex = 0;
-    var timeleft;
+    var timeleft_in_percentage;
 
 
-    //2.start game
-    jQuery(".startBtn").on("click", document, function () {
+
+    //2.staging logic
+    $("#game_staging_area_start_btn").on("click", document, function () {
+
         init();
-        show_me_one_sentence();
+
+        $("#game_staging_area").slideUp();
+        $(".alert").hide();
+
+
+        ask_me_one_sentence();
     });
 
+
+    //3.functions
+    function init() {
+        points = 0;
+        errors = 0;
+        hint = 3;
+        sentenceIndex = 0;
+        $score.innerHTML = points.toString() + '/' + sentenceList.length.toString();
+        $error.innerHTML = errors;
+        $hint.innerHTML = hint.toString();
+
+        is_checked_sentence = $('#game_staging_area input[id="sentence-option"]').is(':checked');
+        is_checked_translation = $('#game_staging_area input[id="translation-option"]').is(':checked');
+
+        if (is_checked_sentence) {
+            $(".words_board").hide();
+            $(".translation_board").hide();
+            $(".flashcard").show();
+            $('.progress').css('width', '100%');
+            $(".progress").show();
+
+
+        }
+
+        if (is_checked_translation) {
+            $(".flashcard").hide();
+            $(".progress").hide();
+            $(".words_board").show();
+            $(".translation_board").show();
+
+        }
+
+
+
+        document.addEventListener("keyup", function (event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+
+                timeleft_in_percentage = 0;
+            }
+        });
+    }
+
+    function ask_me_one_sentence() {
+        build_word_spans();
+        init_sound();
+
+
+        play_sound();
+
+        if (is_checked_sentence) {
+            $(".flashcard").text(sentenceList[sentenceIndex]);
+            timeleft_in_percentage = 100;
+            var progressTimer = setInterval(function () {
+                $('.progress-bar').css('width', timeleft_in_percentage + '%');
+                $('.progress-bar').attr('data-time', timeleft_in_percentage / 5 + 's');
+
+                if (timeleft_in_percentage == 0) {
+                    clearInterval(progressTimer);
+                    $(".progress").hide();
+                    $(".flashcard").hide();
+                    $(".words_board").show();
+                    document.addEventListener("keydown", typing_handler, false);
+                }
+                timeleft_in_percentage -= 5;
+
+            }, 1000);
+
+        }
+
+        if (is_checked_translation) {
+            $(".translation_board").text(translationList[sentenceIndex]);
+            document.addEventListener("keydown", typing_handler, false);
+        }
+
+
+
+        sentenceIndex++;
+        letterIndex = 0;
+    }
+
+    function build_word_spans() {
+        $words.innerHTML = "";
+        var wordArray = sentenceList[sentenceIndex].split("");
+        for (var i = 0; i < wordArray.length; i++) { //building the words with spans around the letters
+            var span = document.createElement("span");
+            span.classList.add("span");
+            span.classList.add("transparent");
+            span.innerHTML = wordArray[i];
+            $words.appendChild(span);
+        }
+        $spans = document.querySelectorAll(".span");
+    }
+
     function init_sound() {
-        __word = new Audio("../wp-content/uploads/userdata" + userID + "/paragraph/" + post_id + "_" + sentenceIndex + ".mp3");
+        __word = new Audio("../wp-content/uploads/userdata" + user_id + "/sound/" + post_id + '_' + sentenceIndex + "_s.mp3");
     }
 
     function play_sound() {
@@ -61,7 +171,6 @@ jQuery(document).ready(function (jQuery) {
             });
         }
     }
-
 
     function play_typewriter_sound() {
 
@@ -94,113 +203,79 @@ jQuery(document).ready(function (jQuery) {
     }
 
 
-    function init() {
-        points = 0;
-        errors = 0;
-        sentenceIndex = 0;
-        scoreDiv.innerHTML = points.toString() + '/' + sentenceList.length.toString();
-        errorDiv.innerHTML = errors;
-        jQuery(".wordsWrap").hide();
-        startBtn.disabled = true;
 
 
-        document.addEventListener("keyup", function (event) {
-            // Number 13 is the "Enter" key on the keyboard
-            if (event.keyCode === 13) {
-                // Cancel the default action, if needed
-                event.preventDefault();
 
-                timeleft = 100;
+    //4.btn_board
+    function I_did_helped() {
+        var helped = false;
+        for (var i = 0; i < $spans.length; i++) {
+            if (!$spans[i].classList.contains("transparent")) { // if it already has class with the bacground color then check the next one
+                continue;
             }
-        });
-    }
-
-
-    function show_me_one_sentence() {
-
-        //a. build word spans
-        words.innerHTML = "";
-        var letterArray = sentenceList[sentenceIndex].split("");
-        for (var i = 0; i < letterArray.length; i++) { //building the words with spans around the letters
-            var span = document.createElement("span");
-            span.classList.add("span");
-            span.classList.add("transparent");
-            span.innerHTML = letterArray[i];
-            words.appendChild(span);
+            $spans[i].classList.remove("transparent");
+            $spans[i].classList.add("bg");
+            helped = true;
+            break;
         }
-        spans = document.querySelectorAll(".span");
-
-
-        //b. show picture
-        jQuery(".game_sentence").css("background-image", "url(../wp-content/uploads/userdata" + userID + "/picture/" + post_id + "_" + sentenceIndex + ")");
-
-
-
-        //c. play sound
-
-        init_sound();
-        play_sound();
-
-        //d. show flashcard
-        jQuery(".flashcard").text(sentenceList[sentenceIndex]);
-        timeleft = 0;
-        var downloadTimer = setInterval(function () {
-            document.getElementById("progressBar").value = timeleft;
-            timeleft += 1;
-            if (timeleft > 20) {
-                clearInterval(downloadTimer);
-                jQuery(".flashcard").hide();
-                jQuery(".wordsWrap").show();
-                turn_on_typing_listener();
-            }
-        }, 1000);
-
-
-        //e. prepare moving to next word
-        sentenceIndex++;
-        letterIndex = 0;
-
-
-
+        return helped;
     }
+    $(".restart-btn").on("click", document, function () {
+        init();
+        ask_me_one_sentence();
+    });
+    $(".pronounce-btn").on("click", document, function () {
+        __word.pause();
+        __word.currentTime = 0;
+        __word.play();
+    });
+    $(".hint-btn").on("click", document, function () {
+        if (hint == 0) {
+            play_error_sound();
+            return;
+        }
 
+        if (I_did_helped()) {
+            play_typewriter_sound();
+            letterIndex++;
+            hint--;
+            $hint.innerHTML = hint.toString();
+            if (letterIndex == $spans.length) {
+                well_done();
+            }
 
-    jQuery(".replayBtn").on("click", document, function () {
-        play_sound();
-        jQuery(this).blur();
+        }
+
+    });
+    $(".exit-btn").on("click", document, function () {
+        init();
+        $("#game_staging_area").slideDown();
     });
 
 
 
-    //3.keydown
-    function isLetterOrSpaceOrDash(str) {
-        return str.length === 1 && str.match(/[a-z-]/i) || str == ' ';
+    //5.typing_handler
+    function isLetterOrNumberOrSpaceOrDash(str) {
+        return str.length === 1 && str.match(/[0-9a-z-]/i) || str == ' ';
     }
 
     function isSymbol(str) {
         return str.length === 1 && str.match(/[\？\！\“\”\：\；\，\。\‘\’\'\"\:\;\,\<\>\/\?!@#\$%\^\&*\)\(+=._-]/i) || str == ' ';
     }
 
-    function turn_on_typing_listener() {
-        document.addEventListener("keydown", typing, false);
-    }
-
-    function turn_off_typing_listener() {
-        document.removeEventListener("keydown", typing, false);
-    }
 
 
-    function typing(e) {
+    function typing_handler(e) {
 
-        typed = e.key;
+        var typed = e.key;
         var isTypo = true;
 
-        if (isSymbol(spans[letterIndex].innerHTML.toUpperCase())) {
+        if (isSymbol($spans[letterIndex].innerHTML.toUpperCase())) {
             isTypo = false;
         } else {
-            if (!isLetterOrSpaceOrDash(typed))
+            if (!isLetterOrNumberOrSpaceOrDash(typed))
                 return;
-            if (spans[letterIndex].innerHTML.toUpperCase() === typed.toUpperCase()) {
+            if ($spans[letterIndex].innerHTML.toUpperCase() === typed.toUpperCase()) {
                 isTypo = false;
             }
         }
@@ -211,77 +286,111 @@ jQuery(document).ready(function (jQuery) {
 
 
 
-            spans[letterIndex].classList.remove("transparent");
-            spans[letterIndex].classList.add("bg");
+            $spans[letterIndex].classList.remove("transparent");
+            $spans[letterIndex].classList.add("bg");
 
             letterIndex++;
         } else {
             play_error_sound();
 
             errors++;
-            errorDiv.innerHTML = errors; //add points to the points div
+            $error.innerHTML = errors; //add points to the points div
         }
 
 
-        var checker = 0;
-        for (var j = 0; j < spans.length; j++) { //checking if all the letters are typed
-            if (spans[j].className === "span bg") {
-                checker++;
-            }
-            if (checker === spans.length) { // if so, animate the words with animate.css class
-
-
-                jQuery(".wordsWrap").hide();
-                jQuery(".flashcard").show();
-
-
-                points++; // increment the points
-                scoreDiv.innerHTML = points.toString() + '/' + sentenceList.length.toString();
-
-
-                turn_off_typing_listener();
-                setTimeout(function () {
-                    if (sentenceIndex == sentenceList.length) {
-                        if (errors <= 3) {
-                            // alert("well done! There should be fireworks");
-                            jQuery("body canvas").fadeIn(2000);
-                            fireworks = setInterval(launch, 3000);
-                            //update score
-                            jQuery.ajax({
-                                url: _ajaxurl,
-                                method: 'GET',
-                                data: {
-                                    action: 'updateScore',
-                                    post_id: post_id,
-                                    isSentenceGame: 'yes',
-                                },
-                                dataType: 'json',
-                                success: function (response) {
-                                    if (response.status == 'success') {
-
-                                        console.log(response);
-                                        startBtn.disabled = false;
-                                    }
-
-                                },
-                            });
-
-                        } else {
-                            alert("please try again!");
-                            startBtn.disabled = false;
-                        }
-
-                    } else {
-                        show_me_one_sentence(); // give another word
-                    }
-
-
-                }, 400);
-            }
-
+        if (letterIndex == $spans.length) {
+            well_done();
         }
     }
 
+    function well_done() {
+
+
+        if (is_checked_sentence) {
+            $(".words_board").hide();
+            $(".flashcard").show();
+            $('.progress').css('width', '100%');
+            $(".progress").show();
+        }
+
+
+
+
+        points++; // increment the points
+        $score.innerHTML = points.toString() + '/' + sentenceList.length.toString();
+
+
+        document.removeEventListener("keydown", typing_handler, false);
+        setTimeout(function () {
+            if (sentenceIndex == sentenceList.length) {
+                if (errors <= 3) {
+                    $("body canvas").fadeIn(2000);
+                    fireworks = setInterval(launch, 3000);
+                    //update score
+                    $.ajax({
+                        url: _ajaxurl,
+                        method: 'GET',
+                        data: {
+                            action: 'updateScore',
+                            post_id: post_id,
+                            isSentenceGame: 'yes',
+                        },
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.status == 'success') {
+
+                                init();
+                                $("#game_staging_area").slideDown();
+                            }
+
+                        },
+                    });
+
+                } else {
+                    $("#game_staging_area").slideDown();
+                    $(".alert>h2").text("Please try again!");
+                    $(".alert").show();
+                }
+            } else {
+                ask_me_one_sentence(); // give another word
+            }
+
+        }, 400);
+    }
+
+    //6.progressBar
+    function init_progressBar() {
+
+
+        // create an observer instance
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type == 'attributes' && mutation.attributeName == 'style') {
+                    var el = mutation.target;
+                    var width = el.style.width; // Can't use jQuery here, as we need the value back in percent
+                    var $parentEl = $(el).parent('.progress');
+                    var time_in_seconds = $(el).attr('data-time');
+                    $parentEl.attr('data-width', width); // Why doesn't this work?? $parentEl.data('width',width)
+                    $parentEl.find('.progress-text').text(time_in_seconds);
+                }
+            });
+        });
+
+        // configuration of the observer
+        var config = {
+            attributes: true,
+            attributeFilter: ['style'],
+            childList: false,
+            characterData: false
+        };
+
+        $('.progress-bar').each(function (e) {
+            // pass in the target node, as well as the observer options
+            observer.observe(this, config);
+        })
+
+
+    }
 
 
 });

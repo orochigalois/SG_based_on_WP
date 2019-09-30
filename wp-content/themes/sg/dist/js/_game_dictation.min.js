@@ -244,14 +244,14 @@ jQuery(document).ready(function ($) {
 
 
     //5.typing_handler
-    function isLetterOrSpaceOrDash(str) {
-        return str.length === 1 && str.match(/[a-z-]/i) || str == ' ';
+    function isLetterOrNumberOrSpaceOrDash(str) {
+        return str.length === 1 && str.match(/[0-9a-z-]/i) || str == ' ';
     }
 
     function typing_handler(e) {
 
         var typed = e.key;
-        if (!isLetterOrSpaceOrDash(typed))
+        if (!isLetterOrNumberOrSpaceOrDash(typed))
             return;
         var isTypo = true;
         for (var i = 0; i < $spans.length; i++) {
@@ -295,7 +295,6 @@ jQuery(document).ready(function ($) {
                 setTimeout(function () {
                     if (wordIndex == wordList.length) {
                         if (errors == 0) {
-                            // alert("well done! There should be fireworks");
                             jQuery("body canvas").fadeIn(2000);
                             fireworks = setInterval(launch, 3000);
 

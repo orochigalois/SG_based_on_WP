@@ -48,9 +48,17 @@ function ajax_collect_sentence()
         // Check the type of file. We'll use this as the 'post_mime_type'.
         $filetype = wp_check_filetype(basename($filename), null);
 
+
         $serialized_data = array();
-        $serialized_data[] = trim($sentence);
+        $line = array();
+        $line['word'] = '';
+        $line['sentence'] = trim($sentence);
+        $line['word_in_native_language'] = '';
+        $line['sentence_in_native_language'] = '';
+
+        $serialized_data[] = $line;
         $serialized_data = maybe_serialize($serialized_data);
+
 
         // Prepare an array of post data for the attachment.
         $attachment = array(
@@ -145,6 +153,8 @@ function ajax_collect_word()
         $line = array();
         $line['word'] = trim($word);
         $line['sentence'] = '';
+        $line['word_in_native_language'] = '';
+        $line['sentence_in_native_language'] = '';
         $serialized_data[] = $line;
         $serialized_data = maybe_serialize($serialized_data);
 

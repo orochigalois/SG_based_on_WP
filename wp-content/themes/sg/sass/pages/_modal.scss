@@ -197,19 +197,23 @@
                 display: flex;
                 -ms-flex-align: center;
                 align-items: center;
-                opacity: 0;
+                opacity: 1;
                 transition: opacity .5s;
                 color: #fff;
+                background-color: rgba(255, 72, 0, 0.5);
+                border-radius: 50%;
+                text-decoration: none;
                 font-size: 30px;
                 position: absolute;
                 cursor: pointer;
                 margin: 0;
                 top: 50%;
                 transform: translateY(-50%);
+                width: 45px;
 
 
                 span {
-                    padding: 0 30px;
+                    padding: 0 15px;
                 }
 
                 &:focus {
@@ -218,12 +222,11 @@
                 }
 
                 &:hover {
-                    opacity: 1;
-                    text-decoration: none;
+                    background-color: rgba(255, 72, 0, 0.7);
                 }
 
                 &.prev {
-                    left: 0;
+                    left: 10px;
 
                     &.greyout {
                         &:hover {
@@ -234,7 +237,7 @@
                 }
 
                 &.next {
-                    right: 0;
+                    right: 10px;
 
                 }
             }

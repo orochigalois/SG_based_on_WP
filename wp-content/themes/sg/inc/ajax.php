@@ -14,11 +14,12 @@ function ajax_getWords()
 	$book = new Book($post_id);
 	$word_matrix = $book->get_matrix();
 
+	$user = wp_get_current_user();
+	$user_info = get_user_meta($user->ID);
 
 	if ($reload_all == 'yes' || $already_loaded == 'no') {
 
-		$user = wp_get_current_user();
-		$user_info = get_user_meta($user->ID);
+
 
 		if (isset($user_info['sg_tts'])) {
 			if ($user_info['sg_tts'][0] == 'voicerss') {

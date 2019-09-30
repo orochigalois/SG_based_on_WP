@@ -28,7 +28,7 @@ if ($sg_word_or_sentence == "sentence") {
 
         foreach ($word_matrix as $i => $line) {
             echo "<tr>";
-            echo "<td>" . $line . "</td>";
+            echo "<td>" . $line['sentence'] . "</td>";
             echo "<td style='width:150px;'>" . $sentence_post->post_date . "</td>";
             echo "</tr>";
         }

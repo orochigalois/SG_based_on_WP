@@ -13,6 +13,7 @@
 
 // Modules
 @import "modules/loaderIcon";
+@import "modules/progressBar";
 
 // Parts
 @import "header";
@@ -22,7 +23,6 @@
 // Pages
 @import "styleguide";
 @import "pages/game_dictation";
-@import "pages/game_sentence";
 @import "pages/library";
 @import "pages/modal";
 @import "pages/modal_update";

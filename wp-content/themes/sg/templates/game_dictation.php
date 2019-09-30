@@ -1,3 +1,5 @@
+<link href='https://fonts.googleapis.com/css?family=Audiowide|Nixie+One' rel='stylesheet' type='text/css'>
+
 <div class="hidden_data" style="display:none;">
     <div class="hidden_data__userID">
         <?php global $current_user;
@@ -30,7 +32,6 @@
         ?>
     </div>
 </div>
-<link href='https://fonts.googleapis.com/css?family=Audiowide|Nixie+One' rel='stylesheet' type='text/css'>
 
 <div class="alert">
     <h2></h2>

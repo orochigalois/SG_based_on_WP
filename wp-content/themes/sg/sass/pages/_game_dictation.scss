@@ -1,8 +1,10 @@
-#toplevel_page_sg_dictation_page {
+#toplevel_page_sg_dictation_page,
+#toplevel_page_sg_sentence_page {
     display: none;
 }
 
-.toplevel_page_sg_dictation_page {
+.toplevel_page_sg_dictation_page,
+.toplevel_page_sg_sentence_page {
     background-color: #282e3a;
     overflow: hidden;
 
@@ -123,6 +125,11 @@
         visibility: hidden;
     }
 
+    ul li input[type=radio] {
+        position: absolute;
+        visibility: hidden;
+    }
+
     ul li label {
         display: block;
         position: relative;
@@ -192,6 +199,18 @@
     }
 
     input[type=checkbox]:checked~label {
+        color: #0DFF92;
+    }
+
+    input[type=radio]:checked~.check {
+        border: 5px solid #0DFF92;
+    }
+
+    input[type=radio]:checked~.check::before {
+        background: #0DFF92;
+    }
+
+    input[type=radio]:checked~label {
         color: #0DFF92;
     }
 
@@ -270,11 +289,24 @@
 
     }
 
+
+    .flashcard {
+        font-family: 'Nixie One', Helvetica, Arial;
+        font-size: 30px;
+
+        @media screen and (max-width:$screen-xs-max) {
+            font-size: 18px;
+        }
+
+        background-color: #ECF0F1;
+    }
+
     .words_board {
         font-family: 'Nixie One', Helvetica, Arial;
 
 
         .words {
+
 
 
             span {
@@ -287,6 +319,8 @@
                 }
             }
 
+
+
             .bg {
                 background-color: #04AF71 !important;
             }
@@ -294,6 +328,19 @@
             .transparent {
                 color: transparent;
             }
+        }
+
+        body.toplevel_page_sg_sentence_page & {
+            .words {
+                span {
+                    font-size: 30px;
+
+                    @media screen and (max-width:$screen-xs-max) {
+                        font-size: 18px;
+                    }
+                }
+            }
+
         }
 
 
@@ -309,9 +356,10 @@
         text-align: center;
         background-color: rgba(0, 0, 0, 0.7);
         margin-top: 20px;
+        font-size: 24px;
 
         @media screen and (max-width:$screen-xs-max) {
-            font-size: 20px;
+            font-size: 18px;
         }
     }
 

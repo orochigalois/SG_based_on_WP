@@ -1,0 +1,78 @@
+.progress {
+    position: relative;
+    z-index: 5;
+    margin: 0 auto 30px;
+    background: #484848;
+    // border: 10px solid #282828;
+    border-radius: 20px;
+    display: inline-block;
+    box-shadow: 0 5px 17px rgba(40, 40, 40, 0.5), 0 0 3px 1px rgba(40, 40, 40, 0.5) inset;
+
+}
+
+.progress-text {
+    position: absolute;
+    font: bold 14px/20px Arial;
+    text-align: center;
+    top: 0;
+    left: 0;
+}
+
+.progress,
+.progress-bar,
+.progress-text {
+    width: 200px;
+    max-width: 200px;
+    height: 20px;
+}
+
+.progress .progress-text:first-child {
+    z-index: 5;
+    color: white;
+}
+
+.progress .progress-text:last-child {
+    z-index: 10;
+    color: black;
+}
+
+.progress-bar {
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    border-radius: 12px;
+    width: 0;
+    -moz-transition: width .2s linear;
+    -webkit-transition: width .2s linear;
+    -o-transition: width .2s linear;
+    transition: width .2s linear;
+}
+
+
+
+/* Pulsating Neon style */
+.progress.neon .progress-bar {
+    background-color: #fff;
+    box-shadow: 0 0 5px #01fe32 inset, 0 0 16px #08ff35, 0 0 20px #08ff35, 0 0 15px #08ff35;
+    -webkit-animation: pulse 2s linear infinite;
+    -moz-animation: pulse 2s linear infinite;
+    animation: pulse 2s linear infinite;
+}
+
+@-webkit-keyframes pulse {
+    50% {
+        box-shadow: 0 0 5px #01fe32 inset, 0 0 10px #08ff35, 0 0 10px #08ff35, 0 0 10px #08ff35;
+    }
+}
+
+@-moz-keyframes pulse {
+    50% {
+        box-shadow: 0 0 5px #01fe32 inset, 0 0 10px #08ff35, 0 0 10px #08ff35, 0 0 10px #08ff35;
+    }
+}
+
+@keyframes pulse {
+    50% {
+        box-shadow: 0 0 5px #01fe32 inset, 0 0 10px #08ff35, 0 0 10px #08ff35, 0 0 10px #08ff35;
+    }
+}
