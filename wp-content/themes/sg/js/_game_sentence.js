@@ -1,6 +1,7 @@
 jQuery(document).ready(function ($) {
 
     init_progressBar();
+    init_toggleBar();
 
     //1.get hidden_data & init
     var sentenceList = [];
@@ -110,7 +111,7 @@ jQuery(document).ready(function ($) {
 
 
         play_sound();
-        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + post_id + "_" + sentenceIndex + ")");
+        jQuery(".game_dictation .background-image").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + post_id + "_" + sentenceIndex + ")");
         if (is_checked_sentence) {
             $(".flashcard").text(sentenceList[sentenceIndex]);
             timeleft_in_percentage = 100;
@@ -133,6 +134,8 @@ jQuery(document).ready(function ($) {
 
         if (is_checked_translation) {
             $(".translation_board").text(translationList[sentenceIndex]);
+            $(".words_board").fadeIn();
+            $(".translation_board").fadeIn();
             document.addEventListener("keydown", typing_handler, false);
         }
 
@@ -308,12 +311,22 @@ jQuery(document).ready(function ($) {
     function well_done() {
 
 
-        if (is_checked_sentence) {
-            $(".words_board").hide();
-            $(".flashcard").show();
-            $('.progress').css('width', '100%');
-            $(".progress").show();
+
+        if (sentenceIndex != sentenceList.length) {
+            if (is_checked_sentence) {
+                $(".words_board").fadeOut(2000, function () {
+                    $(".flashcard").fadeIn(2000);
+                    $('.progress').css('width', '100%');
+                    $(".progress").fadeIn(2000);
+                });
+            }
+            if (is_checked_translation) {
+                $(".words_board").fadeOut(2000);
+                $(".translation_board").fadeOut(2000);
+            }
+
         }
+
 
 
 
@@ -326,27 +339,29 @@ jQuery(document).ready(function ($) {
         setTimeout(function () {
             if (sentenceIndex == sentenceList.length) {
                 if (errors <= 3) {
-                    $("body canvas").fadeIn(2000);
-                    fireworks = setInterval(launch, 3000);
-                    //update score
-                    $.ajax({
-                        url: _ajaxurl,
-                        method: 'GET',
-                        data: {
-                            action: 'updateScore',
-                            post_id: post_id,
-                            isSentenceGame: 'yes',
-                        },
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.status == 'success') {
+                    $("body canvas").fadeIn(2000, function () {
+                        //update score
+                        $.ajax({
+                            url: _ajaxurl,
+                            method: 'GET',
+                            data: {
+                                action: 'updateScore',
+                                post_id: post_id,
+                                isSentenceGame: 'yes',
+                            },
+                            dataType: 'json',
+                            success: function (response) {
+                                if (response.status == 'success') {
 
-                                init();
-                                $("#game_staging_area").slideDown();
-                            }
+                                    init();
+                                    $("#game_staging_area").slideDown();
+                                }
 
-                        },
+                            },
+                        });
                     });
+                    fireworks = setInterval(launch, 3000);
+
 
                 } else {
                     $("#game_staging_area").slideDown();
@@ -357,7 +372,7 @@ jQuery(document).ready(function ($) {
                 ask_me_one_sentence(); // give another word
             }
 
-        }, 400);
+        }, 2000);
     }
 
     //6.progressBar
@@ -392,6 +407,12 @@ jQuery(document).ready(function ($) {
         })
 
 
+    }
+
+    function init_toggleBar() {
+        $('#toggle--neon').click(function () {
+            $(".background-image").toggle();
+        });
     }
 
 

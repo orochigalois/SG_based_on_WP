@@ -56,12 +56,24 @@
 </div>
 <div class="game_dictation">
 
+    <div class="background-image">
+
+    </div>
+
 
     <div class="btn_board">
         <p class="restart-btn">RESTART</p>
         <p class="pronounce-btn">PRONOUNCE</p>
         <p class="hint-btn">HINT</p>
         <p class="exit-btn">EXIT</p>
+    </div>
+
+
+    <div class="toogle_board">
+        <div class="toggle toggle--neon">
+            <input type="checkbox" id="toggle--neon" class="toggle--checkbox">
+            <label class="toggle--btn" for="toggle--neon" data-label-on="image" data-label-off="off"></label>
+        </div>
     </div>
 
     <div class="score_board">
