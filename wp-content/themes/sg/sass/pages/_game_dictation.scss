@@ -240,7 +240,11 @@
         background-color: black;
         background-repeat: no-repeat;
         background-size: 100% 100%;
-        display: none;
+
+        body.toplevel_page_sg_sentence_page & {
+            display: none;
+        }
+
     }
 
 

@@ -77,7 +77,9 @@
     </div>
 </div>
 <div class="game_dictation">
+    <div class="background-image">
 
+    </div>
 
     <div class="btn_board">
         <p class="restart-btn">RESTART</p>

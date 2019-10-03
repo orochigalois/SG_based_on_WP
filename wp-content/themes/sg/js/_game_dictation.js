@@ -142,11 +142,11 @@ jQuery(document).ready(function ($) {
     }
 
     function show_picture() {
-        jQuery(".game_dictation").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + post_id + '_' + wordIndex + ")");
+        jQuery(".game_dictation .background-image").css("background-image", "url(../wp-content/uploads/userdata" + user_id + "/picture/" + post_id + '_' + wordIndex + ")");
     }
 
     function hide_picture() {
-        jQuery(".game_dictation").css("background-image", "none");
+        jQuery(".game_dictation .background-image").css("background-image", "none");
     }
 
     function show_sentence() {
