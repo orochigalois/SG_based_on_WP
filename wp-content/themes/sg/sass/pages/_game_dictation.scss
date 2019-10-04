@@ -53,24 +53,11 @@
     cursor: pointer;
 
     &:hover {
-        -webkit-animation: neon5 1.5s ease-in-out infinite alternate;
-        -moz-animation: neon5 1.5s ease-in-out infinite alternate;
-        animation: neon5 1.5s ease-in-out infinite alternate;
         color: #ffffff;
-    }
-}
-
-
-/*glow for webkit*/
-@-webkit-keyframes neon5 {
-    from {
         text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF9900, 0 0 70px #FF9900, 0 0 80px #FF9900, 0 0 100px #FF9900, 0 0 150px #FF9900;
     }
-
-    to {
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #FF9900, 0 0 35px #FF9900, 0 0 40px #FF9900, 0 0 50px #FF9900, 0 0 75px #FF9900;
-    }
 }
+
 
 #game_staging_area {
     background-color: black;
@@ -327,17 +314,6 @@
      Neon toggle
      ====================================================== */
 
-        @keyframes neon {
-            0% {
-                text-shadow: 0 0 10px #fff, 0 0 15px #fff, 0 0 25px #fff, 0 0 40px #ff9900,
-                    0 0 70px #ff9900, 0 0 90px #ff9900, 0 0 90px #ff9900;
-            }
-
-            100% {
-                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff9900,
-                    0 0 35px #ff9900, 0 0 40px #ff9900, 0 0 50px #ff9900;
-            }
-        }
 
         $textColor--active: #f1f1f1;
         $textColor--inactive: #333;
@@ -368,8 +344,7 @@
 
                 &:before {
                     content: attr(data-label-off);
-                    animation: neon 1.5s ease-in-out infinite alternate;
-                    animation-delay: 90ms;
+                    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF9900, 0 0 70px #FF9900, 0 0 80px #FF9900, 0 0 100px #FF9900, 0 0 150px #FF9900;
                     color: $textColor--active;
                 }
 
@@ -387,8 +362,7 @@
                         }
 
                         &:after {
-                            animation: neon 1.5s ease-in-out infinite alternate;
-                            animation-delay: 90ms;
+                            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #FF9900, 0 0 70px #FF9900, 0 0 80px #FF9900, 0 0 100px #FF9900, 0 0 150px #FF9900;
                             color: $textColor--active;
                         }
                     }
@@ -504,7 +478,7 @@
         color: white;
         text-align: center;
         background-color: rgba(0, 0, 0, 0.7);
-        margin-top: 20px;
+        margin: 20px auto 0;
         font-size: 24px;
         z-index: 1;
 

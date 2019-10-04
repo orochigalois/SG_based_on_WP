@@ -40,7 +40,8 @@ function ajax_get_images()
 {
     $start = (intval($_GET["page"]) - 1) * 9 + 1;
     $wordcode = rawurlencode($_GET["word"]);
-    $url =  'https://www.googleapis.com/customsearch/v1?start=' . $start . '&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode;
+    $extraWord = rawurlencode($_GET["extraWord"]);
+    $url =  'https://www.googleapis.com/customsearch/v1?start=' . $start . '&num=9&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode . '+' . $extraWord;
 
 
     $result = curl_request($url);
@@ -50,7 +51,7 @@ function ajax_get_images()
 
 
     foreach ($jsonobj->items as $value) {
-        $return_str = $return_str . '<li><img src="'
+        $return_str = $return_str . '<li><img referrerpolicy="no-referrer" src="'
             . $value->link . '" /></li>';
     }
 

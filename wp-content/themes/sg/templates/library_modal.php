@@ -11,7 +11,8 @@
                 <option value="Work Sans">Work Sans</option>
             </select>
         </div>
-        <button class="reload-all">Reload Sound/Image</button>
+        <button class="reload-all">Reload</button>
+        <input class="extra-keyword" type="text" id="" placeholder="Keyword">
         <button class="game-dictation">Dictation</button>
         <button class="md-close">Close</button>
     </div>

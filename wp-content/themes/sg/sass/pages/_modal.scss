@@ -55,6 +55,11 @@
 
         }
 
+        .extra-keyword {
+            @extend button;
+            width: 100px;
+        }
+
         .select-style {
             padding: 0;
             margin: 0;

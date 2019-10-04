@@ -151,7 +151,7 @@ function generateVocabularyHTML(wordMatrix) {
 
 		sentenceHTML = "<dd><span data-toggle='modal' data-target='#updateModal'>" + wordMatrix[i].sentence + "</span><span></span></dd>";
 
-		imageHTML = "<img src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID + "_" + i + "'/>";
+		imageHTML = "<img referrerpolicy=\"no-referrer\" src='" + "../wp-content/uploads/userdata" + userID + "/picture/" + currentPostID + "_" + i + "'/>";
 
 
 		jQuery(".md-modal .vocabulary>dl").append(imageHTML + wordHTML + sentenceHTML);
@@ -343,6 +343,7 @@ function imageHandler() {
 
 
 			currentWord = jQuery(this).next().children().eq(0).text();
+			extraWord = jQuery('.extra-keyword').val();
 
 			picture_name = currentPostID + "_" + index;
 			currentImg = jQuery(this);
@@ -356,6 +357,7 @@ function imageHandler() {
 					action: 'get_images',
 					page: currentPage,
 					word: currentWord,
+					extraWord: extraWord,
 				},
 				dataType: 'html',
 				success: function (response) {
@@ -392,6 +394,7 @@ function imageHandler() {
 	//prev page
 	jQuery(".image-overlay__content__body .prev").on("click", document, function () {
 		jQuery("#loadIcon").fadeIn();
+		extraWord = jQuery('.extra-keyword').val();
 		if (currentPage > 1) {
 			currentPage--;
 			jQuery.ajax({
@@ -401,6 +404,7 @@ function imageHandler() {
 					action: 'get_images',
 					page: currentPage,
 					word: currentWord,
+					extraWord: extraWord,
 				},
 				dataType: 'html',
 				success: function (response) {
@@ -421,6 +425,7 @@ function imageHandler() {
 	//next page
 	jQuery(".image-overlay__content__body .next").on("click", document, function () {
 		jQuery("#loadIcon").fadeIn();
+		extraWord = jQuery('.extra-keyword').val();
 		currentPage++;
 		jQuery.ajax({
 			url: _ajaxurl,
@@ -429,6 +434,7 @@ function imageHandler() {
 				action: 'get_images',
 				page: currentPage,
 				word: currentWord,
+				extraWord: extraWord,
 			},
 			dataType: 'html',
 			success: function (response) {

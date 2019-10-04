@@ -47,7 +47,7 @@
             </li>
 
             <li>
-                <input type="checkbox" id="picture-option" name="picture">
+                <input type="checkbox" id="picture-option" name="picture" checked>
                 <label for="picture-option">Picture</label>
 
                 <div class="check">
@@ -56,7 +56,7 @@
             </li>
 
             <li>
-                <input type="checkbox" id="sentence-option" name="sentence">
+                <input type="checkbox" id="sentence-option" name="sentence" checked>
                 <label for="sentence-option">Sentence</label>
 
                 <div class="check">
@@ -65,7 +65,7 @@
             </li>
 
             <li>
-                <input type="checkbox" id="translation-option" name="translation">
+                <input type="checkbox" id="translation-option" name="translation" checked>
                 <label for="translation-option">Translation</label>
 
                 <div class="check">
