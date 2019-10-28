@@ -18,6 +18,7 @@ $all_scored_posts = $wpdb->get_results(
     left join 
     wp_postmeta d 
     on c.post_id=d.post_id where d.`meta_key`='sg_word_or_sentence' and d.`meta_value`='{$type}'
+    order by `meta_value` desc
     "
 );
 echo "<table><tr>
@@ -28,7 +29,3 @@ foreach ($all_scored_posts as $score) {
     echo "<tr><td>" . $score->meta_value . "</td><td>" . $score->post_title . "</td></tr>";
 }
 echo "</table>";
-
-
-?>
-
