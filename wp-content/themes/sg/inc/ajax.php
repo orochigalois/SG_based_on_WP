@@ -33,7 +33,7 @@ function ajax_getWords()
 
 		get_wordImage($word_matrix, $isSentenceGame, $post_id);
 
-		get_word_translation($isSentenceGame, $post_id, NULL);
+		//get_word_translation($isSentenceGame, $post_id, NULL);
 
 		update_post_meta($post_id, 'sg_already_loaded', 'yes');
 	}
