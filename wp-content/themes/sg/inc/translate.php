@@ -86,21 +86,24 @@ function get_word_translation($isSentenceGame, $post_id, $line_index)
     if (is_null($line_index)) {
         foreach ($word_matrix as $i => $row) {
 
-
-            $result = mymemory_translate($row['word'], $target_language_code);
-            $word_matrix[$i]['word_in_native_language'] = $result;
-
-            $result = mymemory_translate($row['sentence'], $target_language_code);
-            $word_matrix[$i]['sentence_in_native_language'] = $result;
+            if ($row['word'] !== '') {
+                $result = mymemory_translate($row['word'], $target_language_code);
+                $word_matrix[$i]['word_in_native_language'] = $result;
+            }
+            if ($row['sentence'] !== '') {
+                $result = mymemory_translate($row['sentence'], $target_language_code);
+                $word_matrix[$i]['sentence_in_native_language'] = $result;
+            }
         }
     } else {
-
-        $result = mymemory_translate($word_matrix[$line_index]['word'], $target_language_code);
-        $word_matrix[$line_index]['word_in_native_language'] = $result;
-
-
-        $result = mymemory_translate($word_matrix[$line_index]['sentence'], $target_language_code);
-        $word_matrix[$line_index]['sentence_in_native_language'] = $result;
+        if ($word_matrix[$line_index]['word'] !== '') {
+            $result = mymemory_translate($word_matrix[$line_index]['word'], $target_language_code);
+            $word_matrix[$line_index]['word_in_native_language'] = $result;
+        }
+        if ($word_matrix[$line_index]['sentence'] !== '') {
+            $result = mymemory_translate($word_matrix[$line_index]['sentence'], $target_language_code);
+            $word_matrix[$line_index]['sentence_in_native_language'] = $result;
+        }
     }
 
     $book->write_to_db($word_matrix);
