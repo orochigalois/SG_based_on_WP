@@ -53,3 +53,11 @@ function lp_enqueue_admin()
 	}
 }
 add_action('admin_init', 'lp_enqueue_admin');
+
+
+function my_custom_login_stylesheet()
+{
+	wp_enqueue_style('custom-login', get_stylesheet_directory_uri() . '/admin/style-login.css');
+}
+//This loads the function above on the login page
+add_action('login_enqueue_scripts', 'my_custom_login_stylesheet');
