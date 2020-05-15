@@ -13,6 +13,11 @@ function ajax_getWords()
 
 	$book = new Book($post_id);
 	$word_matrix = $book->get_matrix();
+	if (!$word_matrix) {
+		$result['status'] = "fail";
+		print json_encode($result);
+		wp_die();
+	}
 
 	$user = wp_get_current_user();
 	$user_info = get_user_meta($user->ID);

@@ -124,6 +124,8 @@ function ajax_get_words(post_id, reload_all, title) {
 				titleHandler(post_id);
 				jQuery('.md-modal button').attr("disabled", false);
 				jQuery('.md-modal select').attr("disabled", false);
+			} else {
+				alert('Can not unserialize the data, please check the post_content field in wp_posts table');
 			}
 		},
 		error: function (jqXHR, textStatus, errorThrown) {

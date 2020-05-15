@@ -11,6 +11,7 @@ sg_current_word_post_id_for_REST_API    (value: post_id)    single
 sg_your_native_language (value: zh / en / ... etc.)    single
 sg_tts (value: google / voicerss)    single
 sg_current_post  (value: post_id)   single
+sg_user_token  (value: r3iVWXw3)   single
 
 In wp_postmeta:
 
