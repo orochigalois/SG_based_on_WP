@@ -16,13 +16,17 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id, $li
     global $current_user;
 
     $upload_dir = wp_upload_dir();
+    $base_dir = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound';
 
-    // instantiates a client
+    // Ensure base directory exists
+    if (!file_exists($base_dir)) {
+        mkdir($base_dir, 0755, true);
+    }
+
+    // Instantiates a client
     $client = new TextToSpeechClient();
-    // build the voice request, select the language code ("en-US") and the ssml
-    // voice gender
 
-    // All LanguageCodes refer to: https://cloud.google.com/text-to-speech/docs/voices
+    // Build the voice request
     $voice = (new VoiceSelectionParams())
         ->setLanguageCode('en-US')
         ->setSsmlGender(SsmlVoiceGender::MALE);
@@ -30,89 +34,61 @@ function get_wordSound_by_google_tts($wordmatrix, $isSentenceGame, $post_id, $li
     // Effects profile
     $effectsProfileId = "telephony-class-application";
 
-    // select the type of audio file you want returned
+    // Select the type of audio file you want returned
     $audioConfig = (new AudioConfig())
         ->setAudioEncoding(AudioEncoding::MP3)
         ->setEffectsProfileId(array($effectsProfileId));
 
+    // Helper function to synthesize speech and save to file
+    function synthesizeAndSave($client, $text, $voice, $audioConfig, $filePath)
+    {
+        // Ensure the directory exists before saving
+        $dir = dirname($filePath);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $synthesisInputText = (new SynthesisInput())->setText($text);
+        $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
+        $audioContent = $response->getAudioContent();
+        file_put_contents($filePath, $audioContent);
+    }
+
+    // Process the word matrix
     if (is_null($line_index)) {
         foreach ($wordmatrix as $i => $row) {
-            if ($isSentenceGame == 'yes') {
+            if ($isSentenceGame === 'yes') {
                 $sentence = $row['sentence'];
-                $synthesisInputText = (new SynthesisInput())
-                    ->setText($sentence);
-
-                $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-                $audioContent = $response->getAudioContent();
-                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '_s.mp3';
-
-                file_put_contents($sentence_saveTo, $audioContent);
+                $sentence_saveTo = $base_dir . '/' . $post_id . '_' . $i . '_s.mp3';
+                synthesizeAndSave($client, $sentence, $voice, $audioConfig, $sentence_saveTo);
             } else {
                 $word = $row['word'];
                 $sentence = $row['sentence'];
 
-                $synthesisInputText = (new SynthesisInput())
-                    ->setText($word);
-
-                $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-                $audioContent = $response->getAudioContent();
-
-                $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '.mp3';
-
-                // the response's audioContent is binary
-                file_put_contents($word_saveTo, $audioContent);
+                $word_saveTo = $base_dir . '/' . $post_id . '_' . $i . '.mp3';
+                synthesizeAndSave($client, $word, $voice, $audioConfig, $word_saveTo);
 
                 if ($sentence != '') {
-
-                    $synthesisInputText->setText($sentence);
-
-                    $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-                    $audioContent = $response->getAudioContent();
-                    $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $i . '_s.mp3';
-                    file_put_contents($sentence_saveTo, $audioContent);
+                    $sentence_saveTo = $base_dir . '/' . $post_id . '_' . $i . '_s.mp3';
+                    synthesizeAndSave($client, $sentence, $voice, $audioConfig, $sentence_saveTo);
                 }
             }
         }
     } else {
-
-        if ($isSentenceGame == 'yes') {
+        if ($isSentenceGame === 'yes') {
             $sentence = $wordmatrix[$line_index]['sentence'];
-
-
-            $synthesisInputText = (new SynthesisInput())
-                ->setText($sentence);
-
-            $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-            $audioContent = $response->getAudioContent();
-
-            $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '_s.mp3';
-
-            file_put_contents($sentence_saveTo, $audioContent);
+            $sentence_saveTo = $base_dir . '/' . $post_id . '_' . $line_index . '_s.mp3';
+            synthesizeAndSave($client, $sentence, $voice, $audioConfig, $sentence_saveTo);
         } else {
             $word = $wordmatrix[$line_index]['word'];
             $sentence = $wordmatrix[$line_index]['sentence'];
 
-            $synthesisInputText = (new SynthesisInput())
-                ->setText($word);
-
-            $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-            $audioContent = $response->getAudioContent();
-
-            $word_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '.mp3';
-
-            file_put_contents($word_saveTo, $audioContent);
-
+            $word_saveTo = $base_dir . '/' . $post_id . '_' . $line_index . '.mp3';
+            synthesizeAndSave($client, $word, $voice, $audioConfig, $word_saveTo);
 
             if ($sentence != '') {
-
-                $synthesisInputText->setText($sentence);
-
-                $response = $client->synthesizeSpeech($synthesisInputText, $voice, $audioConfig);
-                $audioContent = $response->getAudioContent();
-
-                $sentence_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/sound' . '/' . $post_id . '_' . $line_index . '_s.mp3';
-
-                file_put_contents($sentence_saveTo, $audioContent);
+                $sentence_saveTo = $base_dir . '/' . $post_id . '_' . $line_index . '_s.mp3';
+                synthesizeAndSave($client, $sentence, $voice, $audioConfig, $sentence_saveTo);
             }
         }
     }

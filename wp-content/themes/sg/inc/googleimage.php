@@ -7,17 +7,19 @@ function get_wordImage($wordmatrix, $isSentenceGame, $post_id)
     global $current_user;
 
     $upload_dir = wp_upload_dir();
+    $base_dir = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture';
+
+    // Ensure base directory exists
+    if (!file_exists($base_dir)) {
+        mkdir($base_dir, 0755, true);
+    }
+
     foreach ($wordmatrix as $i => $row) {
-
-        if ($isSentenceGame == 'yes') {
-            $keyword = $row['sentence'];
-        } else {
-            $keyword = $row['word'];
-        }
+        $keyword = $isSentenceGame === 'yes' ? $row['sentence'] : $row['word'];
         $wordcode = rawurlencode($keyword);
-        //parameters refer to https://developers.google.com/custom-search/v1/cse/list
-        $word_url =  'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode;
 
+        // Parameters refer to https://developers.google.com/custom-search/v1/cse/list
+        $word_url = 'https://www.googleapis.com/customsearch/v1?start=1&num=1&key=AIzaSyDhSPErqY29GpIKJaydpbzPmszuequWors&cx=005357025438319005378:47442hllu9g&searchType=image&imgSize=large&q=' . $wordcode;
 
         $result = curl_request($word_url);
         $jsonobj = json_decode($result);
@@ -28,7 +30,13 @@ function get_wordImage($wordmatrix, $isSentenceGame, $post_id)
             $image_link = $value->link;
         }
 
-        $image_saveTo = $upload_dir['basedir'] . '/userdata' . $current_user->ID . '/picture' . '/' . $post_id . '_' . $i;
+        $image_saveTo = $base_dir . '/' . $post_id . '_' . $i;
+
+        // Ensure the directory exists before saving
+        $dir = dirname($image_saveTo);
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
 
         curl_save_file($image_link, $image_saveTo);
     }
